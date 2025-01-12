@@ -1,4 +1,10 @@
 ;; -*- lexical-binding: t -*-
+;; mozc_emacs_helper for Windows https://github.com/smzht/mozc_emacs_helper
+;; を利用して、WSLのEmacsからWindowsのGoogle日本語入力を使う。
+
+;; 事前準備:
+;; emacs-mozc を動かすための設定（WSL 設定編） https://w.atwiki.jp/ntemacs/pages/61.html
+;; を参考に、`mozc_emacs_helper.sh'を作成してパスを通しておく。
 
 (use-package mozc-im :ensure t)
 (use-package mozc-popup :ensure t)
