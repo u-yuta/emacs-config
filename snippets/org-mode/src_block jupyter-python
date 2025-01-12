@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: src_block jupyter-python
+# key: srcjupyterpython
+# --
+#+begin_src jupyter-python :session py :kernel python3 :exports results
+#+end_src

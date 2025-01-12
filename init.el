@@ -1,0 +1,723 @@
+;; -*- lexical-binding: t -*-
+
+;; ============================================
+;; 0. use-package設定
+;; ============================================
+
+(setopt use-package-enable-imenu-support t) ;; Must be set before loading `use-package'
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+
+;; ============================================
+;; 1. 基本設定
+;; ============================================
+
+;; 起動時の Warning を抑止する
+(setq byte-compile-warnings '(cl-functions))
+
+;; 自動リバート
+(global-auto-revert-mode 1)
+
+;; ファイル/バッファ操作
+(setq confirm-kill-emacs 'yes-or-no-p)
+(setq recentf-exclude '("\\.recentf" ".emacs.d/bookmarks"))
+(setq set-mark-command-repeat-pop t)
+
+;; 自動保存/バックアップ設定
+(let ((target-dir (expand-file-name "~/"))
+      (dest-dir (expand-file-name "~/.Trash/")))
+  ;; 自動保存ファイル(#*#)の作成先変更
+  (add-to-list 'auto-save-file-name-transforms
+               `(,(concat target-dir "\\([^/]*/\\)*\\([^/]*\\)$")
+                 ,(concat dest-dir "\\2")
+                 t))
+  ;; バックアップファイル(*~)の作成先変更
+  (add-to-list 'backup-directory-alist (cons target-dir dest-dir))
+  ;; 自動保存リスト(.saves-<PID>-<HOSTNAME>)の作成先変更
+  (setq auto-save-list-file-prefix (expand-file-name ".saves-" dest-dir)))
+
+;; custom.el 設定
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; サーバー設定
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+;; グローバルなキーバインドの設定
+(global-set-key (kbd "<home>") 'beginning-of-buffer)
+(global-set-key (kbd "<end>") 'end-of-buffer)
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+
+(global-set-key (kbd "M-h") 'backward-kill-word)
+(global-set-key (kbd "C-c h") 'help-command)
+
+;; モードごとの設定より優先して設定
+(bind-key* "C-h" 'backward-delete-char-untabify)
+
+;; use built-in which-key
+(which-key-mode)
+
+;; load-path を追加
+(add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+
+;; システム判定
+(setq uy/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
+(setq uy/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
+(setq uy/system-windows-p (eq system-type 'windows-nt))
+(setq uy/os-text (cond
+                  (uy/system-linux-p "Linux🐧")
+                  (uy/system-msys-p "Msys")
+                  (uy/system-windows-p "Windows🖥️")))
+;; WSL上かどうかの判定
+(setq uy/wsl-p
+      (and (string-match-p "WSL" (shell-command-to-string "uname -r"))
+           (eq system-type 'gnu/linux)))
+
+
+;; シェル設定
+(if uy/system-msys-p
+    (setq shell-file-name "/usr/bin/bash"))
+(if uy/system-linux-p
+    (setq shell-file-name "/bin/bash"))
+(setq explicit-shell-file-name shell-file-name)
+
+;; ============================================
+;; 2. UI/外観設定
+;; ============================================
+
+;; ツールバー/メニューバー設定
+(tool-bar-mode 0)
+(menu-bar-mode 1)  ;; メニューは残しておく。Ctrl-右クリックでも表示できる。
+(tab-bar-mode 1)
+(context-menu-mode 1)  ;; 右クリックでコンテクストメニューを開く
+(desktop-save-mode 1)  ;; セッションを保存する
+
+;; モードライン設定
+(setq frame-title-format
+      '(multiple-frames "%b"
+                        (" " invocation-name "@" system-name " " uy/os-text
+                         (:eval (if (buffer-file-name) " %f" " %b")))))
+
+;; 行番号表示
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+;; 外観設定
+(require 'setup-appearance)
+
+;; ============================================
+;; 3. 編集支援
+;; ============================================
+
+(delete-selection-mode 1)
+
+;; 基本編集設定
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq-default fill-column 80)
+(setq case-fold-search nil)
+
+;; 括弧/引用符
+(electric-pair-mode 1)
+(setq electric-pair-preserve-balance nil)
+
+;; 警告音/ベル
+(setq visible-bell t)
+
+;; スクロール設定
+(setq scroll-conservatively 1)
+(setq scroll-margin 5)
+(setq next-screen-context-lines 1)
+(setq scroll-preserve-screen-position nil)
+
+(defun uy/indent-defun ()
+  "Indent the current defun."
+  (interactive)
+  (save-excursion
+    (mark-defun)
+    (indent-region (region-beginning) (region-end))))
+
+;; ============================================
+;; 4. 標準モジュールの設定
+;; ============================================
+
+;; info-mode設定
+(use-package info
+  :ensure nil
+  :config
+  ;; 以下は casual-info を参考にしたキーバインド
+  ;; Bind h and l to navigate to previous and next nodes
+  ;; Bind j and k to navigate to next and previous references
+  (keymap-set Info-mode-map "h" #'Info-prev)
+  (keymap-set Info-mode-map "j" #'Info-next-reference)
+  (keymap-set Info-mode-map "k" #'Info-prev-reference)
+  (keymap-set Info-mode-map "l" #'Info-next)
+  ;; Bind / to search
+  (keymap-set Info-mode-map "/" #'Info-search)
+  ;; Set Bookmark
+  (keymap-set Info-mode-map "B" #'bookmark-set)
+  ;; Use web-browser history navigation bindings
+  (keymap-set Info-mode-map "M-<left>" #'Info-history-back)
+  (keymap-set Info-mode-map "M-<right>" #'Info-history-forward)
+
+  ;; Bind p and n to paragraph navigation
+  ;; casual-info にある関数を使用する
+  (keymap-set Info-mode-map "p" #'casual-info-browse-backward-paragraph)
+  (keymap-set Info-mode-map "n" #'casual-info-browse-forward-paragraph)
+
+  (add-hook 'Info-mode-hook #'hl-line-mode)  ;; カーソル行をハイライト
+  (add-hook 'Info-mode-hook #'scroll-lock-mode)  ;; 矢印キーでスクロール
+  )
+
+(use-package browse-url
+  :ensure nil
+  :config
+  (setq browse-url-browser-function 'browse-url-generic)
+  (when uy/wsl-p (setq browse-url-generic-program "wslview"))
+  (when uy/system-windows-p
+    (setq browse-url-browser-function 'browse-url-default-browser))
+  ;; (global-set-key (kbd "C-c u") 'browse-url-at-point)
+  )
+
+;; ibuffer
+(use-package ibuffer
+  :ensure nil
+  :bind (("C-x C-b" . ibuffer)) ;; 標準の list-buffers の代わりに ibuffer を使用
+  :init
+  ;; グルーピング
+    (setq ibuffer-saved-filter-groups
+          (quote (("default"
+                   ("Org" ;; all org-related buffers
+                    (mode . org-mode))
+                   ("Dired" (mode . dired-mode))
+                   ("Emacs Lisp"   (mode . emacs-lisp-mode))
+                   ("Emacs" (or
+                             (name . "^\\*scratch\\*$")
+                             (name . "^\\*Messages\\*$")))
+                   ("Special Buffers"
+                    (or
+                     (mode . magit-status-mode)
+                     (mode . magit-process-mode)
+                     (mode . magit-mode)
+                     (mode . magit-diff-mode)
+                     (mode . ediff-mode)
+                     (mode . jupyter-repl-mode)))
+                   ))))
+
+  :config
+  (add-hook 'ibuffer-mode-hook
+            (lambda ()
+              (ibuffer-switch-to-saved-filter-groups "default")))
+  )
+
+;; dired
+(use-package dired
+  :ensure nil
+  :config 
+  ;; ディレクトリがファイルの前に表示される。
+  ;; 隠しファイルも表示される。
+  ;; ファイルサイズは1K, 1.2Mのように読みやすく表示される。
+  ;; ファイル名にバージョン番号がある場合、自然順で並べ替えられる。
+  (setq dired-listing-switches "-laGh1v --group-directories-first")
+
+  (setq dired-dwim-target t)
+  )
+
+;; dired WSL用の設定
+(when uy/wsl-p
+  (use-package dired
+    :ensure nil
+    :bind (:map dired-mode-map
+                ("C-c o" . dired-open-file-on-windows)
+                )
+    :config
+    (setf dired-kill-when-opening-new-dired-buffer t)
+
+    (defun dired-open-file-on-windows ()
+      "Open files on Windows."
+      (interactive)
+      (message "Opening on Windows: %s..." (dired-get-filename))
+      ;; wslview を使ってWindowsの関連付けで開く。
+      ;; wslview は wslutilities/wslu https://github.com/wslutilities/wslu に含まれる
+      (shell-command (mapconcat #'shell-quote-argument
+                                (list "wslview" (dired-get-filename))
+                                " "))
+      (message "Opened on Windows: %s." (dired-get-filename))
+      )
+    )
+  )
+
+(use-package project
+  :ensure nil
+  ;; Cannot use :hook because 'project-find-functions does not end in -hook
+  ;; Cannot use :init (must use :config) because otherwise
+  ;; project-find-functions is not yet initialized.
+  :config
+  (setq project-vc-extra-root-markers '(".project.el"))  ;; Emacs 29.1以降で有効
+  )
+
+;; windmove
+;; Windowを切り替える
+(use-package windmove
+  :ensure nil
+  :config
+  ;; Ctrl+arrow でwindmove
+  (windmove-default-keybindings 'ctrl))
+
+;; ============================================
+;; 5. 開発支援
+;; ============================================
+
+;; Eglot
+(use-package eglot
+  :ensure nil)
+
+;; magit
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit-status))
+  :config
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+  ;; logの日時表示フォーマット設定
+  (setq magit-log-margin '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)))
+
+
+;; treesitter
+(require-if-exists init-treesitter)
+
+;; ============================================
+;; 6. 日本語環境、日本語入力
+;; ============================================
+
+(require 'setup-japanese)
+
+;; ============================================
+;; 7. Org-mode関連
+;; ============================================
+
+;; Bibliography files
+(setq uy/bib-files '("~/doc_local/bibliography/references.bib"
+                     "~/doc_local/bibliography/00Share.bib"))
+
+;; org-mode設定
+(require 'setup-org-mode)
+
+;; org-roam設定
+(require 'setup-org-roam)
+
+(use-package htmlize :ensure t)
+
+;; org-noter設定
+(use-package org-noter
+  :ensure t
+  :defer t
+  :config
+  (setq org-noter-notes-search-path (list (expand-file-name "share" org-roam-directory)))
+  (setq org-noter-default-notes-file-names '("resouce.notes.org"))
+  )
+
+;; Citar (org-cite のインターフェース拡張)
+(use-package citar
+  :ensure t
+  :after oc
+  :custom
+  (citar-bibliography uy/bib-files)
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-notes-paths (list (expand-file-name "share" org-roam-directory)))
+  :hook
+  (LaTeX-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup)
+
+  :config
+  ;; WindowsのZoteroで作成した文献リストのfileフィールドをWSLのパスに変換する
+  (defun uy/citar-file--parser-windows-path-to-wsl (file-field)
+    "Split FILE-FIELD by `;' and convert Windows paths to WSL paths.
+  Each filename in FILE-FIELD is converted using `wslpath -u <filename>`.
+  Returns a list of original and converted paths."
+    (mapcan
+     (lambda (filename)
+       (let* ((trimmed (string-trim filename))
+              (wslpath (string-trim (shell-command-to-string (format "wslpath -u '%s'" trimmed)))))
+         ;; Include both the original and converted path if they differ
+         (if (string-empty-p trimmed)
+             nil
+           (if (string= trimmed wslpath)
+               (list trimmed)
+             (list trimmed wslpath)))))
+     (citar-file--split-escaped-string file-field ?\;)))
+
+  (when uy/wsl-p
+    ;; Add the custom parser to citar-file-parser-functions
+    (add-to-list 'citar-file-parser-functions 'uy/citar-file--parser-windows-path-to-wsl))
+
+  ;; 文献リストのUIにEmojiを表示する
+  (with-eval-after-load 'emojify
+    (defvar citar-indicator-notes-icons
+      (citar-indicator-create
+       :symbol "📓"
+       :function #'citar-has-notes
+       :padding "  "
+       :tag "has:notes"))
+    (defvar citar-indicator-links-icons
+      (citar-indicator-create
+       :symbol "🔗"
+       :function #'citar-has-links
+       :padding "  "
+       :tag "has:links"))
+    (defvar citar-indicator-files-icons
+      (citar-indicator-create
+       :symbol "📁"
+       :function #'citar-has-files
+       :padding "  "
+       :tag "has:files"))
+    (setq citar-indicators
+          (list citar-indicator-files-icons
+                citar-indicator-notes-icons
+                citar-indicator-links-icons))))
+
+;; citar-org-roam: provide tighter Citar and Org-Roam integration
+(use-package citar-org-roam
+  :ensure t
+  :after (citar org-roam)
+  :custom
+  (citar-org-roam-subdir "share")
+  :config
+  (citar-org-roam-mode)
+  (setq citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
+
+;; ============================================
+;; 8. Windows, WSL関連
+;; ============================================
+
+;; Windows パス と UNC パス を使えるようにするための設定 (WSL 用)
+(when uy/wsl-p (require-if-exists windows-path-on-wsl))
+
+;; ============================================
+;; 9. ユーティリティ関数
+;; ============================================
+
+;; 便利関数
+(defun uy/open-init-file ()
+  "Open the init file."
+  (interactive)
+  (find-file user-init-file))
+
+(defun uy/open-journal-file ()
+  "Open journal file."
+  (interactive)
+  (find-file "~/org-roam/journal/journal.org"))
+
+
+;; ============================================
+;; 10. プログラム、マークアップ言語関連
+;; ============================================
+
+(require 'setup-python)
+
+;; markdown-mode
+(use-package markdown-mode
+  :ensure t
+  :mode
+  ("README\\.md\\'" . gfm-mode)
+  :init
+  (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+
+;; YAML
+(use-package yaml-mode :ensure t :defer t)
+
+;; Lua
+(use-package lua-mode :ensure t :defer t)
+
+;; Major mode for editing and running Microsoft PowerShell files
+(use-package powershell :ensure t)
+
+;; ============================================
+;; 11. LaTeX
+;; ============================================
+
+;; AUCTeX (LaTeX 編集環境)
+(use-package auctex
+  :ensure t
+  :defer t
+  :hook ((LaTeX-mode . TeX-source-correlate-mode)
+         (LaTeX-mode . TeX-PDF-mode))
+  :config
+  ;; デフォルトのTeXエンジンをLuaTeXに設定
+  (setq TeX-engine 'luatex)
+  (setq TeX-command-default "LuaLaTeX")
+  ;; LuaLaTeXのコンパイルコマンドを追加
+  (add-to-list 'TeX-command-list
+               '("LuaLaTeX" "lualatex -shell-escape -interaction=nonstopmode %s"
+                 TeX-run-TeX nil t :help "Run LuaLaTeX"))
+  ;; PDFビューアの設定（wslviewを使用）
+  (setq TeX-view-program-selection '((output-pdf "WSLView")))
+  (setq TeX-view-program-list '(("WSLView" "wslview %o"))))
+
+;; CDLaTeX (LaTexでの数式入力の補助)
+(use-package cdlatex
+  :ensure t
+  :hook (LaTeX-mode . turn-on-cdlatex) ;; LaTeXモードでCDLaTeXを有効化
+  :config
+  ;; 数式モードでCDLaTeXを有効化する
+  (add-hook 'LaTeX-mode-hook 'cdlatex-mode))
+
+;; ============================================
+;; 12. その他の設定
+;; ============================================
+
+;; FFAP設定
+(ffap-bindings)
+
+;; よく使うファイルを開く
+(defun uy/open-agenda-file ()
+  "Open agenda file."
+  (interactive)
+    (find-file (format "~/org-roam/journal/agenda.org")))
+
+(defun uy/open-index-shared-file ()
+  "Open index file (entry point for org-roam)."
+  (interactive)
+  (find-file "~/org-roam/share/02_index_shared.org"))
+
+(defun uy/open-index-home-file ()
+  "Open index file (entry point for org-roam)."
+  (interactive)
+  (find-file "~/org-roam/00_index_home.org"))
+
+(defun uy/open-index-office-file ()
+  "Open index file (entry point for org-roam)."
+  (interactive)
+  (find-file "~/org-roam/01_index_office.org"))
+
+(defun uy/open-task-file ()
+  "Open task file."
+  (interactive)
+  (let ((year-month (format-time-string "%y%m")))
+    (find-file (format "~/org-roam/work/task-%s.org" year-month))))
+
+(global-set-key (kbd "C-c f .") 'uy/open-init-file)
+(global-set-key (kbd "C-c f i") 'uy/open-index-shared-file)
+(global-set-key (kbd "C-c f h") 'uy/open-index-home-file)
+(global-set-key (kbd "C-c f o") 'uy/open-index-office-file)
+(global-set-key (kbd "C-c f j") 'uy/open-journal-file)
+;; Back to indentation, or beginning of line.
+(defun back-to-indentation-or-beginning ()
+   (interactive) 
+   (if (bolp) (back-to-indentation) (beginning-of-line)))
+
+;; avy
+;; 参考：文字入力後、ターゲット選択前に `?' を入力する、選択可能なAction(kill, copy, zapなど)が表示される
+(use-package avy
+  :ensure t
+  :bind
+  (("M-j" . avy-goto-migemo-timer)
+   ("M-g g" . avy-goto-char-2)
+   ("M-g M-g" . avy-goto-line))
+  :commands (avy-goto-migemo-timer)
+  :config
+  
+  ;; avy-goto-timer + migemo
+  (require 'migemo)
+  (defun avy-goto-migemo-timer (&optional arg)
+    (interactive "P")
+    (let ((avy-all-windows (if arg
+                               (not avy-all-windows)
+                             avy-all-windows)))
+      (avy-with avy-goto-migemo-timer
+        (setq avy--old-cands (avy--read-candidates #'migemo-get-pattern))
+        (avy-process avy--old-cands))))
+  ;; 選択用の文字を候補と重ねずに前方に表示する
+  (add-to-list 'avy-styles-alist '(avy-goto-migemo-timer . pre))
+
+  ;; isearchの候補をavyで選択する
+  (define-key isearch-mode-map (kbd "M-j") 'avy-isearch)
+
+  ;; Avy候補表示中に選択可能なアクションの設定
+  (defun avy-action-copy-whole-line (pt)
+    "選択候補を含む行全体を選択する avy-action"
+    (save-excursion
+      (goto-char pt)
+      (cl-destructuring-bind (start . end)
+          (bounds-of-thing-at-point 'line)
+        (copy-region-as-kill start end)))
+    (select-window
+     (cdr
+      (ring-ref avy-ring 0)))
+    t)
+
+  (defun avy-action-yank-whole-line (pt)
+    (avy-action-copy-whole-line pt)
+    (save-excursion (yank))
+    t)
+
+  ;; 
+  (setf (alist-get ?w avy-dispatch-alist) 'avy-action-copy
+        (alist-get ?y avy-dispatch-alist) 'avy-action-yank
+        (alist-get ?W avy-dispatch-alist) 'avy-action-copy-whole-line
+        (alist-get ?Y avy-dispatch-alist) 'avy-action-yank-whole-line)
+
+  ;; AvyをEmbarkと組み合わせる
+  ;; 1. Avyで候補を表示した状態で `.` で embark-act を起動してアクションを選択
+  ;; 2. Avy のキーで候補を選択すると、選択したアクションが実行される
+  ;; 3. カーソル位置はAvy実行前に戻る
+  (defun avy-action-embark (pt)
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (embark-act))
+      (select-window
+       (cdr (ring-ref avy-ring 0))))
+    t)
+  (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark) ;; `.` に割当
+  )
+
+;; Evil
+(require 'setup-evil)  ;; in site-lisp
+
+;; ミニバッファ周りの設定 vertico, consult (embarkも)
+(require 'setup-vertico-consult)  ;; in site-lisp
+
+;; wgrep allows you to edit a grep buffer and apply those changes to the file
+;; buffer like sed interactively.
+(use-package wgrep :ensure t)
+
+(use-package rg
+  ;; ripgrep をインストールしておく。
+  :ensure t
+  :bind ("C-c s g" . rg-menu)
+  )
+
+(use-package visual-regexp
+  :ensure t
+  :defer t
+  :bind (("C-c e r" . vr/query-replace)
+         ("M-r" . vr/query-replace)))
+
+(use-package expand-region
+  :ensure t
+  :bind ("C-;" . er/expand-region))
+
+(use-package yasnippet
+  :ensure t
+  :custom (yas-snippet-dirs '("~/.emacs.d/snippets"))
+  :bind (:map yas-minor-mode-map
+              ("C-c i s" . yas-insert-snippet)
+              ("C-c y i" . yas-insert-snippet)
+              ("C-c y n" . yas-new-snippet)
+              ("C-c y v" . yas-visit-snippet-file)
+              ("C-c y l" . yas-describe-tables)
+              ("C-c y g" . yas-reload-all))
+  :hook (after-init . yas-global-mode)
+  )
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after yasnippet
+  :config
+  (setq yas-snippet-dirs (append yas-snippet-dirs (list yasnippet-snippets-dir))))
+
+(require 'setup-completion)
+
+;; Displays eldoc documentations in a childframe
+(use-package eldoc-box
+  :ensure t
+  :bind (("C-c v h" . eldoc-box-hover-mode)
+         :map eglot-mode-map ("C-c C-h" . eldoc-box-eglot-help-at-point))
+  :config
+  (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-mode t)
+  )
+
+;; pdf-tools
+(use-package pdf-tools
+  :ensure t
+  :defer t
+  :config
+  ;; initialize
+  (pdf-loader-install))
+
+;; visual undo-tree
+(use-package vundo
+  :ensure t
+  :config
+  ;; Take less on-screen space.
+  (setq vundo-compact-display t))
+
+(use-package simple-httpd :ensure t :defer t)
+
+;; Eat: Emulate A Terminal
+(use-package eat :ensure t :defer t)
+
+(when uy/wsl-p 
+  (use-package notmuch
+    :commands notmuch-hello)
+  )
+
+;; GPG設定
+(setq epg-pinentry-mode 'loopback)
+
+;; password-storeの情報をauth-soucesで使う
+(use-package auth-source-pass
+  :ensure nil
+  :init (auth-source-pass-enable))
+
+;; GPTelで使うAPI-keyの格納用
+(use-package password-store :ensure t)
+
+;; GPTel
+(use-package gptel
+  :vc (:url "https://github.com/karthink/gptel")
+  :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
+  :config
+  (setopt gptel-model 'Llama-3.1-Swallow-Instruct)  ;; default model
+  ;; Gemini
+  (defun uy/api-key-gemini ()
+    "auth-sourceからGeminiのAPI keyを取得する"
+    (let* ((credentials (auth-source-search :host "generativelanguage.googleapis.com"))
+           (secret-fn (plist-get (car credentials) :secret)))
+      (when secret-fn (funcall secret-fn))))
+  (gptel-make-gemini "Gemini" :key #'uy/api-key-gemini :stream t)
+  ;; DeepSeek
+  (defun uy/api-key-deepseek ()
+    "auth-sourceからDeepSeekのAPI keyを取得する"
+    (let* ((credentials (auth-source-search :host "api.deepseek.com"))
+           (secret-fn (plist-get (car credentials) :secret)))
+      (when secret-fn (funcall secret-fn))))
+  (gptel-make-openai "DeepSeek"       ;Any name you want
+    :host "api.deepseek.com"
+    :endpoint "/chat/completions"
+    :stream t
+    :key #'uy/api-key-deepseek
+    :models '(deepseek-chat deepseek-coder))
+  ;; Ollama
+  (gptel-make-ollama "Ollama"             ;Any name of your choosing
+    :host "localhost:11434"               ;Where it's running
+    :stream t                             ;Stream responses
+    ;; List of models
+    :models '(gemma:2b
+              hf.co/alfredplpl/gemma-2-baku-2b-it-gguf
+              Llama-3.1-Swallow-Instruct
+              qwen2.5-coder-instruct
+              )
+    )
+  ;; 回答を日本語にする
+  (setopt gptel-directives
+          '((default
+             . "You are a large language model living in Emacs and a helpful assistant. Respond concisely . 回答は日本語で。ですます調ではなく常体にしてください。")
+            (programming
+             . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+            (writing
+             . "You are a large language model and a writing assistant. Respond concisely in Japamese. 回答は日本語で。ですます調ではなく常体にしてください。")
+            (chat
+             . "You are a large language model and a conversation partner. Respond concisely in Japamese. 回答は日本語。")
+            (translate-to-ja
+             . "You are a translator. Translate into Japanese. 回答はですます調ではなく常体にしてください。")
+            (translate-to-en
+             . "You are a translator. Translate into English.")))
+  )
+
+;; setup transient menu
+(require 'setup-transient)

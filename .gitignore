@@ -1,0 +1,105 @@
+# 無視しない
+!/init.el
+!/elisp
+
+# custom.el (custom-set-variables の設定値)は除外
+/custom.el
+
+# direnv
+/.envrc
+
+/.cache/
+.org-id-locations
+auto-save-list/
+/bookmarks
+/dirvish
+/eln-cache
+/elpaca/
+/emojis/
+/.gitleaks.toml
+/history
+/image-dired/
+/kkcrc
+/multisession/
+/org-clock-save.el
+/org-journal.cache
+/org-persist/
+/org-roam.db
+/persp-state-file
+/projectile-bookmarks.eld
+/projects
+/recentf
+/request/
+/srecode-map.el
+/persp-confs/
+/skk-get-jisyo/
+/straight/
+/transient/
+/tree-sitter/
+/url/
+/var/
+/tabsession.el
+.lsp-session-v1
+.mc-lists.el
+.dap-breakpoints
+*_bak
+
+# aider
+.aider*
+.env
+
+# Created by https://www.gitignore.io/api/emacs
+# Edit at https://www.gitignore.io/?templates=emacs
+
+### Emacs ###
+# -*- mode: gitignore; -*-
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Org-mode
+.org-id-locations
+*_archive
+
+# flymake-mode
+*_flymake.*
+
+# eshell files
+/eshell/history
+/eshell/lastdir
+
+# elpa packages
+/elpa/
+
+# reftex files
+*.rel
+
+# AUCTeX auto folder
+/auto/
+
+# cask packages
+.cask/
+dist/
+
+# Flycheck
+flycheck_*.el
+
+# server auth directory
+/server/
+
+# projectiles files
+.projectile
+
+# directory configuration
+.dir-locals.el
+
+# network security
+/network-security.data
+
+
+# End of https://www.gitignore.io/api/emacs

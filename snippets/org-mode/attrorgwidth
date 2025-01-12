@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: attr_org width
+# key: attr_org_width
+# --
+#+attr_org: :width 
