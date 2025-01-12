@@ -7,22 +7,6 @@
 
 (require 'transient)
 
-;; 頻繁に使うコマンドのメニュー
-(transient-define-prefix uy/leader-menu ()
-  :variable-pitch t
-  [
-   ["Find"
-    ("f" "find file" find-file-at-point)
-    ]
-   ["Search 🔍"
-    ]
-   ["Move"
-    ("j" "avy-goto-char-2" avy-goto-char-2)
-    ("J" "avy-goto-migemo-timer" avy-goto-migemo-timer)
-    ]
-   ]
-  )
-
 ;; よく使うファイルを開く
 (transient-define-prefix uy/transient-open-file-menu ()
   [
@@ -43,12 +27,6 @@
   )
 
 (global-set-key (kbd "C-c f") 'uy/transient-open-file-menu)
-
-;; ;;  <SPC> だと慣れない（誤って動作させてしまう）ので別のキーに変更する 
-;; (with-eval-after-load 'evil
-;;   (evil-global-set-key 'normal (kbd "<SPC>") 'uy/leader-menu)
-;;   (evil-global-set-key 'motion (kbd "<SPC>") 'uy/leader-menu)
-;;   )
 
 ;; RegisterとBookmark関連のコマンドをまとめたTransientメニュー -----------------
 

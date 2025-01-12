@@ -119,7 +119,7 @@
 
 (setq org-publish-project-alist
   '(("roam"
-     :base-directory "~/org-roam"
+     :base-directory org-directory
      :auto-sitemap t
      :sitemap-function roam-sitemap
      :sitemap-title "Roam notes"

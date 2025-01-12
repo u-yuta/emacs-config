@@ -4,7 +4,7 @@
   ;; :mode (("\\.txt$" . org-mode))
 
   ;; <user-emacs-directory>/elpa/org-mode にあるバージョンを使用する
-  ;; 
+  ;; インストール手順は以下
   ;; https://orgmode.org/manual/Installation.html
   ;; $ cd ~/.emacs.d/elpa
   ;; $ git clone https://git.savannah.gnu.org/git/emacs/org-mode.git
@@ -24,9 +24,9 @@
   ;; 保存先
   (setq org-directory "~/org-roam/")
   (setq org-agenda-files
-        (append (directory-files "~/org-roam/journal" t "\\.org$")
-                (directory-files "~/org-roam/work" t "pj.*\\.org$")
-                (directory-files "~/org-roam/share" t "pj.*\\.org$")))
+        (append (directory-files (file-name-concat org-directory "journal") t "\\.org$")
+                (directory-files (file-name-concat org-directory "work") t "pj.*\\.org$")
+                (directory-files (file-name-concat org-directory "share") t "pj.*\\.org$")))
   (setq org-agenda-text-search-extra-files '(agenda-archives))
   (setq org-startup-folded nil)
 
@@ -154,39 +154,12 @@
             (delete-directory old-attach-dir)
             (message "Attachments moved from %s to %s" old-attach-dir new-attach-dir))))))
 
-
-
   (setq org-agenda-custom-commands
         '(("x" "Unscheduled Tasks" tags-todo
            "-SCHEDULED>=\"<today>\"-DEADLINE>=\"<today>\"" nil)
           ("u" "Uncategorized tasks" ((tags-todo "-Type")))
           ("d" "Daily Tasks" agenda ""
            ((org-agenda-span 1)))
-          ("p" "Productivity-related tasks"
-           ((agenda "" ((org-agenda-span 1))) ;; a single day agenda
-            (tags-todo "Prod" ; productivity related tags
-                                        ; exclude items scheduled in future
-                       (agenda (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled)))
-                       ))
-           ((org-agenda-compact-blocks t)))
-          ("n" "Non-Productivity-related tasks"
-           ((agenda "" ((org-agenda-span 1))) ;; a single day agenda
-            (tags-todo "NonProd" ; non productivity related tags
-                                        ; exclude items scheduled in future
-                       (agenda (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled)))
-                       ))
-           ((org-agenda-compact-blocks t)))
-          ("D" "View to select daily tasks"
-           ((agenda "" ((org-agenda-span 1))) ;; a single day agenda
-            (tags-todo "WG")  ;; Goal of the week
-            (todo "WAITING")
-            (todo "NEXT")
-            ;; Productivity related & TODO & B+
-            (tags-todo "PRIORITY=\"A\"+Prod+TODO=\"TODO\"|PRIORITY=\"B\"+Prod+TODO=\"TODO\""
-                       ;; exclude items scheduled in future
-                       (agenda (org-agenda-skip-function '(org-agenda-skip-entry-if 'scheduled)))
-                       ))
-           ((org-agenda-compact-blocks t)))
           ))
 
   (setq org-agenda-window-setup 'current-window)
@@ -337,18 +310,6 @@
     (interactive)
     (move-beginning-of-line nil)
     (org-insert-heading))
-
-  ;; Org Cite library
-  (setq org-cite-global-bibliography uy/bib-files)
-  (setq org-cite-export-processors
-        '((md . (csl "chicago-fullnote-bibliography.csl"))   ; Footnote reliant
-          ;;(latex . biblatex)                                 ; For humanities
-          (odt . (csl "chicago-fullnote-bibliography.csl"))  ; Footnote reliant
-          (t . (csl "modern-language-association.csl"))      ; Fallback
-          ))
-  (setq org-cite-csl-styles-dir "~/Zotero/styles")  ; installed by Linux Zotero
-  (require 'oc-csl)
-  (use-package citeproc :ensure t)  ; oc-cslで使われる
 
   (use-package ox-reveal
     :ensure t

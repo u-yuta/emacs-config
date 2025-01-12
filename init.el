@@ -1,7 +1,7 @@
 ;; -*- lexical-binding: t -*-
 
 ;; ============================================
-;; 0. use-package設定
+;; use-package設定
 ;; ============================================
 
 (setopt use-package-enable-imenu-support t) ;; Must be set before loading `use-package'
@@ -9,7 +9,7 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 
 ;; ============================================
-;; 1. 基本設定
+;; 基本設定
 ;; ============================================
 
 ;; 起動時の Warning を抑止する
@@ -85,7 +85,7 @@
 (setq explicit-shell-file-name shell-file-name)
 
 ;; ============================================
-;; 2. UI/外観設定
+;; UI/外観設定
 ;; ============================================
 
 ;; ツールバー/メニューバー設定
@@ -108,7 +108,7 @@
 (require 'setup-appearance)
 
 ;; ============================================
-;; 3. 編集支援
+;; 編集支援
 ;; ============================================
 
 (delete-selection-mode 1)
@@ -140,7 +140,7 @@
     (indent-region (region-beginning) (region-end))))
 
 ;; ============================================
-;; 4. 標準モジュールの設定
+;; 標準モジュールの設定
 ;; ============================================
 
 ;; info-mode設定
@@ -267,7 +267,7 @@
   (windmove-default-keybindings 'ctrl))
 
 ;; ============================================
-;; 5. 開発支援
+;; 開発支援
 ;; ============================================
 
 ;; Eglot
@@ -288,18 +288,14 @@
 (require-if-exists init-treesitter)
 
 ;; ============================================
-;; 6. 日本語環境、日本語入力
+;; 日本語環境、日本語入力
 ;; ============================================
 
 (require 'setup-japanese)
 
 ;; ============================================
-;; 7. Org-mode関連
+;; Org-mode関連
 ;; ============================================
-
-;; Bibliography files
-(setq uy/bib-files '("~/doc_local/bibliography/references.bib"
-                     "~/doc_local/bibliography/00Share.bib"))
 
 ;; org-mode設定
 (require 'setup-org-mode)
@@ -309,6 +305,9 @@
 
 (use-package htmlize :ensure t)
 
+;; 文献引用、citationの選定
+(require 'setup-citation)
+
 ;; org-noter設定
 (use-package org-noter
   :ensure t
@@ -317,87 +316,15 @@
   (setq org-noter-notes-search-path (list (expand-file-name "share" org-roam-directory)))
   (setq org-noter-default-notes-file-names '("resouce.notes.org"))
   )
-
-;; Citar (org-cite のインターフェース拡張)
-(use-package citar
-  :ensure t
-  :after oc
-  :custom
-  (citar-bibliography uy/bib-files)
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar)
-  (citar-notes-paths (list (expand-file-name "share" org-roam-directory)))
-  :hook
-  (LaTeX-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup)
-
-  :config
-  ;; WindowsのZoteroで作成した文献リストのfileフィールドをWSLのパスに変換する
-  (defun uy/citar-file--parser-windows-path-to-wsl (file-field)
-    "Split FILE-FIELD by `;' and convert Windows paths to WSL paths.
-  Each filename in FILE-FIELD is converted using `wslpath -u <filename>`.
-  Returns a list of original and converted paths."
-    (mapcan
-     (lambda (filename)
-       (let* ((trimmed (string-trim filename))
-              (wslpath (string-trim (shell-command-to-string (format "wslpath -u '%s'" trimmed)))))
-         ;; Include both the original and converted path if they differ
-         (if (string-empty-p trimmed)
-             nil
-           (if (string= trimmed wslpath)
-               (list trimmed)
-             (list trimmed wslpath)))))
-     (citar-file--split-escaped-string file-field ?\;)))
-
-  (when uy/wsl-p
-    ;; Add the custom parser to citar-file-parser-functions
-    (add-to-list 'citar-file-parser-functions 'uy/citar-file--parser-windows-path-to-wsl))
-
-  ;; 文献リストのUIにEmojiを表示する
-  (with-eval-after-load 'emojify
-    (defvar citar-indicator-notes-icons
-      (citar-indicator-create
-       :symbol "📓"
-       :function #'citar-has-notes
-       :padding "  "
-       :tag "has:notes"))
-    (defvar citar-indicator-links-icons
-      (citar-indicator-create
-       :symbol "🔗"
-       :function #'citar-has-links
-       :padding "  "
-       :tag "has:links"))
-    (defvar citar-indicator-files-icons
-      (citar-indicator-create
-       :symbol "📁"
-       :function #'citar-has-files
-       :padding "  "
-       :tag "has:files"))
-    (setq citar-indicators
-          (list citar-indicator-files-icons
-                citar-indicator-notes-icons
-                citar-indicator-links-icons))))
-
-;; citar-org-roam: provide tighter Citar and Org-Roam integration
-(use-package citar-org-roam
-  :ensure t
-  :after (citar org-roam)
-  :custom
-  (citar-org-roam-subdir "share")
-  :config
-  (citar-org-roam-mode)
-  (setq citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
-
 ;; ============================================
-;; 8. Windows, WSL関連
+;; Windows, WSL関連
 ;; ============================================
 
 ;; Windows パス と UNC パス を使えるようにするための設定 (WSL 用)
 (when uy/wsl-p (require-if-exists windows-path-on-wsl))
 
 ;; ============================================
-;; 9. プログラム、マークアップ言語関連
+;; プログラム、マークアップ言語関連
 ;; ============================================
 
 (require 'setup-python)
@@ -420,7 +347,7 @@
 (use-package powershell :ensure t)
 
 ;; ============================================
-;; 10. LaTeX
+;; LaTeX
 ;; ============================================
 
 ;; AUCTeX (LaTeX 編集環境)
@@ -450,7 +377,7 @@
   (add-hook 'LaTeX-mode-hook 'cdlatex-mode))
 
 ;; ============================================
-;; 11. その他の設定
+;; その他の設定
 ;; ============================================
 
 ;; FFAP設定
