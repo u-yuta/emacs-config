@@ -23,6 +23,27 @@
    ]
   )
 
+;; よく使うファイルを開く
+(transient-define-prefix uy/transient-open-file-menu ()
+  [
+   ["Find file"
+    ("j" "Journal"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "journal/journal.org"))))
+    ("a" "Agenda"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "journal/agenda.org"))))
+    ("i" "Shared index"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "share/02_index_shared.org"))))
+    ("h" "Home index"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "00_index_home.org"))))
+    ("o" "Office index"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "01_index_office.org"))))
+    ("." "Emacs init"
+     (lambda () (interactive) (find-file user-init-file)))
+    ]]
+  )
+
+(global-set-key (kbd "C-c f") 'uy/transient-open-file-menu)
+
 ;; ;;  <SPC> だと慣れない（誤って動作させてしまう）ので別のキーに変更する 
 ;; (with-eval-after-load 'evil
 ;;   (evil-global-set-key 'normal (kbd "<SPC>") 'uy/leader-menu)

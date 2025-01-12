@@ -397,23 +397,7 @@
 (when uy/wsl-p (require-if-exists windows-path-on-wsl))
 
 ;; ============================================
-;; 9. ユーティリティ関数
-;; ============================================
-
-;; 便利関数
-(defun uy/open-init-file ()
-  "Open the init file."
-  (interactive)
-  (find-file user-init-file))
-
-(defun uy/open-journal-file ()
-  "Open journal file."
-  (interactive)
-  (find-file "~/org-roam/journal/journal.org"))
-
-
-;; ============================================
-;; 10. プログラム、マークアップ言語関連
+;; 9. プログラム、マークアップ言語関連
 ;; ============================================
 
 (require 'setup-python)
@@ -436,7 +420,7 @@
 (use-package powershell :ensure t)
 
 ;; ============================================
-;; 11. LaTeX
+;; 10. LaTeX
 ;; ============================================
 
 ;; AUCTeX (LaTeX 編集環境)
@@ -466,44 +450,12 @@
   (add-hook 'LaTeX-mode-hook 'cdlatex-mode))
 
 ;; ============================================
-;; 12. その他の設定
+;; 11. その他の設定
 ;; ============================================
 
 ;; FFAP設定
 (ffap-bindings)
 
-;; よく使うファイルを開く
-(defun uy/open-agenda-file ()
-  "Open agenda file."
-  (interactive)
-    (find-file (format "~/org-roam/journal/agenda.org")))
-
-(defun uy/open-index-shared-file ()
-  "Open index file (entry point for org-roam)."
-  (interactive)
-  (find-file "~/org-roam/share/02_index_shared.org"))
-
-(defun uy/open-index-home-file ()
-  "Open index file (entry point for org-roam)."
-  (interactive)
-  (find-file "~/org-roam/00_index_home.org"))
-
-(defun uy/open-index-office-file ()
-  "Open index file (entry point for org-roam)."
-  (interactive)
-  (find-file "~/org-roam/01_index_office.org"))
-
-(defun uy/open-task-file ()
-  "Open task file."
-  (interactive)
-  (let ((year-month (format-time-string "%y%m")))
-    (find-file (format "~/org-roam/work/task-%s.org" year-month))))
-
-(global-set-key (kbd "C-c f .") 'uy/open-init-file)
-(global-set-key (kbd "C-c f i") 'uy/open-index-shared-file)
-(global-set-key (kbd "C-c f h") 'uy/open-index-home-file)
-(global-set-key (kbd "C-c f o") 'uy/open-index-office-file)
-(global-set-key (kbd "C-c f j") 'uy/open-journal-file)
 ;; Back to indentation, or beginning of line.
 (defun back-to-indentation-or-beginning ()
    (interactive) 
