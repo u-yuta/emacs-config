@@ -20,17 +20,18 @@
           (3 variable-pitch 1.1) ; absence of weight means `bold'
           (t variable-pitch 1.05)
           ))
-  (ef-themes-select 'ef-owl)
 
   ;; マウスポインターの色をテーマに合わせて変更する
   (defun set-mouse-pointer-color-to-cursor-color ()
-    "テーマ時にカーソルの色をマウスカーソルに反映させる。"
+    "マウスカーソルの色をカーソルの色と同じにする。"
     (let ((cursor-color (face-attribute 'cursor :background nil t)))
       (when cursor-color
         (set-mouse-color cursor-color))))
 
   ;; ef-themesのロード後に実行されるようにフックを設定
   (add-hook 'ef-themes-post-load-hook #'set-mouse-pointer-color-to-cursor-color)
+
+  (ef-themes-select 'ef-owl)
   )
 
 ;; modeline 
