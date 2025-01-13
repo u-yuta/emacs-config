@@ -9,8 +9,8 @@
 
 ;; よく使うファイルを開く
 (transient-define-prefix uy/transient-open-file-menu ()
-  [
-   ["Find file"
+  ["Find file"
+   ["File"
     ("j" "Journal"
      (lambda () (interactive) (find-file (file-name-concat org-directory "journal/journal.org"))))
     ("a" "Agenda"
@@ -23,12 +23,14 @@
      (lambda () (interactive) (find-file (file-name-concat org-directory "01_index_office.org"))))
     ("." "Emacs init"
      (lambda () (interactive) (find-file user-init-file)))
+   ]
+   ["Command"
+    ("p" "Project" project-find-file)
+    ("r" "Recent" recentf)
     ]]
   )
 
 (global-set-key (kbd "C-c f") 'uy/transient-open-file-menu)
-
-;; RegisterとBookmark関連のコマンドをまとめたTransientメニュー -----------------
 
 ;; TransientベースのUIを追加する ----------------------------------------------
 (use-package casual
@@ -53,7 +55,7 @@
   )
 
 ;; RegisterとBookmark関連のコマンドをまとめたTransientメニュー -----------------
-(transient-define-prefix uy/register-and-bookmark-tmenu ()
+(transient-define-prefix uy/transient-register-and-bookmark-menu ()
   :variable-pitch t
   ["Registers and Bookmarks\n"
    ["Resister"
@@ -69,7 +71,7 @@
    ]
   )
 
-(global-set-key (kbd "C-c r") 'uy/register-and-bookmark-tmenu)
+(global-set-key (kbd "C-c r") 'uy/transient-register-and-bookmark-menu)
 
 (provide 'setup-transient)
 
