@@ -504,11 +504,7 @@
 ;; Displays eldoc documentations in a childframe
 (use-package eldoc-box
   :ensure t
-  :bind (("C-c v h" . eldoc-box-hover-mode)
-         :map eglot-mode-map ("C-c C-h" . eldoc-box-eglot-help-at-point))
-  :config
-  (add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-mode t)
-  )
+  :bind ("M-i" . eldoc-box-eglot-help-at-point))
 
 ;; pdf-tools
 (use-package pdf-tools
