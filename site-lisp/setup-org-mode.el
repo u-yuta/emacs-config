@@ -54,7 +54,8 @@
           org-attach-id-fallback-folder-format))
 
   (setq org-agenda-dim-blocked-tasks 'invisible)
-  (setq org-id-link-to-org-use-id t)
+  ;; org-captureを呼び出したときに不要なIDが追加されるのを避ける
+  (setq org-id-link-to-org-use-id 'create-if-interactive)
   
   ;; org-indent-modeをtにすると、見出しレベルに合わせてインデント表示する。
   ;;;; invalid face reference
