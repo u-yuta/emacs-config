@@ -531,16 +531,7 @@
     :commands notmuch-hello)
   )
 
-;; GPG設定
-(setq epg-pinentry-mode 'loopback)
-
-;; password-storeの情報をauth-soucesで使う
-(use-package auth-source-pass
-  :ensure nil
-  :init (auth-source-pass-enable))
-
-;; GPTelで使うAPI-keyの格納用
-(use-package password-store :ensure t)
+(require 'setup-auth-source)
 
 ;; GPTel
 (use-package gptel
@@ -549,23 +540,15 @@
   :config
   (setopt gptel-model 'Llama-3.1-Swallow-Instruct)  ;; default model
   ;; Gemini
-  (defun uy/api-key-gemini ()
-    "auth-sourceからGeminiのAPI keyを取得する"
-    (let* ((credentials (auth-source-search :host "generativelanguage.googleapis.com"))
-           (secret-fn (plist-get (car credentials) :secret)))
-      (when secret-fn (funcall secret-fn))))
-  (gptel-make-gemini "Gemini" :key #'uy/api-key-gemini :stream t)
+  (gptel-make-gemini "Gemini"
+    :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
+    :stream t)
   ;; DeepSeek
-  (defun uy/api-key-deepseek ()
-    "auth-sourceからDeepSeekのAPI keyを取得する"
-    (let* ((credentials (auth-source-search :host "api.deepseek.com"))
-           (secret-fn (plist-get (car credentials) :secret)))
-      (when secret-fn (funcall secret-fn))))
   (gptel-make-openai "DeepSeek"       ;Any name you want
     :host "api.deepseek.com"
     :endpoint "/chat/completions"
     :stream t
-    :key #'uy/api-key-deepseek
+    :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
     :models '(deepseek-chat deepseek-coder))
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
