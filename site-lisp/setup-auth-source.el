@@ -19,6 +19,4 @@
         (error "No secret found for host: %s" host))
     (error "No auth-source entry found for host: %s" host)))
 
-(defun uy/api-key-deepseek () (uy/get-auth-secret "api.deepseek.com"))
-
 (provide 'setup-auth-source)
