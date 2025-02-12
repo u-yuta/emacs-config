@@ -203,7 +203,7 @@
   :bind (("C-x C-b" . ibuffer)) ;; 標準の list-buffers の代わりに ibuffer を使用
   :init
   ;; グルーピング
-    (setq ibuffer-saved-filter-groups
+  (setopt ibuffer-saved-filter-groups
           (quote (("default"
                    ("Org" ;; all org-related buffers
                     (mode . org-mode))
@@ -211,7 +211,12 @@
                    ("Emacs Lisp"   (mode . emacs-lisp-mode))
                    ("Emacs" (or
                              (name . "^\\*scratch\\*$")
-                             (name . "^\\*Messages\\*$")))
+                             (name . "^\\*Messages\\*$")
+                             (name . "^\\*Warnings*\\*$")
+                             (name . "^\\*info*\\*$")
+                             (name . "^\\*Help*\\*$")
+                             ))
+                   ("Python" (or (mode . python-mode) (mode . python-ts-mode)))
                    ("Special Buffers"
                     (or
                      (mode . magit-status-mode)
