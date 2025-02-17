@@ -600,3 +600,21 @@
 
 ;; setup transient menu
 (require 'setup-transient)
+
+
+;; Load host-specific configuration
+(defun load-file-if-exists-in-user-emacs-directory (filename)
+  "Load a file named FILENAME from `user-emacs-directory` if it exists."
+  (let ((filepath (expand-file-name filename user-emacs-directory)))
+    (if (file-exists-p filepath)
+        (progn
+          (load filepath)
+          (message "Loaded file: %s" filepath))
+      (message "File does not exist: %s" filepath))))
+
+(defun get-init-file-for-host ()
+  "Return a string 'init-host-<hostname>.el' where <hostname> is obtained from `system-name`."
+  (let ((hostname (car (split-string system-name "\\.")))) ;; ドメイン部分を除去
+    (format "init-host-%s.el" hostname)))
+
+(load-file-if-exists-in-user-emacs-directory (get-init-file-for-host))
