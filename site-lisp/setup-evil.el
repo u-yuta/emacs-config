@@ -24,6 +24,7 @@
   (evil-mode 1)
   (setopt evil-emacs-state-modes (append evil-emacs-state-modes  
                                          '(Info-mode
+                                           shell-mode
                                            eshell-mode
                                            eat-mode
                                            jupyter-repl-mode)))
