@@ -34,6 +34,10 @@
      (lambda () (interactive) (find-file (file-name-concat org-directory "share/02_index_shared.org"))))
     ("h" "Home index"
      (lambda () (interactive) (find-file (file-name-concat org-directory "00_index_home.org"))))
+    ("l" "Lab notes"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "lab-notes"
+                                                           (format-time-string "%Y")
+                                                           (format-time-string "%m")))))
     ("o" "Office index"
      (lambda () (interactive) (find-file (file-name-concat org-directory "01_index_office.org"))))
     ("." "Emacs init"
