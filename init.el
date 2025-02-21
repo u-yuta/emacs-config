@@ -556,7 +556,7 @@
 
 ;; GPTel
 (use-package gptel
-  :vc (:url "https://github.com/karthink/gptel")
+  :vc (:url "https://github.com/karthink/gptel" :rev "b2e5404")
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (setopt gptel-model 'Llama-3.1-Swallow-Instruct)  ;; default model
