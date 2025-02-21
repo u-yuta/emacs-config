@@ -33,22 +33,19 @@
   )
 
 ;; Corfuに関係するEmacs設定
-(use-package emacs
-  :custom
-  ;; Enable indentation+completion using the TAB key.
-  ;; `completion-at-point' is often bound to M-TAB.
-  (setopt tab-always-indent 'complete)
 
-  ;; Ispellのエラーが出る問題への対処
-  ;; Emacs 30 and newer: Disable Ispell completion function.
-  (setopt text-mode-ispell-word-completion nil)
+;; Enable indentation+completion using the TAB key.
+;; `completion-at-point' is often bound to M-TAB.
+(setopt tab-always-indent 'complete)
 
-  ;; モードに関係ないコマンドを M-x の候補から除外する.
-  ;; Corfu commands are hidden, since they are not used via M-x.
-  ;; This setting is useful beyond Corfu.
-  (setopt read-extended-command-predicate #'command-completion-default-include-p)
+;; Ispellのエラーが出る問題への対処
+;; Emacs 30 and newer: Disable Ispell completion function.
+(setopt text-mode-ispell-word-completion nil)
 
-  )
+;; モードに関係ないコマンドを M-x の候補から除外する.
+;; Corfu commands are hidden, since they are not used via M-x.
+;; This setting is useful beyond Corfu.
+(setopt read-extended-command-predicate #'command-completion-default-include-p)
 
 ;; Use Dabbrev with Corfu!
 (use-package dabbrev
