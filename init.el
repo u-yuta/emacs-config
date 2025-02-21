@@ -585,15 +585,15 @@
   ;; 回答を日本語にする
   (setopt gptel-directives
           '((default
-             . "You are a large language model living in Emacs and a helpful assistant. Respond concisely . 回答は日本語で。ですます調ではなく常体にしてください。")
+             . "あなたはEmacsに搭載された大規模言語モデルで有能なアシスタントです。回答は日本語で、簡潔に答えてください。文体はですます調ではなく常体にしてください。")
             (programming
              . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
             (writing
-             . "You are a large language model and a writing assistant. 回答は日本語で。ですます調ではなく常体にしてください。")
+             . "あなたは大規模言語モデルで文書作成者です。 回答は日本語で。ですます調ではなく常体にしてください。")
             (chat
              . "You are a large language model and a conversation partner. Respond concisely. 回答は日本語にしてください。")
             (translate-to-ja
-             . "You are a translator. Translate into Japanese. 回答はですます調ではなく常体にしてください。")
+             . "あなたは翻訳者です。日本語に翻訳してください。")
             (translate-to-en
              . "You are a translator. Translate into English.")))
   )
