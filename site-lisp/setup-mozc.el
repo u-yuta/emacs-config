@@ -27,6 +27,13 @@
 (use-package mozc-popup :ensure t)
 
 (use-package mozc
+  ;; 変換候補が表示されない問題
+  ;; https://github.com/google/mozc/commits/master/src/unix/emacs/mozc.el
+  ;; の 2025-01-07 のバージョンだと発生する。その前のコミット (9a925ee) だと問題ない。
+
+  ;; 標準の use-package :vc だとgithubのリポジトリから特定のファイルを指定して
+  ;; 持ってくる方法がわからないため、以下の設定は未更新。
+  ;; 手動で古いバージョンを elpa/ 内に入れることで対処している。
   :ensure t
   :after mozc-im
   :config
