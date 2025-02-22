@@ -4,7 +4,7 @@
 git clone https://github.com/u-yuta/emacs-config.git ~/.emacs.d
 ```
 
-Windows 10のWSL2上のEmacs 30で使用中。
+WSL2上のEmacs 30で使用中。
 
 * WindowsのGoogle日本語入力と連携する
   * `変換` でIMEをオン、 `無変換` でIMEをオフにする。
