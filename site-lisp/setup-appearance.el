@@ -143,6 +143,7 @@
     (git-gutter:deleted-sign  "-")
     (git-gutter:update-interval 1)
     :config
+    (setopt git-gutter:disabled-modes '(fundamental-mode image-mode pdf-view-mode))
     (global-git-gutter-mode +1)
     ))
 
