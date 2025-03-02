@@ -134,7 +134,6 @@
 
   )
 
-
 ;; Ruff formatter/linter
 (use-package lazy-ruff
   :ensure t
@@ -142,25 +141,10 @@
   :config
   (lazy-ruff-global-mode t)) ;; Enable the lazy-ruff minor mode globally
 
-;; pyvenv-activate queries the user for a virtual environment directory
-;; to activate
-;; 
-;; pyvenv-workon queries for a virtual environment in $WORKON_HOME (from
-;; virtualenvwrapper.sh)
-(use-package pyvenv
-  :ensure t
-  :config
-  (if (file-directory-p "~/.pyenv/versions")
-      (setenv "WORKON_HOME" "~/.pyenv/versions")
-    )
-  (defun uy/pyvenv-activate-project-venv ()
-    "Activate `projet-root/.venv` with pyvenv-activate."
-    (interactive)
-    (let
-        ((project-venv-directory (expand-file-name ".venv" (project-root (project-current)))))
-      (progn
-        (pyvenv-activate project-venv-directory)
-        (message (concat "Activate venv at " project-venv-directory))))))
+;; pythonic
+;; Pythonの仮想環境設定コマンド（pythonic-activate, pythonic-deactivate）を提供する 
+(use-package pythonic
+  :ensure t)
 
 ;; Automatically insert NumPy style docstrings in Python function definitions.
 (use-package numpydoc
