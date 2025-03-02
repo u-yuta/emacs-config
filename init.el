@@ -293,7 +293,11 @@
 
 ;; Eglot
 (use-package eglot
-  :ensure nil)
+  :ensure nil
+  :config
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode)
+                 "basedpyright-langserver" "--stdio")))  ;; use `basedpyright'
 
 ;; magit
 (use-package magit
