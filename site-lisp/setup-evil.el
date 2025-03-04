@@ -25,6 +25,7 @@
   (setopt evil-emacs-state-modes (append evil-emacs-state-modes  
                                          '(Info-mode
                                            shell-mode
+                                           debugger-mode
                                            eshell-mode
                                            vterm-mode
                                            eat-mode
