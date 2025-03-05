@@ -19,9 +19,6 @@
 ;; テキストスケール変更の刻みを設定する（標準は 1.2）
 (setq text-scale-mode-step 1.1)
 
-;; 左右のマージン幅
-(setopt left-margin-width 5)
-(setopt right-margin-width 5)
 
 (use-package ef-themes
   :ensure t
