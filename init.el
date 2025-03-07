@@ -270,6 +270,18 @@
     )
   )
 
+;; dired-preview
+(use-package dired-preview
+  :ensure t
+  :config
+  (setopt dired-preview-ignored-extensions-regexp
+          (concat
+           "\\.\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a\\|flac\\|wav\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip\\|iso\\|epub\\|pdf"  ;; default value
+           "\\|docx\\|xlsx\\|pptx"  ;; MS Office
+           "\\)"))
+  (setopt dired-preview-delay 0.3)
+  )
+
 (use-package project
   :ensure nil
   ;; Cannot use :hook because 'project-find-functions does not end in -hook
