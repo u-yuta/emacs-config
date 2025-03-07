@@ -67,4 +67,10 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+(use-package evil-markdown
+  :ensure t
+  :vc (:url "https://github.com/Somelauw/evil-markdown")
+  :config
+  (seto))
 (provide 'setup-evil)
+
