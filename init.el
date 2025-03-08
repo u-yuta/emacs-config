@@ -563,6 +563,10 @@
 ;; Eat: Emulate A Terminal
 (use-package eat :ensure t :defer t)
 
+;; vterm
+(use-package vterm
+    :ensure t)
+
 (when uy/wsl-p 
   (use-package notmuch
     :commands notmuch-hello)

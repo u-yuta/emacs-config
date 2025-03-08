@@ -26,8 +26,10 @@
                                          '(Info-mode
                                            shell-mode
                                            eshell-mode
+                                           vterm-mode
                                            eat-mode
-                                           jupyter-repl-mode)))
+                                           jupyter-repl-mode
+                                           )))
   ;; Magit のコミットメッセージ編集画面でInsert modeにする
   (add-hook 'with-editor-mode-hook 'evil-insert-state)
 
