@@ -67,4 +67,24 @@
           (engineer-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、機械工学、電気工学、精密工学、ソフトウェア工学など様々な工学分野に精通した経験豊富なエンジニアとして振る舞います。実際の制約、基準、ベストプラクティスを考慮した実用的で技術的に正確な回答を日本語で提供してください。適切な工学用語と単位を使用し、回答では安全性、効率性、実現可能性を考慮してください。適切な場合は、異なる工学的アプローチ間のトレードオフについても言及してください。")))
   )
 
+;; aidermacs
+(use-package aidermacs
+  :ensure t
+  :vc (:url "https://github.com/MatthewZMD/aidermacs" :rev :newest)
+  :bind (("C-c d" . aidermacs-transient-menu))
+
+  :config
+  ; Enable minor mode for Aider files
+  (aidermacs-setup-minor-mode)
+
+
+  (setopt aidermacs-auto-commits t)
+  (setopt aidermacs-use-architect-mode nil)
+  (setopt aidermacs-default-model "deepseek/deepseek-chat")
+
+  ;; Use vterm backend
+  (setopt aidermacs-backend 'vterm)
+  (setopt aidermacs-vterm-multiline-newline-key "S-<return>")
+  )
+
 (provide 'setup-ai)
