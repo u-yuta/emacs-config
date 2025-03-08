@@ -573,58 +573,7 @@
   )
 
 (require 'setup-auth-source)
-
-;; GPTel
-(use-package gptel
-  :vc (:url "https://github.com/karthink/gptel" :rev "b2e5404")
-  :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
-  :config
-  (setopt gptel-model 'Llama-3.1-Swallow-Instruct)  ;; default model
-  ;; Gemini
-  (gptel-make-gemini "Gemini"
-    :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
-    :stream t)
-  ;; DeepSeek
-  (gptel-make-openai "DeepSeek"       ;Any name you want
-    :host "api.deepseek.com"
-    :endpoint "/chat/completions"
-    :stream t
-    :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
-    :models '(deepseek-chat deepseek-coder))
-  ;; Ollama
-  (gptel-make-ollama "Ollama"             ;Any name of your choosing
-    :host "localhost:11434"               ;Where it's running
-    :stream t                             ;Stream responses
-    ;; List of models
-    :models '(gemma:2b
-              hf.co/alfredplpl/gemma-2-baku-2b-it-gguf
-              Llama-3.1-Swallow-Instruct
-              qwen2.5-coder-instruct
-              )
-    )
-  ;; ディレクティブ
-  (setq gptel-directives
-        '((default     . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
-          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-          (writing     . "You are a large language model and a writing assistant. Respond concisely.")
-          (chat        . "You are a large language model and a conversation partner. Respond concisely.")
-          
-          ;; 日本語応答用ディレクティブ
-          (default-ja  . "あなたはEmacsに組み込まれた大規模言語モデルであり、役立つアシスタントです。常に日本語で簡潔に応答してください。")
-          (summarize-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、要約のスペシャリストである。提供されたテキストの要点と主要な構造を保ちながら、常に日本語で簡潔に要約すること。である調（常体）で応答すること。")
-          (writing-ja  . "あなたはEmacsに組み込まれた大規模言語モデルであり、文章作成のアシスタントである。常に日本語でである調（常体）を使用し、簡潔に応答すること。")
-          (brainstorm-ja . '("あなたはEmacsに組み込まれた大規模言語モデルであり、創造的なブレインストーミングを手伝うアシスタントです。常に日本語で応答してください。"
-                             "アイデアをブレインストーミングしましょう。"
-                             "創造的なアイデア生成のお手伝いをします。今日はどのようなテーマについて考えていきましょうか？"))
-          
-          ;; 翻訳用ディレクティブ
-          (translate-to-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、優れた翻訳者です。入力されたテキストを日本語に翻訳してください。原文の意味とニュアンスを正確に保ちながら、自然で流暢な日本語に翻訳してください。翻訳以外の説明は不要です。")
-          (translate-to-en . "You are a large language model living in Emacs and a skilled translator. Translate the input text into English. Preserve the original meaning and nuances while producing natural and fluent English. Provide only the translation without explanations.")
-          
-          ;; 専門家ディレクティブ（日本語のみ）
-          (scientist-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、物理学、数学、工学など複数の科学分野に深い知識を持つ科学者として振る舞います。現在の科学的コンセンサスを反映した正確かつ証拠に基づいた回答を日本語で提供してください。適切な場合は正確な科学用語を使用し、複雑な概念も明確に説明してください。競合する科学理論がある場合はそれらを認識し、特定の科学的事実について不確かな場合は限界を認めてください。")
-          (engineer-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、機械工学、電気工学、精密工学、ソフトウェア工学など様々な工学分野に精通した経験豊富なエンジニアとして振る舞います。実際の制約、基準、ベストプラクティスを考慮した実用的で技術的に正確な回答を日本語で提供してください。適切な工学用語と単位を使用し、回答では安全性、効率性、実現可能性を考慮してください。適切な場合は、異なる工学的アプローチ間のトレードオフについても言及してください。")))
-  )
+(require 'setup-ai)
 
 ;; setup transient menu
 (require 'setup-transient)
