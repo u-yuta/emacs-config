@@ -25,15 +25,17 @@
 ;; フォントの設定
 (setq use-default-font-for-symbols nil)
 ;; デフォルト フォント
-(set-face-attribute 'default nil :family "UDEV Gothic JPDOC" :height 114)
+(set-face-attribute 'default nil :family "UDEV Gothic NF" :height 114)
+
 ;; プロポーショナル フォント
 ;; (set-face-attribute 'variable-pitch nil :family "Yu Gothic UI" :height 114)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans JP" :height 114)
 
 ;; 等幅フォント
-(set-face-attribute 'fixed-pitch nil :family "UDEV Gothic JPDOC" :height 114)
+(set-face-attribute 'fixed-pitch nil :family "UDEV Gothic NF" :height 114)
+
 ;; ツールチップ表示フォント
-(set-face-attribute 'tooltip nil :family "UDEV Gothic JPDOC" :height 100)
+(set-face-attribute 'tooltip nil :family "UDEV Gothic NF" :height 100)
 
 ;; 記号の文字化け対策
 (cond
