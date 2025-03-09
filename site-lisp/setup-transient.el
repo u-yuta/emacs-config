@@ -44,9 +44,12 @@
      (lambda () (interactive) (find-file user-init-file)))
    ]
    ["Command"
-    ("p" "Project" project-find-file)
-    ("r" "Recent" recentf)
-    ]]
+    ("f" "find-file" find-file-at-point)
+    ("c" "locate" consult-locate)
+    ("p" "project" project-find-file)
+    ("r" "recent" recentf)
+    ]
+   ]
   )
 
 (global-set-key (kbd "C-c f") 'uy/transient-open-file-menu)
@@ -130,9 +133,6 @@
 ;; Search key map
 (transient-define-prefix uy/transient-search-map ()
   ["Search"
-   ["Files"
-    ("d" "find" consult-find)
-    ("c" "locate" consult-locate)]
    ["In files"
     ("g" "grep" consult-grep)
     ("G" "Git grep" consult-git-grep)
@@ -140,7 +140,9 @@
     ("l" "line" consult-line)
     ("L" "line-multi" consult-line-multi)
     ("R" "org-roam-ripgrep" bms/org-roam-rg-search)]
-   ["Others" ("e" "isearch-history" consult-isearch-history)]]
+   ["Others"
+    ("h" "isearch-history" consult-isearch-history)
+    ]]
   )
 
 ;; Search key map
