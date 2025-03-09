@@ -71,8 +71,7 @@
 
 (use-package evil-markdown
   :ensure t
-  :vc (:url "https://github.com/Somelauw/evil-markdown")
-  :config
-  (seto))
+  :vc (:url "https://github.com/Somelauw/evil-markdown" :branch "main" :rev :newest))
+
 (provide 'setup-evil)
 
