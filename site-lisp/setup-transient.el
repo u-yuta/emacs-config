@@ -92,5 +92,85 @@
 
 (global-set-key (kbd "C-c r") 'uy/transient-register-and-bookmark-menu)
 
+;; Evil Leader -----------------------
+(with-eval-after-load 'evil
+  (evil-set-leader (list 'normal 'visual) (kbd "SPC"))
+  (evil-define-key 'normal 'global (kbd "<leader>a") 'uy/transient-app-map)
+  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>h") 'help-command)
+  (evil-define-key 'normal 'global (kbd "<leader>f") 'uy/transient-open-file-menu)
+  (evil-define-key 'normal 'global (kbd "<leader>g") 'uy/transient-goto-map)
+  (evil-define-key 'normal 'global (kbd "<leader>s") 'uy/transient-search-map)
+  (evil-define-key 'normal 'global (kbd "<leader>w") 'uy/transient-window-map)
+  )
+
+;; Applications
+(transient-define-prefix uy/transient-app-map ()
+   ["AI"
+    ("d" "aider" aidermacs-transient-menu)
+    ("g" "gptel" gptel-menu)]
+   ["Others"
+    ("t" "vterm" vterm)]
+  )
+
+;; Goto key map
+(transient-define-prefix uy/transient-goto-map ()
+   ["Goto"
+    ("e" "compile-error" consult-compile-error)
+    ("f" "flymake" consult-flymake)
+    ("g" "goto-line" consult-goto-line)
+    ("j" "goto-char-timer" avy-goto-migemo-timer)
+    ("o" "outline" consult-outline)
+    ("m" "mark" consult-mark)
+    ("k" "global mark" consult-global-mark)
+    ("i" "imenu" consult-imenu)
+    ("I" "imenu-multi" consult-imenu-multi)]
+  )
+
+;; Search key map
+(transient-define-prefix uy/transient-search-map ()
+  ["Search"
+   ["Files"
+    ("d" "find" consult-find)
+    ("c" "locate" consult-locate)]
+   ["In files"
+    ("g" "grep" consult-grep)
+    ("G" "Git grep" consult-git-grep)
+    ("r" "Ripgrep" consult-ripgrep)
+    ("l" "line" consult-line)
+    ("L" "line-multi" consult-line-multi)
+    ("R" "org-roam-ripgrep" bms/org-roam-rg-search)]
+   ["Others" ("e" "isearch-history" consult-isearch-history)]]
+  )
+
+;; Search key map
+(transient-define-prefix uy/transient-window-map ()
+  ["Window"
+   ["Manipulate"
+    ("c" "delete" evil-window-delete)
+    ("o" "delete other" delete-other-windows)
+    ("x" "exchange" evil-window-exchange)
+    ("v" "split vertically" evil-window-vsplit)
+    ("s" "split" evil-window-split)
+    ("q" "quit" evil-quit)
+    ]
+   ["Goto"
+    ("h" "left" evil-window-left)
+    ("j" "down" evil-window-down)
+    ("k" "up" evil-window-up)
+    ("l" "right" evil-window-right)
+    ("p" "previous (recent)" evil-window-mru)
+    ("w" "next" evil-window-next)
+    ]
+   ["Size"
+    ("+" "increase height" evil-window-increase-height :transient t)
+    ("-" "decrease height" evil-window-decrease-height :transient t)
+    (">" "increase width" evil-window-increase-width :transient t)
+    ("<" "decrease width" evil-window-decrease-width :transient t)
+    ("=" "balance" balance-windows)
+    ]
+   ]
+  )
+
 (provide 'setup-transient)
 
