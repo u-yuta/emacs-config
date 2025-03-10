@@ -38,26 +38,6 @@
   ;; Configures display formatting for Org-roam node.
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:12}" 'face 'org-tag)))
 
-  ;; ファイル名を短縮する関数を修正
-  (defun my-org-roam--title-to-slug (title)
-    "Convert TITLE to a filename-suitable slug."
-    (cl-flet* ((nonspacing-mark-p (char)
-                                  (eq 'Mn (get-char-code-property char 'general-category)))
-               (strip-nonspacing-marks (s)
-                                       (apply #'string (seq-remove #'nonspacing-mark-p
-                                                                   ;; NFD でなく NFC にした
-                                                                   ;; 濁点等が消えないように
-                                                                   (ucs-normalize-NFC-string s))))
-               (cl-replace (title pair)
-                           (replace-regexp-in-string (car pair) (cdr pair) title)))
-      (let* ((pairs `(("[^[:alnum:][:digit:]]" . "_")  ;; convert anything not alphanumeric
-                      ("__*" . "_")  ;; remove sequential underscores
-                      ("^_" . "")  ;; remove starting underscore
-                      ("_$" . "")))  ;; remove ending underscore
-             (slug (-reduce-from #'cl-replace (strip-nonspacing-marks title) pairs)))
-        (downcase slug))))
-  (setq org-roam-title-to-slug-function  #'my-org-roam--title-to-slug)
-
   ;; org-roam capture template
   (setq org-roam-capture-templates
         '(("d" "default" plain "%?" :target
