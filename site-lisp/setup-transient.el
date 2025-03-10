@@ -100,6 +100,7 @@
   (evil-set-leader (list 'normal 'visual) (kbd "SPC"))
   (evil-define-key 'normal 'global (kbd "<leader>a") 'uy/transient-app-map)
   (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
+  (evil-define-key 'normal 'global (kbd "<leader>c") 'uy/transient-capture-map)
   (evil-define-key 'normal 'global (kbd "<leader>h") 'help-command)
   (evil-define-key 'normal 'global (kbd "<leader>f") 'uy/transient-open-file-menu)
   (evil-define-key 'normal 'global (kbd "<leader>g") 'uy/transient-goto-map)
@@ -171,6 +172,17 @@
     ("<" "decrease width" evil-window-decrease-width :transient t)
     ("=" "balance" balance-windows)
     ]
+   ]
+  )
+
+;; org-mode capture key map
+;; menu to access org[-roam]-capture and custom note-creation function
+(transient-define-prefix uy/transient-capture-map ()
+  ["Org-mode capture"
+   ("j" "Journal" (lambda () (interactive) (org-capture nil "j")))
+   ("l" "Lab note" uy/create-new-lab-note)
+   ("w" "Work" (lambda () (interactive) (org-roam-capture nil "w")))
+   ("s" "Share" (lambda () (interactive) (org-roam-capture nil "s")))
    ]
   )
 
