@@ -125,6 +125,50 @@
      :table-of-contents nil
      :style "<link rel=\"stylesheet\" href=\"../other/mystyle.cs\" type=\"text/css\">")))
 
+
+;; org-directory/%Y/%m に 日付-連番-<title_slug>.org のノートファイルを作成する関数
+(defun uy/create-new-lab-note ()
+  "Create a new note file in `org-directory/lab-notes'.
+The filename will be `org-directory/lab-notes/%Y/%m/%Y%m%d-${i}-${slug}.org'.
+Where `i' is the smallest number+1 of `%Y%m%d-number-*.org' in the same folder.
+The title is input from a minibuffer prompt, and the slug is generated from the title 
+using `org-roam-node-slug'."
+  (interactive)
+  (let* ((date (format-time-string "%Y%m%d"))
+         (year (format-time-string "%Y"))
+         (month (format-time-string "%m"))
+         (lab-notes-dir (expand-file-name (concat "lab-notes/" year "/" month "/") org-directory))
+         (title (read-string "Note title: "))
+         ;; Create a temporary org-roam-node with just the title for slugification
+         (temp-node (org-roam-node-create :title title))
+         (slug (org-roam-node-slug temp-node))
+         (filename-pattern (concat date "-[0-9]+-.*\\.org"))
+         (file-number 1))
+    
+    ;; Create directory if it doesn't exist
+    (unless (file-exists-p lab-notes-dir)
+      (make-directory lab-notes-dir t))
+    
+    ;; Find the next available number
+    (when (file-exists-p lab-notes-dir)
+      (let ((files (directory-files lab-notes-dir nil filename-pattern))
+            (max-num 0))
+        (dolist (file files)
+          (when (string-match (concat date "-\\([0-9]+\\)-") file)
+            (let ((num (string-to-number (match-string 1 file))))
+              (when (> num max-num)
+                (setq max-num num)))))
+        (setq file-number (1+ max-num))))
+    
+    ;; Create the file
+    (let ((file-path (expand-file-name (format "%s-%d-%s.org" date file-number slug) lab-notes-dir)))
+      (find-file file-path)
+      (insert (format "#+TITLE: %s\n" title))
+      (insert (format "#+DATE: %s\n" (format-time-string "%Y-%m-%d")))
+      (insert "#+FILETAGS: :lab:\n\n")
+      (org-id-get-create)
+      (goto-char (point-max)))))
+
 ;; Tableの形式をその場で変換する関数。
 (defun org-table-transform-in-place ()
   "Just like `ORG-TABLE-EXPORT', but instead of exporting to a
