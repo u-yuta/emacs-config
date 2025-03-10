@@ -145,7 +145,7 @@
     ]]
   )
 
-;; Search key map
+;; Window key map
 (transient-define-prefix uy/transient-window-map ()
   ["Window"
    ["Manipulate"
