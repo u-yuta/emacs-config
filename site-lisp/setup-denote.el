@@ -18,6 +18,7 @@
 ;; Denoteをテスト使用中
 (use-package denote
   :ensure t
+  :vc (:url "https://github.com/protesilaos/denote" :branch "main" :rev :newest)
   :hook (dired-mode . denote-dired-mode)
   :after org
   :bind
@@ -34,3 +35,5 @@
   ;; "[D]" followed by the file's title.  Read the doc string of
   ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1))
+
+(provide 'setup-denote)

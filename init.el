@@ -494,6 +494,9 @@
 ;; Evil
 (require 'setup-evil)  ;; in site-lisp
 
+;; Denote
+(require 'setup-denote)
+
 ;; ミニバッファ周りの設定 vertico, consult (embarkも)
 (require 'setup-vertico-consult)  ;; in site-lisp
 
