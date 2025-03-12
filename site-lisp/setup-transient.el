@@ -95,18 +95,32 @@
 
 (global-set-key (kbd "C-c r") 'uy/transient-register-and-bookmark-menu)
 
-;; Evil Leader -----------------------
+;; Leader key menu -----------------------
 (with-eval-after-load 'evil
-  (evil-set-leader (list 'normal 'visual) (kbd "SPC"))
-  (evil-define-key 'normal 'global (kbd "<leader>a") 'uy/transient-app-map)
-  (evil-define-key 'normal 'global (kbd "<leader>b") 'consult-buffer)
-  (evil-define-key 'normal 'global (kbd "<leader>c") 'uy/transient-capture-map)
-  (evil-define-key 'normal 'global (kbd "<leader>h") 'help-command)
-  (evil-define-key 'normal 'global (kbd "<leader>f") 'uy/transient-open-file-menu)
-  (evil-define-key 'normal 'global (kbd "<leader>g") 'uy/transient-goto-map)
-  (evil-define-key 'normal 'global (kbd "<leader>s") 'uy/transient-search-map)
-  (evil-define-key 'normal 'global (kbd "<leader>w") 'uy/transient-window-map)
+  (evil-define-key 'normal 'global (kbd "<SPC>") 'uy/transient-leader-menu))
+
+(transient-define-prefix uy/transient-leader-menu ()
+  ["Leader key menu"
+   ("a" "App" uy/transient-app-map)
+   ("b" "Buffers" consult-buffer)
+   ("c" "Capture" uy/transient-capture-map)
+   ;; ("d" "Dired" (lambda () (interactive) (dired default-directory)))  ;; open current dir
+   ("d" "Dired" dired-at-point)  ;; open current dir
+   ("h" "Help" uy/emulate-help-command)
+   ("f" "File" uy/transient-open-file-menu)
+   ("g" "Goto" uy/transient-goto-map)
+   ("s" "Search" uy/transient-search-map)
+   ("w" "Window" uy/transient-window-map)]
   )
+
+;; help-command のラッパー関数を定義
+(defun uy/emulate-help-command ()
+  "Execute C-c h and wait for next key."
+  (interactive)
+  (transient-quit-one)
+  ;; help-commandのキー実行時の動作を関数で再現できなかったため、
+  ;; help-commandに割り当てたキーシーケンスを直接実行する。
+  (setq unread-command-events (listify-key-sequence (kbd "C-c h"))))
 
 ;; Applications
 (transient-define-prefix uy/transient-app-map ()
