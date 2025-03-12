@@ -28,7 +28,8 @@
    ("C-c n b" . denote-backlinks)
    ("C-c n d" . denote-sort-dired))
   :config
-  (setopt denote-directory (file-name-concat org-directory "lab-notes/2025/03"))  ;; test
+  (setopt denote-directory (file-name-concat org-directory "denote"))  ;; test
+  (setopt denote-known-keywords '("emacs" "math" "linux" "python"))
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
