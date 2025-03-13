@@ -19,7 +19,7 @@
 ;; テキストスケール変更の刻みを設定する（標準は 1.2）
 (setq text-scale-mode-step 1.1)
 
-
+;; Theme
 (use-package ef-themes
   :ensure t
   :config
