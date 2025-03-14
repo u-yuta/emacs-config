@@ -27,6 +27,7 @@
 (use-package password-store :ensure t)
 
 ;; GPTelで使うAPI-keyの格納用
+;; password store のデータの更新が反映されない場合は auth-source-forget-all-cached を実行する
 (defun uy/get-auth-secret (host)
   "Get secret from auth-source for the specified HOST."
   (if-let ((auth-info (car (auth-source-search :host host))))
