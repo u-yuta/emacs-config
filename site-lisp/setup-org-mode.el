@@ -201,34 +201,11 @@
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
 
-  ;; org-clock-convenience
-  ;; (use-package の bind だと動作しなかったので、add-hook を使用)
-  (use-package org-clock-convenience
-    :ensure t
-    :init
-    (progn
-      ;; https://github.com/dfeich/org-clock-convenience
-      (defun dfeich/org-agenda-mode-fn ()
-        (define-key org-agenda-mode-map
-                    (kbd "<S-up>") #'org-clock-convenience-timestamp-up)
-        (define-key org-agenda-mode-map
-                    (kbd "<S-down>") #'org-clock-convenience-timestamp-down)
-        (define-key org-agenda-mode-map
-                    (kbd "") #'org-clock-convenience-fill-gap))
-      (add-hook 'org-agenda-mode-hook #'dfeich/org-agenda-mode-fn)
-      ))
-
   (use-package ox-pandoc
     :ensure t
     :config
     (with-eval-after-load 'ox
       (require 'ox-pandoc)))
-
-  (use-package ox-hugo
-    :ensure t
-    :after ox
-    :config
-    (setq org-element-use-cache nil))
 
   ;; https://git.sr.ht/~bzg/org-contrib
   (use-package org-contrib :ensure t)
@@ -321,48 +298,6 @@
   ;; （PlangUMLのJARファイルをローカルで実行する。Java環境が必要。）
   (setq org-plantuml-exec-mode 'jar)
   (setq org-plantuml-jar-path "~/.local/bin/plantuml.jar")
-  )
-
-(use-package org-super-agenda
-  :ensure t
-  :config
-  (org-super-agenda-mode)
-
-  (defun uy/org-super-agenda-list (&optional arg)
-    "カレントバッファのアジェンダリストを表示する"
-    (interactive "P")
-    (let ((org-super-agenda-groups
-           '(;; Each group has an implicit boolean OR operator between its selectors.
-             (:name "Next"  ; Optionally specify section name
-                    ;; :time-grid t  ; Items that appear on the time grid
-                    :todo "NEXT")  ; Items that have this TODO keyword
-             (:name "Important"
-                    ;; Single arguments given alone
-                    :priority "A")
-             (:name "Meeting"
-                    :tag "mtg")
-             (:name "Habit"
-                    :habit t)
-             ;; Groups supply their own section names when none are given
-             (:todo ("WAITING" "HOLD") :order 8)  ; Set order of this section
-             (:todo ("SOMEDAY" "TO-READ" "CHECK" "TO-WATCH" "WATCHING")
-                    ;; Show this group at the end of the agenda (since it has the
-                    ;; highest number). If you specified this group last, items
-                    ;; with these todo keywords that e.g. have priority A would be
-                    ;; displayed in that group instead, because items are grouped
-                    ;; out in the order the groups are listed.
-                    :order 9)
-             (:priority<= "B"
-                          ;; Show this section after "Today" and "Important", because
-                          ;; their order is unspecified, defaulting to 0. Sections
-                          ;; are displayed lowest-number-first.
-                          :order 1)
-             ;; After the last group, the agenda will display items that didn't
-             ;; match any of these groups, with the default order position of 99
-
-             ;; (:auto-category t)
-             )))
-      (org-agenda arg "a" t)))
   )
 
 (use-package org-bullets
