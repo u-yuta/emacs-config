@@ -39,11 +39,7 @@
   :init
   ;; 保存先
   (setq org-directory "~/org-roam/")
-  (setq org-agenda-files
-        (append (directory-files (file-name-concat org-directory "journal") t "\\.org$")
-                (directory-files (file-name-concat org-directory "work") t "pj.*\\.org$")
-                (directory-files (file-name-concat org-directory "share") t "pj.*\\.org$")))
-  (setq org-agenda-text-search-extra-files '(agenda-archives))
+  (setq org-agenda-files (list (file-name-concat org-directory "journal/agenda.org")))
   (setq org-startup-folded nil)
 
   :config  
@@ -171,14 +167,6 @@
             (delete-directory old-attach-dir)
             (message "Attachments moved from %s to %s" old-attach-dir new-attach-dir))))))
 
-  (setq org-agenda-custom-commands
-        '(("x" "Unscheduled Tasks" tags-todo
-           "-SCHEDULED>=\"<today>\"-DEADLINE>=\"<today>\"" nil)
-          ("u" "Uncategorized tasks" ((tags-todo "-Type")))
-          ("d" "Daily Tasks" agenda ""
-           ((org-agenda-span 1)))
-          ))
-
   (setq org-agenda-window-setup 'current-window)
   (setq org-agenda-skip-scheduled-if-done t)
   (setq org-return-follows-link t)  ;; RET to follow link
@@ -216,8 +204,6 @@
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
 
-  (setq recentf-exclude
-        (append recentf-exclude org-agenda-files))
   ;; org-clock-convenience
   ;; (use-package の bind だと動作しなかったので、add-hook を使用)
   (use-package org-clock-convenience
