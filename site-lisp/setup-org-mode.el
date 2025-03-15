@@ -184,8 +184,6 @@
   (setq org-use-speed-commands t)
   (setq org-image-actual-width nil)
   
-  (if (executable-find "ipython")
-      (setq org-babel-python-command "ipython"))
   ;; active Babel languages
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -195,7 +193,6 @@
      (python . t)
      (plantuml . t)
      ))
-  (setq org-babel-python-command "ipython")
 
   ;; Export
   (setq org-export-with-creator nil)
