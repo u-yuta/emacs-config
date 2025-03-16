@@ -28,13 +28,14 @@
    ("C-c n b" . denote-backlinks)
    ("C-c n d" . denote-sort-dired))
   :config
-  (setopt denote-directory (file-name-concat org-directory "denote"))  ;; test
-  (setopt denote-known-keywords '("emacs" "math" "linux" "python"))
+  (setopt denote-directory org-directory)
+  (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "python" "screenshot" "scan"))
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
   ;; "[D]" followed by the file's title.  Read the doc string of
   ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1))
+
 
 (provide 'setup-denote)
