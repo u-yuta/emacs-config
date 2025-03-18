@@ -29,7 +29,9 @@
    ("C-c n d" . denote-sort-dired))
   :config
   (setopt denote-directory org-directory)
-  (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "python" "screenshot" "scan"))
+  (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "llm" "python" "screenshot" "scan"))
+
+  (setopt denote-sequence-scheme 'alphanumeric)
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
