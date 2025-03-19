@@ -19,6 +19,9 @@
 ;; テキストスケール変更の刻みを設定する（標準は 1.2）
 (setq text-scale-mode-step 1.1)
 
+;; Show fringe indicators in visual line mode
+(setopt visual-line-fringe-indicators '(nil t))
+
 ;; Theme
 (use-package ef-themes
   :ensure t

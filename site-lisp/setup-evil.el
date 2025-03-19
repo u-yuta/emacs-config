@@ -20,6 +20,7 @@
   :init
   (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
   (setq evil-want-keybinding nil)
+  (setopt evil-respect-visual-line-mode t)  ;; visual-line-modeに応じて表示行での移動を行う
   :config
   (evil-mode 1)
   (setopt evil-emacs-state-modes (append evil-emacs-state-modes  
