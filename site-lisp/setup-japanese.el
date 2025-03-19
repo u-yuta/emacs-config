@@ -94,7 +94,7 @@
 
 ;; visual line mode で日本語文章が適度に折り返し表示されるようにする
 (word-wrap-whitespace-mode 1)
-(add-to-list word-wrap-whitespace-characters ?\]) ;; `]' を折り返しの区切り文字に加える
+(setopt word-wrap-whitespace-characters (append word-wrap-whitespace-characters '(?\]))) ;; `]' を折り返しの区切り文字に加える
 
 ;; pangu-spacing
 ;; 半角文字と全角文字の間にスペースを入れる。
