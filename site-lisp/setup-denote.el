@@ -37,7 +37,23 @@
   ;; instead of their long file name they have, for example, a literal
   ;; "[D]" followed by the file's title.  Read the doc string of
   ;; `denote-rename-buffer-format' for how to modify this.
-  (denote-rename-buffer-mode 1))
+  (denote-rename-buffer-mode 1)
 
+  ;; orgファイルのidentifierをorg-roamのIDとしても利用可能な書式に変更する
+  (setopt denote-org-front-matter
+          ":PROPERTIES:
+:ID: %4$s
+:END:
+#+title:      %1$s
+#+date:       %2$s
+#+filetags:   %3$s
+#+signature:  %5$s
+
+\n")
+
+  )
+
+(with-eval-after-load 'denote
+  (require 'org-to-denote))
 
 (provide 'setup-denote)
