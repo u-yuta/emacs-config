@@ -28,7 +28,6 @@
 (set-face-attribute 'default nil :family "UDEV Gothic NF" :height 114)
 
 ;; プロポーショナル フォント
-;; (set-face-attribute 'variable-pitch nil :family "Yu Gothic UI" :height 114)
 (set-face-attribute 'variable-pitch nil :family "Noto Sans JP" :height 114)
 
 ;; 等幅フォント
