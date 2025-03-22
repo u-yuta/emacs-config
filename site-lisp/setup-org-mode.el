@@ -112,13 +112,24 @@
           (:endgroup . nil)
           ))
 
+  (defun uy/journal-file-name-year-month ()
+    "Return a string representing the journal file path in the formatting
+    '<org-directory>/journal/journal-YYYY-mm.org' using current year and month."
+    (let ((year (format-time-string "%Y"))
+          (month (format-time-string "%m")))
+      (file-name-concat org-directory (concat "journal/journal-" year "-" month ".org"))))
+
   ;; org-modeのcapture template
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "journal/agenda.org" "Inbox")
            "* TODO %?\n\n\n" :prepend t)
           ("j" "Journal" entry
            (file+olp+datetree "journal/journal.org")
-           "* %U %?\n")))
+           "* %U %?\n")
+          ("J" "Journal month" entry
+           (file+olp+datetree (lambda () (uy/journal-file-name-year-month)))
+           "* %U %?\n")
+          ))
 
   (setq myroamfiles (directory-files org-directory t "org$"))
   (defun uy/org-files-list-except-journal ()

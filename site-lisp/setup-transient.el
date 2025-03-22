@@ -27,7 +27,7 @@
   ["Find file"
    ["File"
     ("j" "Journal"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "journal/journal.org"))))
+     (lambda () (interactive) (find-file (uy/journal-file-name-year-month))))
     ("a" "Agenda"
      (lambda () (interactive) (find-file (file-name-concat org-directory "journal/agenda.org"))))
     ("i" "Shared index"
