@@ -106,21 +106,21 @@
    ("c" "Capture" uy/transient-capture-map)
    ;; ("d" "Dired" (lambda () (interactive) (dired default-directory)))  ;; open current dir
    ("d" "Dired" dired-at-point)  ;; open current dir
-   ("h" "Help" uy/emulate-help-command)
+   ("h" "Help" uy/transient-help-map)  ;; defined in Helpful configuration
    ("f" "File" uy/transient-open-file-menu)
    ("g" "Goto" uy/transient-goto-map)
    ("s" "Search" uy/transient-search-map)
    ("w" "Window" uy/transient-window-map)]
   )
 
-;; help-command のラッパー関数を定義
-(defun uy/emulate-help-command ()
-  "Execute C-c h and wait for next key."
-  (interactive)
-  (transient-quit-one)
-  ;; help-commandのキー実行時の動作を関数で再現できなかったため、
-  ;; help-commandに割り当てたキーシーケンスを直接実行する。
-  (setq unread-command-events (listify-key-sequence (kbd "C-c h"))))
+;; Help
+(transient-define-prefix uy/transient-help-map ()
+   ["Help"
+    ("f" "function and command" helpful-callable)
+    ("v" "variable" helpful-variable)
+    ("k" "key" helpful-key)
+    ("x" "command" helpful-command)
+    ("." "at-point" helpful-at-point)])
 
 ;; Applications
 (transient-define-prefix uy/transient-app-map ()

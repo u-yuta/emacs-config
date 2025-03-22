@@ -577,6 +577,7 @@
 
 (require 'setup-auth-source)
 (require 'setup-ai)
+(require 'setup-helpful)
 
 ;; setup transient menu
 (require 'setup-transient)
