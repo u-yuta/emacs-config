@@ -124,9 +124,6 @@
         '(("t" "Todo" entry (file+headline "journal/agenda.org" "Inbox")
            "* TODO %?\n\n\n" :prepend t)
           ("j" "Journal" entry
-           (file+olp+datetree "journal/journal.org")
-           "* %U %?\n")
-          ("J" "Journal month" entry
            (file+olp+datetree (lambda () (uy/journal-file-name-year-month)))
            "* %U %?\n")
           ))
