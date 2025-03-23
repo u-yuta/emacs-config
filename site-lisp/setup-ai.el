@@ -71,16 +71,15 @@
 ;; aidermacs
 (use-package aidermacs
   :ensure t
-  :vc (:url "https://github.com/MatthewZMD/aidermacs" :rev :newest)
+  :vc (:url "https://github.com/u-yuta/aidermacs" :rev :newest)
   :bind (("C-c d" . aidermacs-transient-menu))
 
   :config
   ; Enable minor mode for Aider files
   (aidermacs-setup-minor-mode)
 
-
-  (setopt aidermacs-auto-commits t)
-  (setopt aidermacs-use-architect-mode nil)
+  (setopt aidermacs-auto-commits nil)
+  (setopt aidermacs-use-architect-mode t)
   (setopt aidermacs-default-model "deepseek/deepseek-chat")
 
   ;; Use vterm backend
