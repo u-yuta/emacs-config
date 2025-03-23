@@ -202,12 +202,58 @@
      (plantuml . t)
      ))
 
+  ;; Manage ID locations
+  (defun uy/org-id-update-org-roam-files ()
+    "Update Org-ID locations for all Org-roam files."
+    (interactive)
+    (org-id-update-id-locations (org-roam-list-files)))
+  
+  (defun uy/org-id-update-id-current-file ()
+    "Scan the current buffer for Org-ID locations and update them."
+    (interactive)
+    (org-id-update-id-locations (list (buffer-file-name (current-buffer)))))
+
   ;; Export
   (setq org-export-with-creator nil)
   
   ;; save the clock history across Emacs sessions
   (setq org-clock-persist 'history)
   (org-clock-persistence-insinuate)
+
+  ;; org-modeのエクスポート時に、マルチバイト文字間では、
+  ;; 改行箇所に挿入されるスペースを削除する。
+  ;; 以下のサイトの情報を参考にした。
+  ;; Bug: ODT export of Chinese text inserts spaces for line breaks
+  ;; https://yhetil.org/orgmode/sbhnlv$4t1$1@ciao.gmane.io/T/
+  (defun eh-org-wash-text (text backend _info)
+    "导出 org file 时，删除中文之间不必要的空格。"
+    (when (or (org-export-derived-backend-p backend 'html)
+              (org-export-derived-backend-p backend 'odt)
+              (org-export-derived-backend-p backend 'pandoc)
+              (org-export-derived-backend-p backend 'latex))
+      (let ((regexp "[[:multibyte:]]")
+            (string text))
+        ;; org-mode 默认将一个换行符转换为空格，但中文不需要这个空格，删除。
+        (setq string
+              (replace-regexp-in-string
+               (format "\\(%s\\) *\n *\\(%s\\)" regexp regexp)
+               "\\1\\2" string))
+        ;; 删除粗体之后的空格
+        (dolist (str '("</b>" "</code>" "</del>" "</i>"))
+          (setq string
+                (replace-regexp-in-string
+                 (format "\\(%s\\)\\(%s\\)[ ]+\\(%s\\)" regexp str regexp)
+                 "\\1\\2\\3" string)))
+        ;; 删除粗体之前的空格
+        (dolist (str '("<b>" "<code>" "<del>" "<i>" "<span class=\"underline\">"))
+          (setq string
+                (replace-regexp-in-string
+                 (format "\\(%s\\)[ ]+\\(%s\\)\\(%s\\)" regexp str regexp)
+                 "\\1\\2\\3" string)))
+        string)))
+
+  (add-hook 'org-export-filter-headline-functions #'eh-org-wash-text)
+  (add-hook 'org-export-filter-paragraph-functions #'eh-org-wash-text)
 
   (use-package ox-pandoc
     :ensure t
@@ -296,6 +342,14 @@
     (move-beginning-of-line nil)
     (org-insert-heading))
 
+
+  ;; Dired から org-attach を使う
+  (add-hook 'dired-mode-hook
+            (lambda ()
+              (define-key dired-mode-map
+                (kbd "C-c C-x a")
+                #'org-attach-dired-to-subtree)))
+
   (use-package ox-reveal
     :ensure t
     :vc (:url "https://github.com/yjwen/org-reveal")
@@ -318,5 +372,49 @@
 ;; org-bookmark-heading
 ;; Use the standard Emacs bookmark commands, C-x r m
 (use-package org-bookmark-heading :ensure t)
+
+(use-package org-download
+  :ensure t
+  :after org
+  :config
+  (setq org-download-method 'attach)
+  (setq org-download-screenshot-method
+        "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\""))
+
+
+;; Tableの形式をその場で変換する関数。
+(defun org-table-transform-in-place ()
+  "Just like `ORG-TABLE-EXPORT', but instead of exporting to a
+  file, replace table with data formatted according to user's
+  choice, where the format choices are the same as
+  org-table-export.
+  https://stackoverflow.com/a/38277039"
+  (interactive)
+  (unless (org-at-table-p) (user-error "No table at point"))
+  (org-table-align)
+  (let* ((format
+      (completing-read "Transform table function: "
+               '("orgtbl-to-tsv" "orgtbl-to-csv" "orgtbl-to-latex"
+                 "orgtbl-to-html" "orgtbl-to-generic"
+                 "orgtbl-to-texinfo" "orgtbl-to-orgtbl"
+                 "orgtbl-to-unicode")))
+     (curr-point (point)))
+    (if (string-match "\\([^ \t\r\n]+\\)\\( +.*\\)?" format)
+    (let ((transform (intern (match-string 1 format)))
+          (params (and (match-end 2)
+               (read (concat "(" (match-string 2 format) ")"))))
+          (table (org-table-to-lisp
+              (buffer-substring-no-properties
+               (org-table-begin) (org-table-end)))))
+      (unless (fboundp transform)
+        (user-error "No such transformation function %s" transform))
+      (save-restriction
+        (with-output-to-string
+          (delete-region (org-table-begin) (org-table-end))
+          (insert (funcall transform table params) "\n")))
+      (goto-char curr-point)
+      (beginning-of-line)
+      (message "Tranformation done."))
+      (user-error "Table export format invalid"))))
 
 (provide 'setup-org-mode)
