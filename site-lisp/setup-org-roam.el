@@ -56,6 +56,17 @@
   
   ;; org-roam dailies の設定
   (setq org-roam-dailies-directory "journal/")
+
+  ;; Manage ID locations
+  (defun uy/org-id-update-org-roam-files ()
+    "Update Org-ID locations for all Org-roam files."
+    (interactive)
+    (org-id-update-id-locations (org-roam-list-files)))
+  
+  (defun uy/org-id-update-id-current-file ()
+    "Scan the current buffer for Org-ID locations and update them."
+    (interactive)
+    (org-id-update-id-locations (list (buffer-file-name (current-buffer)))))
   )
 
 (use-package org-roam-ui
@@ -71,5 +82,23 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
+
+(use-package org-ql
+  :ensure t
+  :after org-roam  ;; org-roam-list-files を使っている
+  :config
+
+  (defun uy/find-org-entries-by-heading-in-directory ()
+    "Find org entries with specific heading text in all org files in a directory."
+    (interactive)
+    (let* ((directory (read-directory-name "Search org files in directory: "))
+           (heading-text (read-string "Heading contains: "))
+           (org-files (directory-files-recursively directory "\\.org$")))
+      (if org-files
+          (org-ql-find org-files
+                       :query-prefix (format "heading:\"%s\" " heading-text)
+                       :prompt (format "Entries with \"%s\" in heading: " heading-text)
+                       :widen t)
+        (message "No org files found in %s" directory)))))
 
 (provide 'setup-org-roam)
