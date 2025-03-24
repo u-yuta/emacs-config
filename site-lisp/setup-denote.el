@@ -39,7 +39,7 @@
   ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1)
 
-  ;; orgファイルのidentifierをorg-roamのIDとしても利用可能な書式に変更する
+  ;; orgファイルのidentifierをorg-modeのIDとしても利用可能な書式に変更する
   (setopt denote-org-front-matter
           ":PROPERTIES:
 :ID: %4$s
@@ -48,9 +48,7 @@
 #+date:       %2$s
 #+filetags:   %3$s
 #+signature:  %5$s
-
 \n")
-
   )
 
 (with-eval-after-load 'denote
