@@ -149,6 +149,7 @@
 (transient-define-prefix uy/transient-search-map ()
   ["Search"
    ["In files"
+    ("D" "rg dir file-pattern" uy/consult-ripgrep-in-directory)
     ("g" "grep" consult-grep)
     ("G" "Git grep" consult-git-grep)
     ("r" "Ripgrep" consult-ripgrep)

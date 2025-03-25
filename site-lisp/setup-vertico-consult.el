@@ -122,7 +122,8 @@
          ("M-s L" . consult-line-multi)
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
-         ("C-c s R" . bms/org-roam-rg-search)    ;; 追加
+         ("C-c R" . bms/org-roam-rg-search)    ;; 追加
+         ("M-s D" . uy/consult-ripgrep-in-directory)  ;; 追加
          ;; Isearch integration
          ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
@@ -184,6 +185,22 @@
   ;; Optionally make narrowing help available in the minibuffer.
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
+
+  (defun uy/consult-ripgrep-in-directory (dir-path &optional file-pattern initial)
+    "DIR-PATH内のFILE-PATTERNにマッチするファイルに対してripgrep検索を実行"
+    (interactive 
+     (list (read-directory-name "Directory: ")
+           (read-string "File pattern (e.g. \\.org$, ^2025.*\\_emacs.*.md$): ")
+           (when (use-region-p)
+             (buffer-substring-no-properties (region-beginning) (region-end)))))
+    (let* ((default-directory (expand-file-name dir-path))
+           (consult-ripgrep-args (if (and file-pattern (not (string= file-pattern "")))
+                                    (append (if (listp consult-ripgrep-args) 
+                                                consult-ripgrep-args 
+                                              (list consult-ripgrep-args))
+                                            (list "-g" (concat "*" file-pattern "*")))
+                                  consult-ripgrep-args)))
+      (consult-ripgrep dir-path initial)))
   )
 
 ;; Using consult-ripgrep with org-roam for searching notes
