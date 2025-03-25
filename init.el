@@ -28,6 +28,10 @@
 ;; 基本設定
 ;; ============================================
 
+;; 起動時に scratch buffer を表示
+(setq initial-buffer-choice t)
+(setq initial-major-mode 'lisp-interaction-mode)
+
 ;; 起動時の Warning を抑止する
 (setq byte-compile-warnings '(cl-functions))
 
