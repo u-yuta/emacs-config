@@ -87,6 +87,7 @@
   :ensure t
   :after org-roam  ;; org-roam-list-files を使っている
   :config
+  (setopt org-ql-warn-no-heading nil)
 
   (defun uy/find-org-entries-by-heading-in-directory ()
     "Find org entries with specific heading text in all org files in a directory."
