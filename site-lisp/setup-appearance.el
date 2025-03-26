@@ -134,6 +134,10 @@
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
+;; Olivetti mode: automatically resize window margins to set a desired text body width
+(use-package olivetti
+  :ensure t)
+
 (when (not uy/system-windows-p)  ;; Windowsでは遅くなるのでオフ
   (use-package git-gutter
     :ensure t
