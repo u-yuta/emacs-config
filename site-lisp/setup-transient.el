@@ -59,11 +59,9 @@
   :ensure t
   :bind
   ((:map Info-mode-map
-         ("C-c t" . casual-info-tmenu)
+         ("C-c C-t" . casual-info-tmenu)
          :map calc-mode-map
-         ("C-c t" . casual-calc-tmenu)
-         :map calc-mode-map
-         ("C-c t" . casual-calc-tmenu)))
+         ("C-c C-t" . casual-calc-tmenu)))
   :commands
   ;; casual-info非起動時にも使えるようにする
   (casual-info-browse-backward-paragraph casual-info-browse-forward-paragraph) 
@@ -75,25 +73,6 @@
   ;; Calc
   (require 'casual-calc) ; optional if using autoloaded menu
   )
-
-;; RegisterとBookmark関連のコマンドをまとめたTransientメニュー -----------------
-(transient-define-prefix uy/transient-register-and-bookmark-menu ()
-  :variable-pitch t
-  ["Registers and Bookmarks\n"
-   ["Resister"
-    ("s" "copy-to-register リージョンをコピー" copy-to-register :transient nil)
-    ("i" "insert-register 貼り付け" insert-register :transient nil)
-    ("<SPC>" "point-to-register カーソル位置を登録" point-to-register :transient nil)
-    ("j" "jump-to-register 登録位置へジャンプ" point-to-register :transient nil)]
-   ["Bookmark"
-    ("m" "bookmark-set 登録" bookmark-set :transient nil)
-    ("b" "bookmark-jump ジャンプ" bookmark-jump :transient nil)
-    ("l" "bookmark-bmenu-list ブックマークの一覧表示" list-bookmarks :transient nil)  ;; なぜか表示されない
-    ] 
-   ]
-  )
-
-(global-set-key (kbd "C-c r") 'uy/transient-register-and-bookmark-menu)
 
 ;; Leader key menu -----------------------
 (with-eval-after-load 'evil
