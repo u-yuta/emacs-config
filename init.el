@@ -40,7 +40,6 @@
 
 ;; ファイル/バッファ操作
 (setq confirm-kill-emacs 'yes-or-no-p)
-(setq recentf-exclude '("\\.recentf" ".emacs.d/bookmarks"))
 (setq set-mark-command-repeat-pop t)
 
 ;; 自動保存/バックアップ設定
@@ -242,6 +241,15 @@
   (add-hook 'ibuffer-mode-hook
             (lambda ()
               (ibuffer-switch-to-saved-filter-groups "default")))
+  )
+
+;; recentf
+(use-package recentf
+  :config
+  (setopt recentf-max-saved-items 1000)
+  (setopt recentf-max-menu-items 500)
+  (recentf-mode 1)
+  (run-at-time nil (* 5 60) 'recentf-save-list)
   )
 
 ;; dired
