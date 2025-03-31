@@ -23,6 +23,7 @@
   :after org
   :bind
   (("C-c n n" . denote)
+   ("C-c n N" . denote-subdirectory)
    ("C-c n r" . denote-rename-file)
    ("C-c n l" . denote-link)
    ("C-c n b" . denote-backlinks)
