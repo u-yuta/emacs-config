@@ -30,6 +30,9 @@
    ("C-c n d" . denote-sort-dired))
   :config
   (setopt denote-directory org-directory)
+  ;; ノート作成時にサブディレクトリとタイトルを指定する
+  (setopt denote-prompts '(subdirectory title))
+  
   (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "llm" "python" "screenshot" "scan"))
 
   (setopt denote-sequence-scheme 'alphanumeric)
