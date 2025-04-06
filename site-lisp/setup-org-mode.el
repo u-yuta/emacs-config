@@ -31,9 +31,10 @@
   :bind (("C-c c" . org-capture)
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
-         ("C-c i t" . org-time-stamp-inactive)
-         ("C-c i i" . org-id-get-create)
-         ("C-c [" . nil)
+         :map org-mode-map
+         ("C-c ." . org-time-stamp-inactive)
+         ("C-c !" . org-time-stamp)
+         ("C-c [" . nil)  ;; unbind org-agenda-file-to-front
          )
 
   :init
