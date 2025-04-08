@@ -29,7 +29,7 @@
     ("j" "Journal"
      (lambda () (interactive) (find-file (uy/journal-file-name-year-month))))
     ("a" "Agenda"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "journal/agenda.org"))))
+     (lambda () (interactive) (find-file (file-name-concat uy/journal-directory "agenda.org"))))
     ("i" "Shared index"
      (lambda () (interactive) (find-file (file-name-concat org-directory "share-files/02_index_shared.org"))))
     ("h" "Home index"

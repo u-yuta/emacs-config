@@ -54,9 +54,6 @@
            :unnarrowed t)
           ))
   
-  ;; org-roam dailies の設定
-  (setq org-roam-dailies-directory "journal/")
-
   ;; Manage ID locations
   (defun uy/org-id-update-org-roam-files ()
     "Update Org-ID locations for all Org-roam files."

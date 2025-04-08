@@ -40,7 +40,8 @@
   :init
   ;; 保存先
   (setq org-directory "~/org-roam/")
-  (setq org-agenda-files (list (file-name-concat org-directory "journal/agenda.org")))
+  (setq uy/journal-directory (file-name-concat org-directory "p1-journal"))
+  (setq org-agenda-files (list (file-name-concat uy/journal-directory "agenda.org")))
   (setq org-startup-folded nil)
 
   :config  
@@ -115,16 +116,14 @@
 
   (defun uy/journal-file-name-year-month ()
     "Return a string representing the journal file path in the formatting
-    '<org-directory>/journal/journal-YYYY-mm.org' using current year and month."
+    '<journal-directory>/journal-YYYY-mm.org' using current year and month."
     (let ((year (format-time-string "%Y"))
           (month (format-time-string "%m")))
-      (file-name-concat org-directory (concat "journal/journal-" year "-" month ".org"))))
+      (file-name-concat uy/journal-directory (concat "journal-" year "-" month ".org"))))
 
   ;; org-modeのcapture template
   (setq org-capture-templates
-        '(("t" "Todo" entry (file+headline "journal/agenda.org" "Inbox")
-           "* TODO %?\n\n\n" :prepend t)
-          ("j" "Journal" entry
+        '(("j" "Journal" entry
            (file+olp+datetree (lambda () (uy/journal-file-name-year-month)))
            "* %U %?\n")
           ))
