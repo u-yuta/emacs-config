@@ -313,7 +313,10 @@
   :config
   (add-to-list 'eglot-server-programs
                '((python-mode python-ts-mode)
-                 "basedpyright-langserver" "--stdio")))  ;; use `basedpyright'
+                 "basedpyright-langserver" "--stdio")) ;; use `basedpyright'
+  ;; Disable inlay hints
+  (setopt eglot-ignored-server-capabilites '(:inlayHintProvider))
+  )
 
 ;; magit
 (use-package magit
