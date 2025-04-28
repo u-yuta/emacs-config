@@ -35,8 +35,6 @@
   
   (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "llm" "python" "screenshot" "scan"))
 
-  (setopt denote-sequence-scheme 'alphanumeric)
-
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
   ;; "[D]" followed by the file's title.  Read the doc string of
@@ -53,6 +51,14 @@
 #+filetags:   %3$s
 #+signature:  %5$s
 \n")
+  )
+
+(use-package denote-sequence
+  :ensure t
+  :vc (:url "https://github.com/protesilaos/denote-sequence" :branch "main" :rev :newest)
+  :after denote
+  :config
+  (setopt denote-sequence-scheme 'alphanumeric)
   )
 
 (with-eval-after-load 'denote
