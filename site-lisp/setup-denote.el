@@ -61,6 +61,12 @@
   (setopt denote-sequence-scheme 'alphanumeric)
   )
 
+(use-package denote-org
+  :ensure t
+  :vc (:url "https://github.com/protesilaos/denote-org" :branch "main" :rev :newest)
+  :after denote
+  )
+
 (with-eval-after-load 'denote
   (require 'org-to-denote))
 
