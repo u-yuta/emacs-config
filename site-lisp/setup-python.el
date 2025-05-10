@@ -30,6 +30,14 @@
             (lambda ()
               ;; バッファローカル変数として corfu-auto を nil に設定
               (setq-local corfu-auto nil))))
+
+  ;; Pythonインタープリターを `uv run python' で起動するコマンド
+  (defun uy/run-python-uv ()
+    "Run an inferior Python process with shell interpreter command `uv run python'."
+    (interactive
+     (let ((python-shell-interpreter "uv")
+           (python-shell-interpreter-args "run python -i"))
+       (call-interactively 'run-python))))
   )
 
 ;; REPLで画像・数式表示
