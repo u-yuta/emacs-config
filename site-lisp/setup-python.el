@@ -19,7 +19,6 @@
 ;; Built-in Python utilities
 (use-package python
   :ensure nil
-  :bind ;(:map python-mode-map ("C-c C-c" . python-shell-send-region))
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
