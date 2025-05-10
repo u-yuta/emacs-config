@@ -23,20 +23,7 @@
   :config
   ;; Remove guess indent python message
   (setq python-indent-guess-indent-offset-verbose nil)
-  ;; Use IPython when available or fall back to regular Python 
-  (cond
-   ((executable-find "ipython")
-    (progn
-      (setq python-shell-buffer-name "IPython")
-      (setq python-shell-interpreter "ipython")
-      (setq python-shell-interpreter-args "-i --simple-prompt")))
-   ((executable-find "python3")
-    (setq python-shell-interpreter "python3"))
-   ((executable-find "python2")
-    (setq python-shell-interpreter "python2"))
-   (t
-    (setq python-shell-interpreter "python")))
-  
+
   ;; REPLで補完文字列がバッファに挿入される問題の対策
   (with-eval-after-load 'corfu
   (add-hook 'inferior-python-mode-hook
