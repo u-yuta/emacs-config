@@ -303,6 +303,13 @@
   ;; Ctrl+arrow でwindmove
   (windmove-default-keybindings 'ctrl))
 
+;; repeat-mode
+;; コマンドのリピート機能を有効にする
+;; 対応しているコマンドを確認するには `M-x describe-repeat-maps'
+(use-package repeat
+  :config
+  (repeat-mode))
+
 ;; ============================================
 ;; 開発支援
 ;; ============================================
