@@ -12,6 +12,7 @@
 .org-id-locations
 auto-save-list/
 /bookmarks
+/dape-breakpoints
 /dirvish
 /eln-cache
 /elpaca/
