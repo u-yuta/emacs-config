@@ -44,6 +44,10 @@
               qwen2.5-coder-instruct
               )
     )
+
+  ;; MCP利用
+  (require 'gptel-integrations)
+
   ;; ディレクティブ
   (setq gptel-directives
         '((default     . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
@@ -86,5 +90,16 @@
   (setopt aidermacs-backend 'vterm)
   (setopt aidermacs-vterm-multiline-newline-key "S-<return>")
   )
+
+;; mcp.el
+(use-package mcp-hub
+  :ensure t
+  :vc (:url "https://github.com/lizqwerscott/mcp.el" :rev :newest)
+  :config
+  (setq mcp-hub-servers
+        `(("filesystem"
+           . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(file-name-concat (getenv "HOME") "AI"))))
+          ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
+          ("mcp-pandoc" . (:command "uvx" :args ("mcp-pandoc"))))))
 
 (provide 'setup-ai)
