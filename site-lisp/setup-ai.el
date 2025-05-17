@@ -21,7 +21,11 @@
   :vc (:url "https://github.com/karthink/gptel" :rev :newest)
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
-  (setopt gptel-model 'Llama-3.1-Swallow-Instruct)  ;; default model
+  (setopt gptel-model 'gpt-4.1-mini)  ;; default model
+
+  ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
+  ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
+
   ;; Gemini
   (gptel-make-gemini "Gemini"
     :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
@@ -33,6 +37,19 @@
     :stream t
     :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
     :models '(deepseek-chat deepseek-coder))
+  ;; Novita AI
+  (gptel-make-openai "Novita"     ;Any name you want
+    :host "api.novita.ai"
+    :endpoint "/v3/openai/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
+    :models '(qwen/qwen3-4b-fp8
+              qwen/qwen3-235b-a22b-fp8
+              deepseek/deepseek-v3-0324
+              meta-llama/llama-3.1-8b-instruct
+              meta-llama/llama-3.3-70b-instruct
+              meta-llama/llama-4-scout-17b-16e-instruct
+              ))
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
     :host "localhost:11434"               ;Where it's running
