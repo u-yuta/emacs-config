@@ -84,6 +84,7 @@
    ;; ("d" "Dired" (lambda () (interactive) (dired default-directory)))  ;; open current dir
    ("d" "Dired" dired-at-point)  ;; open current dir
    ("h" "Help" uy/transient-help-map)  ;; defined in Helpful configuration
+   ("i" "Insert" uy/transient-insert-map)
    ("f" "File" uy/transient-open-file-menu)
    ("g" "Goto" uy/transient-goto-map)
    ("s" "Search" uy/transient-search-map)
@@ -137,6 +138,14 @@
     ("h" "isearch-history" consult-isearch-history)
     ]]
   )
+
+;; Insert key map
+(transient-define-prefix uy/transient-insert-map ()
+   ["Insert"
+    ("t" "timestamp" uy/insert-timestamp)
+    ("y" "yasnippet" yas-insert-snippet)]
+  )
+(global-set-key (kbd "C-c i") 'uy/transient-insert-map)
 
 ;; Window key map
 (transient-define-prefix uy/transient-window-map ()

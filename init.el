@@ -159,6 +159,12 @@
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 
+(defun uy/insert-timestamp ()
+  "Insert timestamp"
+  (interactive)
+  (insert (format-time-string "%Y%m%dT%H%M%S")))
+
+
 ;; ============================================
 ;; 標準モジュールの設定
 ;; ============================================
@@ -538,7 +544,6 @@
   :ensure t
   :custom (yas-snippet-dirs '("~/.emacs.d/snippets"))
   :bind (:map yas-minor-mode-map
-              ("C-c i s" . yas-insert-snippet)
               ("C-c y i" . yas-insert-snippet)
               ("C-c y n" . yas-new-snippet)
               ("C-c y v" . yas-visit-snippet-file)
