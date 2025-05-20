@@ -37,15 +37,19 @@
      (let ((python-shell-interpreter "uv")
            (python-shell-interpreter-args "run python -i"))
        (call-interactively 'run-python))))
+
+  ;; uv環境用の設定
+  ;; TODO ipythonがない場合は python にフォールバックする。u
+  (setopt python-shell-interpreter "uv")
+  (setopt python-shell-interpreter-args "run ipython --simple-prompt --classic")
   )
 
 ;; REPLで画像・数式表示
 (use-package comint-mime
   :ensure t
   :config
-  ;; (when (executable-find "ipython3")
-  ;;   (setq python-shell-interpreter "ipython3"
-  ;;         python-shell-interpreter-args "--simple-prompt --classic"))
+
+  ;; 注： pythonのinterperterがipythonに設定されている必要がある (ipython は ipykernel の依存関係に含まれている)
   (add-hook 'inferior-python-mode-hook 'comint-mime-setup)
   )
 
