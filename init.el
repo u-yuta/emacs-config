@@ -328,7 +328,7 @@
                '((python-mode python-ts-mode)
                  "basedpyright-langserver" "--stdio")) ;; use `basedpyright'
   ;; Disable inlay hints
-  (setopt eglot-ignored-server-capabilites '(:inlayHintProvider))
+  (setopt eglot-ignored-server-capabilities '(:inlayHintProvider))
   )
 
 ;; magit
