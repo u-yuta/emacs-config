@@ -331,6 +331,12 @@
   (setopt eglot-ignored-server-capabilities '(:inlayHintProvider))
   )
 
+;; Tree-sitter
+;; 言語ごとの構文をインストールする手順は `site-lisp/init-treesitter.el' を参照。
+(use-package treesit
+  :config
+  (setopt treesit-font-lock-level 4))
+
 ;; magit
 (use-package magit
   :ensure t
