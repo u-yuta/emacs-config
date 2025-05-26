@@ -42,6 +42,14 @@
   ;; TODO ipythonがない場合は python にフォールバックする。u
   (setopt python-shell-interpreter "uv")
   (setopt python-shell-interpreter-args "run ipython --simple-prompt --classic")
+
+  ;; Pythonのインタープリターにてbuffer-file を `__file__' に設定するコマンド
+  (defun uy/python-shell-set-buffer-path-as-dunder-file ()
+    """Set buffer-file path as __file__ in Python interpreter."""
+    (interactive)
+    (let ((cmd (concat "from pathlib import Path; __file__ = Path(\"" (buffer-file-name) "\").resolve()")))
+      (python-shell-send-string cmd)
+      (message cmd)))
   )
 
 ;; REPLで画像・数式表示
@@ -61,14 +69,13 @@
   :config
   (add-hook 'python-mode-hook 'code-cells-mode-maybe)
   (add-hook 'python-ts-mode-hook 'code-cells-mode-maybe)
-  (with-eval-after-load 'code-cells
-    (let ((map code-cells-mode-map))
-      (define-key map (kbd "M-p") 'code-cells-backward-cell)
-      (define-key map (kbd "M-n") 'code-cells-forward-cell)
-      (define-key map (kbd "C-c C-c") 'code-cells-eval)
-      (define-key map (kbd "<C-return>") 'code-cells-eval-and-step)
-      ;; Overriding other minor mode bindings requires some insistence...
-      (define-key map [remap jupyter-eval-line-or-region] 'code-cells-eval))))
+  (define-key code-cells-mode-map (kbd "M-p") 'code-cells-backward-cell)
+  (define-key code-cells-mode-map (kbd "M-n") 'code-cells-forward-cell)
+  (define-key code-cells-mode-map (kbd "C-c C-c") 'code-cells-eval)
+  (define-key code-cells-mode-map (kbd "<C-return>") 'code-cells-eval-and-step)
+  (define-key code-cells-mode-map (kbd "<S-return>") 'code-cells-eval-and-step)
+  ;; Overriding other minor mode bindings requires some insistence...
+  (define-key map [remap jupyter-eval-line-or-region] 'code-cells-eval))
 
 ;; jupyter
 ;; `jupyter-run-repl' でJupyter REPLのバッファを開く
