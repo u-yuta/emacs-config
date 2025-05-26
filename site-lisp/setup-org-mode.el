@@ -93,7 +93,7 @@
   (setq org-tag-persistent-alist
         '((:startgroup . nil)
           (:startgrouptag)
-          ("Project") (:grouptags) ("PJ@.+")  ;; tag hierarchy, 
+          ("project") (:grouptags) ("PJ@.+")  ;; tag hierarchy, 
           (:endgrouptag)
           (:endgroup . nil)
           (:startgroup . nil)
@@ -101,10 +101,7 @@
           (:endgroup . nil)
           (:newline)
           (:startgroup . nil)
-          ("SemiBiz") ("Optics") ("Simulation") ("Emacs") ("Visualization")
-          (:endgroup . nil)
-          (:startgroup . nil)
-          ("today" . ?t) ("thisweek" . ?w) ("thismonth")
+          ("optics") ("simulation") ("emacs") ("visualization")
           (:endgroup . nil)
           (:startgroup . nil)
           ("@home" . ?h) ("@errand" . ?e) ("@office" . ?o)

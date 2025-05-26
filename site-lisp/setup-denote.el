@@ -33,7 +33,12 @@
   ;; ノート作成時にサブディレクトリとタイトルを指定する
   (setopt denote-prompts '(subdirectory title))
   
-  (setopt denote-known-keywords '("emacs" "journal" "math" "linux" "llm" "python" "screenshot" "scan"))
+  (setopt denote-known-keywords
+          '("journal" "labnote" "moc" ;; 種類・用途
+            "screenshot" "scan" ;; 種類
+            "emacs" "math" "linux" "llm" "python"  ;; 話題
+            "noexport"  ;; org-mode機能
+            ))
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
