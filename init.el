@@ -244,54 +244,9 @@
   )
 
 ;; dired
-(use-package dired
-  :ensure nil
-  :config 
-  ;; ディレクトリがファイルの前に表示される。
-  ;; 隠しファイルも表示される。
-  ;; ファイルサイズは1K, 1.2Mのように読みやすく表示される。
-  ;; ファイル名にバージョン番号がある場合、自然順で並べ替えられる。
-  (setq dired-listing-switches "-laGh1v --group-directories-first")
+(require setup-dired)
 
-  (setq dired-dwim-target t)
-  )
-
-;; dired WSL用の設定
-(when uy/wsl-p
-  (use-package dired
-    :ensure nil
-    :bind (:map dired-mode-map
-                ("C-c o" . dired-open-file-on-windows)
-                )
-    :config
-    (setf dired-kill-when-opening-new-dired-buffer t)
-
-    (defun dired-open-file-on-windows ()
-      "Open files on Windows."
-      (interactive)
-      (message "Opening on Windows: %s..." (dired-get-filename))
-      ;; wslview を使ってWindowsの関連付けで開く。
-      ;; wslview は wslutilities/wslu https://github.com/wslutilities/wslu に含まれる
-      (shell-command (mapconcat #'shell-quote-argument
-                                (list "wslview" (dired-get-filename))
-                                " "))
-      (message "Opened on Windows: %s." (dired-get-filename))
-      )
-    )
-  )
-
-;; dired-preview
-(use-package dired-preview
-  :ensure t
-  :config
-  (setopt dired-preview-ignored-extensions-regexp
-          (concat
-           "\\.\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|m4a\\|flac\\|wav\\|gz\\|zst\\|tar\\|xz\\|rar\\|zip\\|iso\\|epub\\|pdf"  ;; default value
-           "\\|docx\\|xlsx\\|pptx"  ;; MS Office
-           "\\)"))
-  (setopt dired-preview-delay 0.3)
-  )
-
+;; project
 (use-package project
   :ensure nil
   ;; Cannot use :hook because 'project-find-functions does not end in -hook
