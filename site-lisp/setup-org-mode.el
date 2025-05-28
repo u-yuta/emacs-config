@@ -86,8 +86,8 @@
   (add-to-list 'org-file-apps '("\\.docx?\\'" . "wslview %s"))
   (add-to-list 'org-file-apps '("\\.pptx?\\'" . "wslview %s"))
   
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+  (setopt org-todo-keywords
+        '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
           (sequence "WAITING(w!)" "HOLD(h!)" "|" "SOMEDAY(s!)" "CANCELLED(c!)")))
 
   (setq org-tag-persistent-alist

@@ -50,6 +50,15 @@
   (ef-themes-select 'ef-owl)
   )
 
+;; 表示色のカスタマイズ
+(custom-set-faces
+ ;; ef-themesでは orgのデフォルト値を引き継いでいる
+ '(org-done ((t (:foreground "dark gray"   
+                             :strike-through t))))
+ '(org-headline-done 
+   ((((class color) (min-colors 16) (background dark)) 
+     (:foreground "dark gray" :strike-through t)))))
+
 ;; modeline 
 (use-package moody
   :ensure t
