@@ -75,7 +75,7 @@
   (define-key code-cells-mode-map (kbd "<C-return>") 'code-cells-eval-and-step)
   (define-key code-cells-mode-map (kbd "<S-return>") 'code-cells-eval-and-step)
   ;; Overriding other minor mode bindings requires some insistence...
-  (define-key map [remap jupyter-eval-line-or-region] 'code-cells-eval))
+  (define-key code-cells-mode-map [remap jupyter-eval-line-or-region] 'code-cells-eval))
 
 ;; jupyter
 ;; `jupyter-run-repl' でJupyter REPLのバッファを開く
