@@ -244,7 +244,7 @@
   )
 
 ;; dired
-(require setup-dired)
+(require 'setup-dired)
 
 ;; project
 (use-package project
