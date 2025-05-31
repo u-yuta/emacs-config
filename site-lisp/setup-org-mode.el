@@ -87,8 +87,8 @@
   (add-to-list 'org-file-apps '("\\.pptx?\\'" . "wslview %s"))
   
   (setopt org-todo-keywords
-        '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
-          (sequence "WAITING(w!)" "HOLD(h!)" "|" "SOMEDAY(s!)" "CANCELLED(c!)")))
+          '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
+            (sequence "WAITING(w!)" "HOLD(h!)" "|" "SOMEDAY(s!)" "CANCELLED(c!)")))
 
   (setq org-tag-persistent-alist
         '((:startgroup . nil)
@@ -139,6 +139,13 @@
   ;; add file name to refile target path list
   (setq org-outline-path-complete-in-steps nil)
   (setq org-refile-use-outline-path 'file)
+
+  ;; org-agendaでのアイテム表示のカスタマイズ
+  (setopt org-agenda-prefix-format
+          '((agenda . " %i %-12:c%?-12t% s")
+            (todo . " %i%36b ")  ;; breadcrumbs を表示
+            (tags . " %i %-12:c")
+            (search . " %i %-12:c")))
 
   ;; リファイルするとともにattachmentsもリファイル先に移動する
   (defun uy/org-refile-with-attachments-keep-id ()
@@ -333,8 +340,8 @@
   (add-hook 'dired-mode-hook
             (lambda ()
               (define-key dired-mode-map
-                (kbd "C-c C-x a")
-                #'org-attach-dired-to-subtree)))
+                          (kbd "C-c C-x a")
+                          #'org-attach-dired-to-subtree)))
 
   (use-package ox-reveal
     :ensure t
