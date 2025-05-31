@@ -56,6 +56,19 @@
 #+filetags:   %3$s
 #+signature:  %5$s
 \n")
+
+  ;; Documents フォルダにDenoteのノートを作るコマンド
+  (defun uy/denote-in-document-directory ()
+    """Create a Denote-format note in `~/Documents'."""
+    (interactive)
+    (let ((denote-directory "~/Documents"))
+      (denote-subdirectory)))
+
+  (defun uy/denote-in-document-directory-current-month ()
+    """Create a Denote-format note in `~/Documents/YYYY/mm'."""
+    (interactive)
+    (let ((denote-directory (format-time-string "~/Documents/%Y/%m")))
+      (denote-subdirectory)))
   )
 
 (use-package denote-sequence
