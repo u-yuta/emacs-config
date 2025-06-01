@@ -143,7 +143,7 @@
   ;; org-agendaでのアイテム表示のカスタマイズ
   (setopt org-agenda-prefix-format
           '((agenda . " %i %-12:c%?-12t% s")
-            (todo . " %i%36b ")  ;; breadcrumbs を表示
+            (todo . " %i%-40.40b ")  ;; breadcrumbs を表示
             (tags . " %i %-12:c")
             (search . " %i %-12:c")))
 
