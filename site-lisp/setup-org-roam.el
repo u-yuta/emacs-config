@@ -43,15 +43,6 @@
         '(("d" "default" plain "%?" :target
            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
            :unnarrowed t)
-           ("w" "work" plain "%?" :target
-           (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
-           :unnarrowed t)
-          ("p" "personal" plain "%?" :target
-           (file+head "personal/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
-           :unnarrowed t)
-          ("s" "share" plain "%?" :target
-           (file+head "share/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
-           :unnarrowed t)
           ))
   
   ;; Manage ID locations
