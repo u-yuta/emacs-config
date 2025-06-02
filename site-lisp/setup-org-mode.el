@@ -79,6 +79,10 @@
   ;; Font size control of LateX previews in Org files
   (plist-put org-format-latex-options :scale 1.25)
   
+  ;; Archiveの保存先ファイル： `<元ファイル名>_archive`, 見出し： datetree。
+  ;; datetree の日付は CLOSED があればその日になる。なければ現在の日付になる。
+  (setopt org-archive-location "%s_archive::datetree/")
+
   ;; リンクを開くプログラムの指定
   ;; Windowsの関連付けでファイルを開くために wslview を使う。
   ;; （wslviewは wslutilities/wslu https://github.com/wslutilities/wslu に含まれる）
