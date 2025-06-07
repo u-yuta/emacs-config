@@ -31,68 +31,71 @@ Fixed to 'org format to preserve org-mode properties."
   :type '(const :tag "Org" org)
   :group 'org-to-denote)
 
+
 (defun org-to-denote-extract-heading-content ()
   "Extract the current heading's content without the heading itself.
 Return a list (heading content timestamp property-id properties) where timestamp,
 property-id, and properties may be nil. PROPERTIES blocks are removed from content."
   (org-back-to-heading t)
-  (let* ((heading (nth 4 (org-heading-components)))
-         (heading-text (replace-regexp-in-string
-                        org-link-bracket-re
-                        "\\2"
-                        (or heading "")))
-         (element (org-element-at-point))
-         (begin (org-element-property :contents-begin element))
-         (end (org-element-property :contents-end element))
-         (content (if (and begin end)
-                      (buffer-substring-no-properties begin end)
-                    ""))
-         ;; Extract timestamp in format [YYYY-MM-DD Day HH:MM]
-         (timestamp-regex "\\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [A-Za-z]\\{3\\} [0-9]\\{2\\}:[0-9]\\{2\\}\\)\\]")
-         (timestamp nil)
+  (let* ((heading-text (org-to-denote--get-heading-text))
+         (content (org-to-denote--get-content))
+         (timestamp (org-to-denote--extract-timestamp heading-text))
+         (clean-heading (org-to-denote--clean-heading heading-text timestamp))
          (properties (org-entry-properties nil))
-         (property-id (cdr (assoc "ID" properties)))
-         (clean-heading heading-text))
+         (property-id (org-to-denote--get-valid-property-id properties))
+         (clean-content (org-to-denote--remove-properties-drawer content)))
     
-    ;; Check if heading contains a timestamp
-    (when (string-match timestamp-regex heading-text)
-      (setq timestamp (match-string 1 heading-text))
-      ;; Remove timestamp from heading
-      (setq clean-heading (string-trim (replace-regexp-in-string timestamp-regex "" heading-text))))
-    
-    ;; Check if ID property has Denote identifier format (YYYYMMDDThhmmss)
+    (list clean-heading clean-content timestamp property-id properties)))
+
+(defun org-to-denote--get-heading-text ()
+  "Get the heading text with links cleaned up."
+  (let ((heading (nth 4 (org-heading-components))))
+    (replace-regexp-in-string
+     org-link-bracket-re "\\2"
+     (or heading ""))))
+
+(defun org-to-denote--get-content ()
+  "Get the content of the current heading."
+  (let* ((element (org-element-at-point))
+         (begin (org-element-property :contents-begin element))
+         (end (org-element-property :contents-end element)))
+    (if (and begin end)
+        (buffer-substring-no-properties begin end)
+      "")))
+
+(defun org-to-denote--extract-timestamp (text)
+  "Extract timestamp from TEXT in format [YYYY-MM-DD Day HH:MM]."
+  (let ((timestamp-regex "\\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [A-Za-z]\\{3\\} [0-9]\\{2\\}:[0-9]\\{2\\}\\)\\]"))
+    (when (string-match timestamp-regex text)
+      (match-string 1 text))))
+
+(defun org-to-denote--clean-heading (heading timestamp)
+  "Remove TIMESTAMP from HEADING if present."
+  (if timestamp
+      (let ((timestamp-regex "\\[\\([0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\} [A-Za-z]\\{3\\} [0-9]\\{2\\}:[0-9]\\{2\\}\\)\\]"))
+        (string-trim (replace-regexp-in-string timestamp-regex "" heading)))
+    heading))
+
+(defun org-to-denote--get-valid-property-id (properties)
+  "Get valid Denote identifier from PROPERTIES if it exists."
+  (let ((property-id (cdr (assoc "ID" properties))))
     (when (and property-id 
                (string-match "^[0-9]\\{8\\}T[0-9]\\{6\\}$" property-id))
-      (setq property-id property-id))
-    
-    ;; Remove PROPERTIES drawer from content
-    (with-temp-buffer
-      (insert content)
-      (goto-char (point-min))
-      (let ((case-fold-search t))
-        (while (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$" nil t)
-          (let ((prop-start (match-beginning 0)))
-            (if (re-search-forward "^[ \t]*:END:[ \t]*$" nil t)
-                (delete-region prop-start (line-beginning-position 2))
-              (goto-char (point-max))))))
-      (setq content (string-trim (buffer-string))))
-    
-    ;; Return the extracted data
-    (list clean-heading content timestamp property-id properties)))
+      property-id)))
 
-(defun org-to-denote-parse-timestamp (timestamp)
-  "Convert org timestamp to denote identifier format.
-TIMESTAMP should be in format YYYY-MM-DD Day HH:MM."
-  (when timestamp
-    (let ((date-time (parse-time-string timestamp)))
-      ;; Format as YYYYMMDDThhmmss
-      (format-time-string "%Y%m%dT%H%M%S" 
-                          (encode-time (nth 0 date-time) ; seconds
-                                      (nth 1 date-time) ; minutes
-                                      (nth 2 date-time) ; hour
-                                      (nth 3 date-time) ; day
-                                      (nth 4 date-time) ; month
-                                      (nth 5 date-time)))))) ; year
+(defun org-to-denote--remove-properties-drawer (content)
+  "Remove PROPERTIES drawer from CONTENT."
+  (with-temp-buffer
+    (insert content)
+    (goto-char (point-min))
+    (let ((case-fold-search t))
+      (while (re-search-forward "^[ \t]*:PROPERTIES:[ \t]*$" nil t)
+        (let ((prop-start (match-beginning 0)))
+          (if (re-search-forward "^[ \t]*:END:[ \t]*$" nil t)
+              (delete-region prop-start (line-beginning-position 2))
+            (goto-char (point-max))))))
+    (string-trim (buffer-string))))
+
 
 (defun org-to-denote ()
   "Export the current org-mode heading to a denote file.
@@ -114,38 +117,42 @@ the ID property in the desired format."
     (user-error "Not in org-mode"))
   
   (let* ((heading-data (org-to-denote-extract-heading-content))
-         (heading (nth 0 heading-data))
-         (content (nth 1 heading-data))
-         (timestamp (nth 2 heading-data))
-         (property-id (nth 3 heading-data))
-         (tags (org-get-tags nil t))
-         ;; Always use org file type
-         (file-type 'org)
-         ;; Prefer heading timestamp over property ID
-         (denote-id (or (when timestamp (org-to-denote-parse-timestamp timestamp))
-                         property-id))
-         (denote-use-title heading)
-         (denote-use-keywords tags)
-         (denote-use-file-type file-type)
-         (denote-use-date (when denote-id (date-to-time denote-id)))
-         (note-path))
+         (denote-params (org-to-denote--build-params heading-data))
+         (note-path (org-to-denote--create-file denote-params))
+         (content (nth 1 heading-data)))
     
-    ;; Create the denote file using the built-in denote function
-    (setq note-path (denote))
-    
-    ;; Insert the content into the denote file 
-    (with-current-buffer (find-file-noselect note-path)
-      ;; Move to the end of the file
-      (goto-char (point-max))
-      
-      ;; Insert content
-      (insert content)
-      (save-buffer))
-    
+    (org-to-denote--insert-content note-path content)
     (message "Created denote file: %s" note-path)
-    
-    ;; Return the path to the created file
     note-path))
+
+(defun org-to-denote--build-params (heading-data)
+  "Build denote parameters from HEADING-DATA."
+  (let ((heading (nth 0 heading-data))
+        (timestamp (nth 2 heading-data))
+        (property-id (nth 3 heading-data))
+        (tags (org-get-tags nil t)))
+    (list :title heading
+          :keywords tags
+          :file-type 'org
+          :id (or (when timestamp (format-time-string "%Y%m%dT%H%M%S"))
+                  property-id)
+          :date (when (or timestamp property-id)
+                  (date-to-time (or timestamp property-id))))))
+
+(defun org-to-denote--create-file (params)
+  "Create denote file with PARAMS."
+  (let ((denote-use-title (plist-get params :title))
+        (denote-use-keywords (plist-get params :keywords))
+        (denote-use-file-type (plist-get params :file-type))
+        (denote-use-date (plist-get params :date)))
+    (denote)))
+
+(defun org-to-denote--insert-content (note-path content)
+  "Insert CONTENT into denote file at NOTE-PATH."
+  (with-current-buffer (find-file-noselect note-path)
+    (goto-char (point-max))
+    (insert content)
+    (save-buffer)))
 
 (provide 'org-to-denote)
 ;;; org-to-denote.el ends here
