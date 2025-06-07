@@ -83,9 +83,31 @@
   :ensure t
   :vc (:url "https://github.com/protesilaos/denote-org" :branch "main" :rev :newest)
   :after denote
-  )
+  :config
+  ;; denote-org-extract-org-subtree の動作を変更。見出しにタイムスタンプがあれば使う。
+  (defun denote-org--get-heading-date ()
+    "Try to return a timestamp for the current Org heading.
+This can be used as the value for the DATE argument of the
+`denote' command."
+    (when-let* ((pos (point))
+                (timestamp (or (org-entry-get pos "DATE")
+                               (org-entry-get pos "CREATED")
+                               (org-entry-get pos "CLOSED")
+                               (uy/org--get-date-in-title)  ;; added
+                               )))
+      (date-to-time timestamp)))
 
-(with-eval-after-load 'denote
-  (require 'org-to-denote))
+  (defun uy/org--get-date-in-title ()
+    """headingからタイムスタンプを抽出する"""
+    (let ((heading (org-get-heading t t)))
+      (when (string-match (org-re-timestamp 'all) heading)
+        (match-string 0 heading))))
+
+  (defun uy/denote-org-extract-org-subtree-to-current-month-dir ()
+    (interactive nil org-mode)
+    (let ((denote-directory (format-time-string "~/Documents/%Y/%m")))
+      (denote-org-extract-org-subtree))
+    )
+  )
 
 (provide 'setup-denote)
