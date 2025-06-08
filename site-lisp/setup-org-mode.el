@@ -40,7 +40,7 @@
 
   :init
   ;; 保存先
-  (setq org-directory "~/org-roam/")
+  (setq org-directory "~/Documents/org/")
   (setq uy/journal-directory (file-name-concat org-directory "p1-journal"))
   (setq org-agenda-files (list (file-name-concat uy/journal-directory "agenda.org")))
   (setq org-startup-folded nil)
