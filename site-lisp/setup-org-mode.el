@@ -31,6 +31,7 @@
   :bind (("C-c c" . org-capture)
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
+         ("C-c C-x C-j" . org-clock-goto)
          :map org-mode-map
          ("C-c ." . org-time-stamp-inactive)
          ("C-c !" . org-time-stamp)
