@@ -58,17 +58,24 @@
 \n")
 
   ;; Documents フォルダにDenoteのノートを作るコマンド
-  (defun uy/denote-in-document-directory ()
+  (defun uy/denote-in-documents ()
     """Create a Denote-format note in `~/Documents'."""
     (interactive)
     (let ((denote-directory "~/Documents"))
       (denote-subdirectory)))
 
-  (defun uy/denote-in-document-directory-current-month ()
+  (defun uy/denote-in-documents-current-month ()
     """Create a Denote-format note in `~/Documents/YYYY/mm'."""
     (interactive)
     (let ((denote-directory (format-time-string "~/Documents/%Y/%m")))
       (denote-subdirectory)))
+
+  ;; Documents フォルダをdenote-directoryとしてdenote-diredを実行する
+  (defun uy/denote-dired-documents ()
+    (interactive)
+    (let ((denote-directory "~/Documents"))
+      (call-interactively 'denote-dired))
+    )
   )
 
 (use-package denote-sequence
