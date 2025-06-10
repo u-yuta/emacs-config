@@ -42,7 +42,7 @@
   ;; 保存先
   (setq org-directory "~/Documents/org/")
   (setq uy/journal-directory (file-name-concat org-directory "p1-journal"))
-  (setq org-agenda-files (list (file-name-concat uy/journal-directory "agenda.org")))
+  (setq org-agenda-files '("s0-agenda/shared-agenda.org"))  ;; shared directory
   (setq org-startup-folded nil)
 
   :config  
@@ -148,7 +148,7 @@
   ;; org-agendaでのアイテム表示のカスタマイズ
   (setopt org-agenda-prefix-format
           '((agenda . " %i %-12:c%?-12t% s")
-            (todo . " %i%-40.40b ")  ;; breadcrumbs を表示
+            (todo . "%-12.12c %i%-40.40b ")  ;; breadcrumbs を表示
             (tags . " %i %-12:c")
             (search . " %i %-12:c")))
 
