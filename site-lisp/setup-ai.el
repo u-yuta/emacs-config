@@ -115,8 +115,14 @@
   :config
   (setq mcp-hub-servers
         `(("filesystem"
-           . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(file-name-concat (getenv "HOME") "AI"))))
+           . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(file-name-concat (getenv "HOME") "Documents" "AI"))))
           ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
-          ("mcp-pandoc" . (:command "uvx" :args ("mcp-pandoc"))))))
+          ("mcp-pandoc" . (:command "uvx" :args ("mcp-pandoc")))
+          ("markitdown" .
+           (:command "docker"
+            :args ("run" "--rm" "-i" "-v"
+                            ,(concat (file-name-concat (getenv "HOME") "Documents/AI") ":/workdir")
+                            "markitdown-mcp:latest")))))
+  )
 
 (provide 'setup-ai)
