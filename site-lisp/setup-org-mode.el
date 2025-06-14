@@ -119,9 +119,7 @@
   (defun uy/journal-file-name-year-month ()
     "Return a string representing the journal file path in the formatting
     '<journal-directory>/journal-YYYY-mm.org' using current year and month."
-    (let ((year (format-time-string "%Y"))
-          (month (format-time-string "%m")))
-      (file-name-concat uy/journal-directory (concat "journal-" year "-" month ".org"))))
+    (file-name-concat uy/journal-directory (format-time-string "journal-%Y-%m.org")))
 
   ;; org-modeのcapture template
   (setq org-capture-templates
