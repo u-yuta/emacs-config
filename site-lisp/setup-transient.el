@@ -30,14 +30,12 @@
      (lambda () (interactive) (find-file (uy/journal-file-name-year-month))))
     ("a" "Agenda"
      (lambda () (interactive) (find-file uy/org-agenda-file)))
-    ("i" "Shared index"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "share-files/02_index_shared.org"))))
+    ("A" "Shared Agenda"
+     (lambda () (interactive) (find-file (file-name-concat org-directory "s0-agenda/shared-agenda.org"))))
     ("h" "Home index"
      (lambda () (interactive) (find-file (file-name-concat org-directory "00_index_home.org"))))
-    ("l" "Lab notes"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "lab-notes"
-                                                           (format-time-string "%Y")
-                                                           (format-time-string "%m")))))
+    ("m" "Documents/YYYY/mm"
+     (lambda () (interactive) (find-file (format-time-string "~/Documents/%Y/%m"))))
     ("." "Emacs init"
      (lambda () (interactive) (find-file user-init-file)))
    ]
