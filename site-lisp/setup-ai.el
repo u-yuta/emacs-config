@@ -125,4 +125,20 @@
                             "markitdown-mcp:latest")))))
   )
 
+;; Autocompletion using gptel
+(use-package gptel-autocomplete
+  :vc (:url "https://github.com/JDNdeveloper/gptel-autocomplete" :rev :newest)
+  :bind
+  (("M-i" . #'gptel-complete) ;; complete at point
+   ("M-a" . #'gptel-accept-completion)  ;; accept currently displayed completion
+   )
+  :config
+  (setopt gptel-autocomplete-before-context-lines 50)
+  (setopt gptel-autocomplete-after-context-lines 10)
+  
+  (setopt gptel-autocomplete-before-context-lines 100)
+  (setopt gptel-autocomplete-after-context-lines 20) 
+  (setopt gptel-autocomplete-temperature 0.1)
+  )
+
 (provide 'setup-ai)
