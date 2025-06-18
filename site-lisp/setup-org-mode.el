@@ -377,6 +377,23 @@
   (setq org-download-screenshot-method
         "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\""))
 
+;; el-easydraw
+(use-package edraw-org
+  :ensure t
+  :after org
+  :vc (:url "https://github.com/misohena/el-easydraw" :rev :newest)
+  :config
+  (edraw-org-setup-default))
+
+;; When using the org-export-in-background option (when using the
+;; asynchronous export function), the following settings are
+;; required. This is because Emacs started in a separate process does
+;; not load org.el but only ox.el.
+(with-eval-after-load "ox"
+  (require 'edraw-org)
+  (edraw-org-setup-exporter))
+
+
 ;; Tableの形式をその場で変換する関数。
 (defun org-table-transform-in-place ()
   "Just like `ORG-TABLE-EXPORT', but instead of exporting to a
