@@ -478,6 +478,9 @@
 ;; Denote
 (require 'setup-denote)
 
+;; Note search
+(require 'setup-note-search)
+
 ;; ミニバッファ周りの設定 vertico, consult (embarkも)
 (require 'setup-vertico-consult)  ;; in site-lisp
 

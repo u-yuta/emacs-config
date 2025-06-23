@@ -36,3 +36,5 @@
     (consult-notes-denote-mode))
   ;; search only for text files in denote dir
   (setopt consult-notes-denote-files-function (lambda () (denote-directory-files nil t t))))
+
+(provide 'setup-note-search)
