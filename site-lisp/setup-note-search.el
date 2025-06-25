@@ -24,6 +24,10 @@
              ;; if using org-roam
              consult-notes-org-roam-find-node
              consult-notes-org-roam-find-node-relation)
+  :bind (
+         ("M-s n" . consult-notes)
+         ("M-s N" . consult-notes-search-in-all-notes)
+         )
   :config
   (setopt consult-notes-file-dir-sources
           '(("Documents"  ?d  "~/Documents")
