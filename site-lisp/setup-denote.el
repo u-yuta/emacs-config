@@ -81,7 +81,26 @@
        'identifier   ; 日付=identifier
        t             ; 逆順
        nil)))
-  )
+
+  ;; ノートを保存時に自動でリネームする https://protesilaos.com/emacs/denote
+  (defun my-denote-always-rename-on-save-based-on-front-matter ()
+    "Rename the current Denote file, if needed, upon saving the file.
+  Rename the file based on its front matter, checking for changes in the
+  title or keywords fields.
+  
+  Add this function to the `after-save-hook'."
+    (let ((denote-rename-confirmations nil)
+          (denote-save-buffers t)) ; to save again post-rename
+      (when (and buffer-file-name (denote-file-is-note-p buffer-file-name))
+        (ignore-errors (denote-rename-file-using-front-matter buffer-file-name))
+        (message "Buffer saved; Denote file renamed"))))
+
+  (defun my/enable-denote-rename-on-save ()
+    (add-hook 'after-save-hook
+              #'my-denote-always-rename-on-save-based-on-front-matter
+              nil t))
+  (add-hook 'denote-rename-buffer-mode-hook #'my/enable-denote-rename-on-save)
+    )
 
 (use-package denote-sequence
   :ensure t
