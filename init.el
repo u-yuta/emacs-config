@@ -535,6 +535,7 @@
   :defer t
   :config
   ;; initialize
+  (pdf-tools-install)
   (pdf-loader-install))
 
 ;; visual undo-tree
