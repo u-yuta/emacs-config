@@ -29,7 +29,7 @@
    ("C-c n b" . denote-backlinks)
    ("C-c n d" . denote-sort-dired))
   :config
-  (setopt denote-directory org-directory)
+  (setopt denote-directory "~/Documents")
   ;; ノート作成時にサブディレクトリとタイトルを指定する
   (setopt denote-prompts '(subdirectory title))
   
@@ -57,29 +57,25 @@
 #+signature:  %5$s
 \n")
 
-  ;; Documents フォルダ以下の選択したフォルダにノートを作るコマンド
-  (defun uy/denote-in-documents ()
-    "Create a Denote-format note in `~/Documents'."
-    (interactive)
-    (let ((denote-directory "~/Documents"))
-      (denote-subdirectory)))
-
   ;; Documents/YYYY/mm にノートを作るコマンド
   (defun uy/denote-in-documents-current-month ()
     "Create a Denote-format note in `~/Documents/YYYY/mm'."
     (interactive)
-    (let ((denote-directory (format-time-string "~/Documents/%Y/%m")))
+    (let ((denote-directory (format-time-string "~/Documents/%Y/%m"))
+          (denote-prompts '(title)))
       (call-interactively 'denote)))
 
-  ;; Documents のノートをDiredで一覧表示するコマンド
-  (defun uy/denote-sort-dired-documents-by-date-descending ()
-    "Display Denote files in dired sorted by date in descending (newest first) order."
-    (interactive)
-    (let ((denote-directory "~/Documents"))
+  ;; 指定したディレクトリ内で正規表現にマッチするノートを日付降順で一覧表示する
+  (defun uy/denote-sort-dired-by-date-descending (denote-dir)
+    "Display Denote files in dired sorted by date in descending (newest first) order,
+  prompting for the directory."
+    (interactive
+     (list (read-directory-name "Denote directory: " default-directory)))
+    (let ((denote-directory denote-dir))
       (denote-sort-dired
        (denote-files-matching-regexp-prompt)
-       'identifier   ; 日付=identifier
-       t             ; 逆順
+       'identifier
+       t
        nil)))
 
   ;; ノートを保存時に自動でリネームする https://protesilaos.com/emacs/denote
