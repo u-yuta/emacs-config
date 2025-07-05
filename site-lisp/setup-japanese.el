@@ -108,23 +108,6 @@
               (set (make-local-variable 'pangu-spacing-real-insert-separtor) t)))
   )
 
-;; migemo設定
-(use-package migemo
-  :ensure t
-  :if (executable-find "cmigemo")  ;; Ubuntuの場合 `sudo apt install cmigemo`
-  :config
-  (setq migemo-command "cmigemo")
-  (setq migemo-options '("-q" "--emacs"))
-  ;; Ubuntuで `sudo apt install cmigemo` でインストールした場合
-  ;; (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
-  ;; AZIK対応版 (https://github.com/p-snow/cmigemo) を標準設定でビルドした場合
-  (setq migemo-dictionary "/usr/local/share/migemo/utf-8/migemo-dict")
-
-  (setq migemo-user-dictionary nil)
-  (setq migemo-regex-dictionary nil)
-  (setq migemo-coding-system 'utf-8-unix)
-  (migemo-init))
-
 ;; IME切り替えキー設定
 (global-set-key (kbd "<muhenkan>") 'disable-input-method)
 (global-set-key (kbd "<henkan>") 'enable-input-method)

@@ -113,7 +113,7 @@
     ("e" "compile-error" consult-compile-error)
     ("f" "flymake" consult-flymake)
     ("g" "goto-line" consult-goto-line)
-    ("j" "goto-char-timer" avy-goto-migemo-timer)
+    ("j" "goto-char-timer" avy-goto-char-timer)
     ("o" "outline" consult-outline)
     ("m" "mark" consult-mark)
     ("k" "global mark" consult-global-mark)

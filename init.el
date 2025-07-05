@@ -411,25 +411,12 @@
 (use-package avy
   :ensure t
   :bind
-  (("M-j" . avy-goto-migemo-timer)
+  (("M-j" . avy-goto-char-timer)
    ("M-g g" . avy-goto-char-2)
    ("M-g M-g" . avy-goto-line))
-  :commands (avy-goto-migemo-timer)
+  :commands (avy-goto-char-timer)
   :config
   
-  ;; avy-goto-timer + migemo
-  (require 'migemo)
-  (defun avy-goto-migemo-timer (&optional arg)
-    (interactive "P")
-    (let ((avy-all-windows (if arg
-                               (not avy-all-windows)
-                             avy-all-windows)))
-      (avy-with avy-goto-migemo-timer
-        (setq avy--old-cands (avy--read-candidates #'migemo-get-pattern))
-        (avy-process avy--old-cands))))
-  ;; 選択用の文字を候補と重ねずに前方に表示する
-  (add-to-list 'avy-styles-alist '(avy-goto-migemo-timer . pre))
-
   ;; isearchの候補をavyで選択する
   (define-key isearch-mode-map (kbd "M-j") 'avy-isearch)
 
