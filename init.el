@@ -135,7 +135,7 @@
 
 ;; 基本編集設定
 (setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
+;; (setq-default tab-width 4)  ;; Org 9.7 以降ではtab-widthが8以外になっているとエラーになる
 (setq-default fill-column 80)
 (setq case-fold-search nil)
 
