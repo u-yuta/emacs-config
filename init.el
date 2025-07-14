@@ -505,6 +505,7 @@
 
 (use-package yasnippet-snippets
   :ensure t
+  :vc (:url "https://github.com/u-yuta/yasnippet-snippets" :branch "main" :rev :newest)
   :after yasnippet
   :config
   (setq yas-snippet-dirs (append yas-snippet-dirs (list yasnippet-snippets-dir))))
