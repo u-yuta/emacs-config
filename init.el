@@ -511,11 +511,6 @@
 
 (require 'setup-completion)
 
-;; Displays eldoc documentations in a childframe
-(use-package eldoc-box
-  :ensure t
-  :bind ("M-i" . eldoc-box-eglot-help-at-point))
-
 ;; pdf-tools
 (use-package pdf-tools
   :ensure t

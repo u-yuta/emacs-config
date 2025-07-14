@@ -138,11 +138,15 @@
 
 ;; Insert key map
 (transient-define-prefix uy/transient-insert-map ()
-   ["Insert"
+   [["Insert"
     ("t" "timestamp" uy/insert-timestamp)
-    ("y" "yasnippet" yas-insert-snippet)]
+    ("y" "yas-insert-snippet" yas-insert-snippet)]
+    ["Completion"
+    ("i" "completion-at-point" completion-at-point)
+    ("x" "yas-expand" yas-expand)]]
   )
 (global-set-key (kbd "C-c i") 'uy/transient-insert-map)
+(global-set-key (kbd "M-i") 'uy/transient-insert-map)
 
 ;; Window key map
 (transient-define-prefix uy/transient-window-map ()
