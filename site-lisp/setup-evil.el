@@ -43,8 +43,6 @@
   (evil-define-key 'normal 'global (kbd "C-.") nil)  ;; Embarkで使う
   (evil-define-key 'normal 'global (kbd "M-.") nil)  ;; Embarkで使う
 
-  ;; <SPC> をLeader key として使用する設定を setup-transient.el に記載している。
-
   ;; すべてのブログラミングモードでアンダースコアを単語の一部として扱う
   ;; https://github.com/syl20bnr/spacemacs/blob/develop/doc/FAQ.org#include-underscores-and-dashes-in-word-motions
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))

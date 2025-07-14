@@ -71,8 +71,7 @@
   )
 
 ;; Leader key menu -----------------------
-(with-eval-after-load 'evil
-  (evil-define-key 'normal 'global (kbd "<SPC>") 'uy/transient-leader-menu))
+(global-set-key (kbd "C-c m") 'uy/transient-leader-menu)
 
 (transient-define-prefix uy/transient-leader-menu ()
   ["Leader key menu"
