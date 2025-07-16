@@ -36,10 +36,36 @@
 ;; ツールチップ表示フォント
 (set-face-attribute 'tooltip nil :family "UDEV Gothic NF" :height 100)
 
-;; 記号の文字化け対策
-(cond
-  ((eq system-type 'windows-nt)
-   (set-fontset-font t 'symbol (font-spec :family "Segoe UI Symbol") nil nil)))
+;; 絵文字の表示フォント設定
+(setopt use-default-font-for-symbols nil)
+(setopt emoji-font "Segoe UI Emoji")  ;; `Noto Color Emoji' だと表示されなかった。
+(setopt emoji-font-fallback "Segoe UI Symbol")  ;; emoji-font に含まれない文字はこれで表示
+(set-fontset-font t 'emoji emoji-font)
+(set-fontset-font t 'emoji emoji-font-fallback nil 'append)
+;; 絵文字コード範囲を追加設定する
+;; 標準で設定されている emoji 範囲 (127744 128512) に含まれていない絵文字ブロックの定義
+(setopt uy/emoji-unicode-ranges-add ;; Unicode絵文字ブロック
+        '((#x1F300 . #x1F5FF) ;; "Misc Symbols and Pictographs"
+          (#x1F600 . #x1F64F) ;; "Emoticons"
+          (#x1F650 . #x1F67F) ;; "Ornamental Dingbats"
+          (#x1F680 . #x1F6FF) ;; "Transport and Map"
+          (#x1F900 . #x1F9FF) ;; "Supplemental Symbols"
+          ;; その他の記号範囲
+          (#x2600 . #x26FF) ;; "Miscellaneous Symbols"
+          (#x2700 . #x27BF) ;; "Dingbats"
+          ))
+(dolist (range-info uy/emoji-unicode-ranges-add)
+  (set-fontset-font t range-info emoji-font)
+  (set-fontset-font t range-info emoji-font-fallback nil 'append))
+
+;; 絵文字表示確認用のサンプル
+;; Misc Symbols and Pictographs (U+1F300-1F5FF): 🌀🌁🌂🌃🌄🌅🌆🌇🌈🌉
+;; Emoticons (U+1F600-1F64F): 😀😁😂😃😄😅😆😇😈😉
+;; Ornamental Dingbats (U+1F650-1F67F): 🙐🙑🙒🙓🙔🙕🙖🙗🙘🙙
+;; Transport and Map (U+1F680-1F6FF): 🚀🚁🚂🚃🚄🚅🚆🚇🚈🚉
+;; Supplemental Symbols (U+1F900-1F9FF): 🤌🤍🤎🤏🤐🤑🤒🤓🤔🤕
+;; Miscellaneous Symbols (U+2600-26FF): ☀☁☂☃☄★☆☇☈☉
+;; Dingbats (U+2700-27BF): ✀✁✂✃✄✅✆✇✈✉
 
 ;; 日本語IME設定
 (if uy/system-windows-p
