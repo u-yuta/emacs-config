@@ -353,7 +353,9 @@
   :mode
   ("README\\.md\\'" . gfm-mode)
   :init
-  (setq markdown-command '("pandoc" "--from=markdown" "--to=html5")))
+  (setq markdown-command '("pandoc" "--from=markdown" "--to=html5"))
+  (setopt markdown-asymmetric-header t)
+  )
 
 ;; YAML
 (use-package yaml-mode :ensure t :defer t)
