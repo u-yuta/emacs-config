@@ -97,14 +97,6 @@
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
 
-;; Display emojis
-(use-package emojify
-  :ensure t
-  :hook (after-init . global-emojify-mode)
-  :config
-  ;; unicode, github を対象にする（asciiは除外） 
-  (emojify-set-emoji-styles '(unicode github)))
-
 (use-package volatile-highlights
   :ensure t
   :hook
