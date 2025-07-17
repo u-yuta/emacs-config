@@ -75,21 +75,5 @@
   :ensure t
   :vc (:url "https://github.com/Somelauw/evil-markdown" :branch "main" :rev :newest))
 
-;; Enter Emacs commands without modifier keys
-;; Example:
-;;   Before: C-p C-k C-n M-^ ) C-j C-y M-r C-x z z M-2 M-f C-x C-s
-;;   After:    p   k   n g ^ )   j   y g r     . .   2 g f   x   s
-(use-package god-mode
-  :ensure t)
-
-;; Evil上で "," でgod-modeに入る。ESCで抜ける。
-(use-package evil-god-state
-  :ensure t
-  :vc (:url "https://github.com/gridaphobe/evil-god-state.git" :branch "main" :rev :newest)
-  :config
-  (evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
-  (evil-define-key 'god global-map [escape] 'evil-god-state-bail)
-  )
-
 (provide 'setup-evil)
 
