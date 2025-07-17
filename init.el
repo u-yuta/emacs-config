@@ -73,6 +73,7 @@
 
 (global-set-key (kbd "M-h") 'backward-kill-word)
 (global-set-key (kbd "C-c h") 'help-command)
+(global-unset-key (kbd "C-x C-z"))  ;; disable suspend-frame
 
 ;; モードごとの設定より優先して設定
 (bind-key* "C-h" 'backward-delete-char-untabify)
