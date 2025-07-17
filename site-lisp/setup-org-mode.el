@@ -206,6 +206,7 @@
      (dot . t)
      (latex . t)
      (python . t)
+     (mermaid . t)
      (plantuml . t)
      ))
 
@@ -393,6 +394,11 @@
   (require 'edraw-org)
   (edraw-org-setup-exporter))
 
+;; ob-mermaid
+(use-package ob-mermaid
+  :ensure t
+  :config
+  (setopt ob-mermaid-cli-path "mmdc"))
 
 ;; Tableの形式をその場で変換する関数。
 (defun org-table-transform-in-place ()
