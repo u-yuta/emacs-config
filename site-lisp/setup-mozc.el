@@ -70,16 +70,19 @@
   (add-hook 'isearch-mode-end-hook
             (lambda ()
               (unless (eq im-state mozc-im-mode)
-		(if im-state
+                (if im-state
                     (activate-input-method default-input-method)
                   (deactivate-input-method)))))
 
 
-  (advice-add 'mozc-session-execute-command
-              :after (lambda (&rest args)
-                       (when (eq (nth 0 args) 'CreateSession)
-			 ;; (mozc-session-sendkey '(hiragana)))))
-			 (mozc-session-sendkey '(Hankaku/Zenkaku)))))
+  ;; mozc.el 2.31.5851.102 のアップデート後、下記adviceがあると
+  ;; input-method有効化後にひらがな入力にならず直接入力状態になる問題が出た。
+  ;; 別の環境でも様子を見るためコメントアウトしておく。問題なければ削除する。
+  ;; (advice-add 'mozc-session-execute-command
+  ;;             :after (lambda (&rest args)
+  ;;                      (when (eq (nth 0 args) 'CreateSession)
+  ;;                        ;; (mozc-session-sendkey '(hiragana)))))
+  ;;                        (mozc-session-sendkey '(Hankaku/Zenkaku)))))
   )
 
 (provide 'setup-mozc)
