@@ -375,6 +375,11 @@
 ;; Major mode for editing and running Microsoft PowerShell files
 (use-package powershell :ensure t)
 
+;; Nix
+(use-package nix-mode
+  :ensure t
+  :mode "\\.nix\\'")
+
 ;; ============================================
 ;; LaTeX
 ;; ============================================
