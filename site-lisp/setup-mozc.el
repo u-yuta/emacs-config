@@ -27,16 +27,18 @@
 (use-package mozc-popup :ensure t)
 
 (use-package mozc
-  ;; 変換候補が表示されない問題
-  ;; https://github.com/google/mozc/commits/master/src/unix/emacs/mozc.el
-  ;; の 2025-01-07 のバージョンだと発生する。その前のコミット (9a925ee) だと問題ない。
-
-  ;; 標準の use-package :vc だとgithubのリポジトリから特定のファイルを指定して
-  ;; 持ってくる方法がわからないため、以下の設定は未更新。
-  ;; 手動で古いバージョンを elpa/ 内に入れることで対処している。
   :ensure t
+  :vc (:url "https://github.com/google/mozc.git"
+            :branch "master"
+            :rev "d703e61"
+            :lisp-dir "src/unix/emacs/")
   :after mozc-im
   :config
+  ;; mozc emacs helper for Windows (https://github.com/smzht/mozc_emacs_helper)
+  ;; のコミット a670237 (May 17, 2025)で動作確認。
+  ;; （mozc emacs helper for Windowsの古いバージョンを、
+  ;;   mozc.elの 2025-01-07 以降のバージョンと組み合わせて使うと
+  ;;   変換候補が表示されない問題が出るので注意。)
   (setq mozc-helper-program-name "mozc_emacs_helper.sh")
   (require-if-exists mozc-cursor-color)
 
