@@ -40,7 +40,7 @@
   (setq mozc-helper-program-name "mozc_emacs_helper.sh")
   (require-if-exists mozc-cursor-color)
 
-  (setq default-input-method "japanese-mozc-im")
+  (setq default-input-method "japanese-mozc")
 
   ;; popup スタイル を使用する
   (setq mozc-candidate-style 'popup)
