@@ -104,12 +104,12 @@
   (defun enable-input-method (&optional arg interactive)
     (interactive "P\np")
     (if (not current-input-method)
-	    (toggle-input-method arg interactive)))
+        (activate-input-method default-input-method)))
 
   (defun disable-input-method (&optional arg interactive)
     (interactive "P\np")
     (if current-input-method
-	    (toggle-input-method arg interactive)))
+	(disable-input-method)))
 
   ;; wdired 終了時に IME を OFF にする
   (advice-add 'wdired-finish-edit
