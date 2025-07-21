@@ -30,6 +30,26 @@
               ;; バッファローカル変数として corfu-auto を nil に設定
               (setq-local corfu-auto nil))))
 
+  (defun uy/configure-python-interpreter ()
+    "現在の環境に応じてPythonインタープリターを設定"
+    (if (executable-find "ipython")
+        (progn
+          (setq-local python-shell-interpreter "ipython")
+          (setq-local python-shell-interpreter-args "--simple-prompt --classic"))
+      (progn
+        (setq-local python-shell-interpreter "python")
+        (setq-local python-shell-interpreter-args "-i"))))
+
+  ;; Pythonモード開始時
+  (add-hook 'python-mode-hook #'uy/configure-python-interpreter)
+
+  ;; direnv (envrc.el) によるバッファごとの環境切替に連動させる
+  (with-eval-after-load 'envrc
+    (add-hook 'envrc-mode-hook
+              (lambda ()
+                (when (derived-mode-p 'python-mode)
+                  (uy/configure-python-interpreter)))))
+
   ;; Pythonインタープリターを `uv run python' で起動するコマンド
   (defun uy/run-python-uv ()
     "Run an inferior Python process with shell interpreter command `uv run python'."
@@ -39,9 +59,8 @@
        (call-interactively 'run-python))))
 
   ;; uv環境用の設定
-  ;; TODO ipythonがない場合は python にフォールバックする。u
   (setopt python-shell-interpreter "uv")
-  (setopt python-shell-interpreter-args "run ipython --simple-prompt --classic")
+  (setopt python-shell-interpreter-args "run python -i")
 
   ;; Pythonのインタープリターにてbuffer-file を `__file__' に設定するコマンド
   (defun uy/python-shell-set-buffer-path-as-dunder-file ()
