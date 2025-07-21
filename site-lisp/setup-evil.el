@@ -42,6 +42,9 @@
   (evil-define-key 'normal 'global (kbd "C-r") #'isearch-backward)  ;; isearch-backword
   (evil-define-key 'normal 'global (kbd "C-.") nil)  ;; Embarkで使う
   (evil-define-key 'normal 'global (kbd "M-.") nil)  ;; Embarkで使う
+  (evil-define-key 'insert 'global (kbd "C-t") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "C-o") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "C-p") nil)  ;; IMEで使う
 
   ;; すべてのブログラミングモードでアンダースコアを単語の一部として扱う
   ;; https://github.com/syl20bnr/spacemacs/blob/develop/doc/FAQ.org#include-underscores-and-dashes-in-word-motions
