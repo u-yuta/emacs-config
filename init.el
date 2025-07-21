@@ -487,6 +487,12 @@
 ;; ミニバッファ周りの設定 vertico, consult (embarkも)
 (require 'setup-vertico-consult)  ;; in site-lisp
 
+;; direnv: buffer-local direnv integration
+(use-package envrc
+  :ensure t
+  :config
+  (envrc-global-mode))
+
 ;; wgrep allows you to edit a grep buffer and apply those changes to the file
 ;; buffer like sed interactively.
 (use-package wgrep :ensure t)
