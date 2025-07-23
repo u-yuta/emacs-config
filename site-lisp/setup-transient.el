@@ -20,7 +20,26 @@
 ;; transient-define-prefixの設定メモ
 ;; - :variable-pitch t を設定すると日本語を含む場合に表示幅が揃う
 
-(require 'transient)
+(use-package transient
+  :ensure nil
+  :config
+  ;; Input methodをtransient起動時に無効化する
+  (defvar uy/transient-original-input-method nil
+    "transient 起動前に有効だった input-method を保存する変数。")
+
+  (defun uy/transient-maybe-disable-input-method ()
+    (when current-input-method
+      (setq uy/transient-original-input-method current-input-method)
+      (deactivate-input-method)))
+
+  (defun uy/transient-restore-input-method ()
+    (when uy/transient-original-input-method
+      (activate-input-method uy/transient-original-input-method)
+      (setq uy/transient-original-input-method nil)))
+
+  (add-hook 'transient-setup-buffer-hook #'uy/transient-maybe-disable-input-method)
+  (add-hook 'transient-exit-hook #'uy/transient-restore-input-method)
+  )
 
 ;; よく使うファイルを開く
 (transient-define-prefix uy/transient-open-file-menu ()
