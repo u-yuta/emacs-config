@@ -45,6 +45,10 @@
   (evil-define-key 'insert 'global (kbd "C-t") nil)  ;; IMEで使う
   (evil-define-key 'insert 'global (kbd "C-o") nil)  ;; IMEで使う
   (evil-define-key 'insert 'global (kbd "C-p") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "S-<down>") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "S-<up>") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "S-<left>") nil)  ;; IMEで使う
+  (evil-define-key 'insert 'global (kbd "S-<right>") nil)  ;; IMEで使う
 
   ;; すべてのブログラミングモードでアンダースコアを単語の一部として扱う
   ;; https://github.com/syl20bnr/spacemacs/blob/develop/doc/FAQ.org#include-underscores-and-dashes-in-word-motions
