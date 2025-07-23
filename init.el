@@ -490,8 +490,7 @@
 ;; direnv: buffer-local direnv integration
 (use-package envrc
   :ensure t
-  :config
-  (envrc-global-mode))
+  :hook (after-init . envrc-global-mode))
 
 ;; wgrep allows you to edit a grep buffer and apply those changes to the file
 ;; buffer like sed interactively.
