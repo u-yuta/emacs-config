@@ -111,6 +111,22 @@
     (if current-input-method
 	(disable-input-method)))
 
+  (defun isearch-enable-input-method ()
+    (interactive)
+    (if (not current-input-method)
+        (isearch-toggle-input-method)
+      (cl-letf (((symbol-function 'toggle-input-method)
+                 (symbol-function 'ignore)))
+        (isearch-toggle-input-method))))
+
+  (defun isearch-disable-input-method ()
+    (interactive)
+    (if current-input-method
+        (isearch-toggle-input-method)
+      (cl-letf (((symbol-function 'toggle-input-method)
+                 (symbol-function 'ignore)))
+        (isearch-toggle-input-method))))
+
   ;; wdired 終了時に IME を OFF にする
   (advice-add 'wdired-finish-edit
               :after (lambda (&rest args)
@@ -137,8 +153,11 @@
 
 ;; IME切り替えキー設定
 (global-set-key (kbd "<muhenkan>") 'disable-input-method)
+(define-key isearch-mode-map (kbd "<muhenkan>") 'isearch-disable-input-method)
 (global-set-key (kbd "<henkan>") 'enable-input-method)
+(define-key isearch-mode-map (kbd "<henkan>") 'isearch-enable-input-method)
 (global-set-key (kbd "<zenkaku-hankaku>") 'toggle-input-method)
+(define-key isearch-mode-map (kbd "<zenkaku-hankaku>") 'isearch-toggle-input-method)
 (global-set-key (kbd "C-<f9>") 'disable-input-method)
 (global-set-key (kbd "C-<f10>") 'enable-input-method)
 
