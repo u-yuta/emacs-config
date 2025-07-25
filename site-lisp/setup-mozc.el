@@ -40,40 +40,11 @@
   ;;   mozc.elの 2025-01-07 以降のバージョンと組み合わせて使うと
   ;;   変換候補が表示されない問題が出るので注意。)
   (setq mozc-helper-program-name "mozc_emacs_helper.sh")
-  (require-if-exists mozc-cursor-color)
 
   (setq default-input-method "japanese-mozc")
 
   ;; popup スタイル を使用する
   (setq mozc-candidate-style 'popup)
-
-  ;; カーソルカラーを設定する
-  (setq mozc-cursor-color-alist '((direct        . "red")
-                                  (read-only     . "yellow")
-                                  (hiragana      . "green")
-                                  (full-katakana . "goldenrod")
-                                  (half-ascii    . "dark orchid")
-                                  (full-ascii    . "orchid")
-                                  (half-katakana . "dark goldenrod")))
-
-  ;; mozc-cursor-color を利用するための対策
-  (defvar-local mozc-im-mode nil)
-  (add-hook 'mozc-im-activate-hook (lambda () (setq mozc-im-mode t)))
-  (add-hook 'mozc-im-deactivate-hook (lambda () (setq mozc-im-mode nil)))
-  (advice-add 'mozc-cursor-color-update
-              :around (lambda (orig-fun &rest args)
-			(let ((mozc-mode mozc-im-mode))
-                          (apply orig-fun args))))
-
-  ;; isearch を利用する前後で IME の状態を維持するための対策 (mozc)
-  (add-hook 'isearch-mode-hook (lambda () (setq im-state mozc-im-mode)))
-  (add-hook 'isearch-mode-end-hook
-            (lambda ()
-              (unless (eq im-state mozc-im-mode)
-                (if im-state
-                    (activate-input-method default-input-method)
-                  (deactivate-input-method)))))
-
 
   ;; mozc.el 2.31.5851.102 のアップデート後、下記adviceがあると
   ;; input-method有効化後にひらがな入力にならず直接入力状態になる問題が出た。
