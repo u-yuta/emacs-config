@@ -104,12 +104,12 @@
   (defun enable-input-method (&optional arg interactive)
     (interactive "P\np")
     (if (not current-input-method)
-        (activate-input-method default-input-method)))
+        (toggle-input-method)))
 
   (defun disable-input-method (&optional arg interactive)
     (interactive "P\np")
     (if current-input-method
-	(disable-input-method)))
+	(toggle-input-method)))
 
   (defun isearch-enable-input-method ()
     (interactive)
