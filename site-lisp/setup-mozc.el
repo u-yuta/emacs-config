@@ -30,24 +30,10 @@
             :rev "d703e61"
             :lisp-dir "src/unix/emacs/")
   :config
-  ;; mozc emacs helper for Windows (https://github.com/smzht/mozc_emacs_helper)
-  ;; のコミット a670237 (May 17, 2025)で動作確認。
-  ;; （mozc emacs helper for Windowsの古いバージョンを、
-  ;;   mozc.elの 2025-01-07 以降のバージョンと組み合わせて使うと
-  ;;   変換候補が表示されない問題が出るので注意。)
   (setq mozc-helper-program-name "mozc_emacs_helper.sh")
 
   ;; popup スタイル を使用する
   (setq mozc-candidate-style 'popup)
-
-  ;; mozc.el 2.31.5851.102 のアップデート後、下記adviceがあると
-  ;; input-method有効化後にひらがな入力にならず直接入力状態になる問題が出た。
-  ;; 別の環境でも様子を見るためコメントアウトしておく。問題なければ削除する。
-  ;; (advice-add 'mozc-session-execute-command
-  ;;             :after (lambda (&rest args)
-  ;;                      (when (eq (nth 0 args) 'CreateSession)
-  ;;                        ;; (mozc-session-sendkey '(hiragana)))))
-  ;;                        (mozc-session-sendkey '(Hankaku/Zenkaku)))))
   )
 
 (use-package mozc-im :ensure t :after mozc)
