@@ -23,16 +23,12 @@
 ;; emacs-mozc を動かすための設定（WSL 設定編） https://w.atwiki.jp/ntemacs/pages/61.html
 ;; を参考に、`mozc_emacs_helper.sh'を作成してパスを通しておく。
 
-(use-package mozc-im :ensure t)
-(use-package mozc-popup :ensure t)
-
 (use-package mozc
   :ensure t
   :vc (:url "https://github.com/google/mozc.git"
             :branch "master"
             :rev "d703e61"
             :lisp-dir "src/unix/emacs/")
-  :after mozc-im
   :config
   ;; mozc emacs helper for Windows (https://github.com/smzht/mozc_emacs_helper)
   ;; のコミット a670237 (May 17, 2025)で動作確認。
@@ -40,8 +36,6 @@
   ;;   mozc.elの 2025-01-07 以降のバージョンと組み合わせて使うと
   ;;   変換候補が表示されない問題が出るので注意。)
   (setq mozc-helper-program-name "mozc_emacs_helper.sh")
-
-  (setq default-input-method "japanese-mozc")
 
   ;; popup スタイル を使用する
   (setq mozc-candidate-style 'popup)
@@ -55,5 +49,10 @@
   ;;                        ;; (mozc-session-sendkey '(hiragana)))))
   ;;                        (mozc-session-sendkey '(Hankaku/Zenkaku)))))
   )
+
+(use-package mozc-im :ensure t :after mozc)
+(use-package mozc-popup :ensure t)
+
+(setopt default-input-method "japanese-mozc-im")
 
 (provide 'setup-mozc)
