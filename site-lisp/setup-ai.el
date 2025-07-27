@@ -123,6 +123,7 @@
            . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(file-name-concat (getenv "HOME") "Documents" "AI"))))
           ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))
           ("mcp-pandoc" . (:command "uvx" :args ("mcp-pandoc")))
+          ("duckduckgo" . (:command "uvx" :args ("duckduckgo-mcp-server")))
           ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp@latest")))
           ("markitdown" .
            (:command "docker"
