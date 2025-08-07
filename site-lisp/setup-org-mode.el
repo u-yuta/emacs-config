@@ -19,15 +19,8 @@
 (use-package org
   ;; :mode (("\\.txt$" . org-mode))
 
-  ;; <user-emacs-directory>/elpa/org-mode にあるバージョンを使用する
-  ;; インストール手順は以下
-  ;; https://orgmode.org/manual/Installation.html
-  ;; $ cd ~/.emacs.d/elpa
-  ;; $ git clone https://git.savannah.gnu.org/git/emacs/org-mode.git
-  ;; $ cd org-mode/
-  ;; $ make autoloads
+  ;; use Nix emacsPackages.org
   :ensure t
-  :load-path "elpa/org-mode/lisp/"
   :bind (("C-c c" . org-capture)
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
