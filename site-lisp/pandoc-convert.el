@@ -1,4 +1,4 @@
-;;; pandoc-convert.el -*- lexical-binding: t -*
+;;; pandoc-transient.el -*- lexical-binding: t -*
 
 ;; Copyright (C) 2025 u-yuta
 ;;
@@ -15,38 +15,34 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(defun uy/pandoc-convert-region (input-format output-format)
-  "Convert selected region (or whole buffer) with pandoc.
-Prompt for input and output formats, then replace text with converted result."
-  (interactive "sInput format: \nsOutput format: ")
-  (let* ((beg (if (use-region-p) (region-beginning) (point-min)))
-         (end (if (use-region-p) (region-end) (point-max)))
-         (text (buffer-substring-no-properties beg end)))
-    (shell-command-on-region
-     beg end
-     (format "pandoc -f %s -t %s" input-format output-format)
-     nil t)))
+(require 'transient)
+(require 's)
+(transient-define-prefix pandoc-transient-menu ()
+  "Pandoc menu interface"
+  :value '("--from=markdown" "--to=org")
 
-(defun uy/pandoc-convert-region-to-org (input-format)
-  "Convert selected region (or whole buffer) to Org format with pandoc.
-Prompt for input format, then replace text with converted result."
-  (interactive "sInput format: ")
-  (let* ((beg (if (use-region-p) (region-beginning) (point-min)))
-         (end (if (use-region-p) (region-end) (point-max)))
-         (text (buffer-substring-no-properties beg end)))
-    (shell-command-on-region
-     beg end
-     (format "pandoc -f %s -t org" input-format)
-     nil t)))
+  [:description "Convert selected region (or whole buffer) with pandoc."
+   ["Format"
+    ("-f" "Input" "--from=" :choices pandoc-transient--list-input-formats)
+    ("-t" "Output" "--to=" :choices pandoc-transient--list-output-formats)]
+   ["Other options" ("-c" "table of contents" "--toc")]
+   ["Command" ("RET" "Convert" pandoc-transient-pandoc-on-region)]
+  ]
+  )
 
-(defun uy/pandoc-convert-region-to-markdown (input-format)
-  "Convert selected region (or whole buffer) to Markdown format with pandoc.
-Prompt for input format, then replace text with converted result."
-  (interactive "sInput format: ")
-  (let* ((beg (if (use-region-p) (region-beginning) (point-min)))
+(defun pandoc-transient-pandoc-on-region ()
+  "Convert selected region (or whole buffer) with pandoc using arguments
+set in the transient menu.."
+  (interactive)
+  ;; (prin1 (s-join " " `("pandoc" ,@(transient-args 'pandoc-transient-menu)))))  ;; debug print
+  (let* ((command (s-join " " `("pandoc" ,@(transient-args 'pandoc-transient-menu))))
+         (beg (if (use-region-p) (region-beginning) (point-min)))
          (end (if (use-region-p) (region-end) (point-max)))
          (text (buffer-substring-no-properties beg end)))
-    (shell-command-on-region
-     beg end
-     (format "pandoc -f %s -t markdown" input-format)
-     nil t)))
+    (shell-command-on-region beg end command nil t)))
+
+(defun pandoc-transient--list-input-formats ()
+  (split-string (shell-command-to-string "pandoc --list-input-formats") "\n" t))
+
+(defun pandoc-transient--list-output-formats ()
+  (split-string (shell-command-to-string "pandoc --list-output-formats") "\n" t))
