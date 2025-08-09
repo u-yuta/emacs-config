@@ -21,7 +21,7 @@
   :vc (:url "https://github.com/karthink/gptel" :rev :newest)
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
-  (setopt gptel-model 'gpt-4.1-mini)  ;; default model
+  (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
 
   ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
   ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
@@ -43,12 +43,16 @@
     :endpoint "/v3/openai/chat/completions"
     :stream t
     :key #'(lambda () (uy/get-auth-secret "novita.ai"))
-    :models '(qwen/qwen3-4b-fp8
-              qwen/qwen3-235b-a22b-fp8
+    :models '(;; qwen/qwen3-4b-fp8
+              qwen/qwen3-235b-a22b-instruct-2507
+              qwen/qwen3-coder-480b-a35b-instruct
               deepseek/deepseek-v3-0324
-              meta-llama/llama-3.1-8b-instruct
-              meta-llama/llama-3.3-70b-instruct
+              deepseek/deepseek-r1-0528
+              ;; deepseek/deepseek-r1-distill-llama-8b
               meta-llama/llama-4-scout-17b-16e-instruct
+              openai/gpt-oss-120b
+              openai/gpt-oss-20b
+              zai-org/glm-4.5
               ))
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
