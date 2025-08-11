@@ -114,6 +114,12 @@
 (tab-bar-mode 1)
 (context-menu-mode 1)  ;; 右クリックでコンテクストメニューを開く
 (desktop-save-mode 1)  ;; セッションを保存する
+;; セッション保存対象から除外
+(setopt desktop-modes-not-to-save 
+        '(compilation-mode dired-mode tags-table-mode help-mode
+          eww-mode grep-mode occur-mode
+          magit-mode magit-log-mode))
+(setopt desktop-buffers-not-to-save "^\*.+\*$")
 
 ;; モードライン設定
 (setq frame-title-format
