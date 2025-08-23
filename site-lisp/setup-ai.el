@@ -37,6 +37,18 @@
     :stream t
     :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
     :models '(deepseek-chat deepseek-coder))
+  ;; OpenRouter
+  (gptel-make-openai "OpenRouter"  ;; Any name you want
+  :host "openrouter.ai"
+  :endpoint "/api/v1/chat/completions"
+  :stream t
+  :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
+  :models '(google/gemini-2.5-pro
+            google/gemini-2.5-flash
+            openai/gpt-5
+            qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
+            z-ai/glm-4.5-air:free
+            ))
   ;; Novita AI
   (gptel-make-openai "Novita"     ;Any name you want
     :host "api.novita.ai"
