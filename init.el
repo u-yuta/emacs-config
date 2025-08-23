@@ -575,6 +575,7 @@
 
 ;; setup transient menu
 (require 'setup-transient)
+(require 'pandoc-menu)
 
 
 ;; Load host-specific configuration

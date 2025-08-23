@@ -46,3 +46,5 @@ set in the transient menu.."
 
 (defun pandoc-transient--list-output-formats ()
   (split-string (shell-command-to-string "pandoc --list-output-formats") "\n" t))
+
+(provide 'pandoc-menu)
