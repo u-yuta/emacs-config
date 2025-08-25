@@ -576,6 +576,7 @@
 ;; setup transient menu
 (require 'setup-transient)
 (require 'pandoc-menu)
+(require 'docdb)
 
 
 ;; Load host-specific configuration
