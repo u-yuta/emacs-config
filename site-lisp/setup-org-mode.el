@@ -201,6 +201,7 @@
      ))
 
   ;; Export
+  (setq org-export-default-language "ja")
   (setq org-export-with-creator nil)
   
   ;; save the clock history across Emacs sessions
