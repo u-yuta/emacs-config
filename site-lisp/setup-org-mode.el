@@ -95,7 +95,7 @@
           (:endgrouptag)
           (:endgroup . nil)
           (:startgroup . nil)
-          ("mtg" . ?m) ("book" . ?b)
+          ("mtg" . ?m) ("book" . ?b) ("chore" . ?c)
           (:endgroup . nil)
           (:newline)
           (:startgroup . nil)
