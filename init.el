@@ -411,6 +411,7 @@
   :ensure t
   :hook (LaTeX-mode . turn-on-cdlatex) ;; LaTeXモードでCDLaTeXを有効化
   :config
+  (setopt cdlatex-sub-super-scripts-outside-math-mode nil)
   ;; 数式モードでCDLaTeXを有効化する
   (add-hook 'LaTeX-mode-hook 'cdlatex-mode))
 
