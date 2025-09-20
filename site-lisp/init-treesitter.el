@@ -23,7 +23,7 @@
 ;; treesit-install-language-grammar が実行される
 ;; (mapc #'treesit-install-language-grammar (mapcar #'car treesit-language-source-alist))
 
-(setq treesit-language-source-alist
+(setopt treesit-language-source-alist
    '((bash       "https://github.com/tree-sitter/tree-sitter-bash")
      (c          "https://github.com/tree-sitter/tree-sitter-c/" "master" "src")
      (clojure    "https://github.com/sogaiu/tree-sitter-clojure" "master" "src")

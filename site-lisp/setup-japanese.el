@@ -19,11 +19,11 @@
 ;; 言語環境
 (set-language-environment "Japanese")  ;; フォントが日本語フォントになるように
 (set-default-coding-systems 'utf-8-unix)
-(setq system-time-locale "C")  ;; avoid Japanese in the time stamp
-(setq text-quoting-style 'straight)  ;; help や message でシングルクォートが全角になるのを抑止
+(setopt system-time-locale "C")  ;; avoid Japanese in the time stamp
+(setopt text-quoting-style 'straight)  ;; help や message でシングルクォートが全角になるのを抑止
 
 ;; フォントの設定
-(setq use-default-font-for-symbols nil)
+(setopt use-default-font-for-symbols nil)
 ;; デフォルト フォント
 (set-face-attribute 'default nil :family "UDEV Gothic NF" :height 114)
 
@@ -73,11 +73,11 @@
     (use-package tr-ime
       :config
       (tr-ime-advanced-install)
-      (setq default-input-method "W32-IME")
+      (setopt default-input-method "W32-IME")
       ;; IME のモードライン表示設定
       ;; 不具合が出る（他のインジケーターが表示されなくなる）のでコメントアウト
       ;; (setq-default w32-ime-mode-line-state-indicator "[--]")
-      ;; (setq w32-ime-mode-line-state-indicator-list '("[--]" "[あ]" "[--]"))      
+      ;; (setopt w32-ime-mode-line-state-indicator-list '("[--]" "[あ]" "[--]"))      
       ;; (w32-ime-initialize)
       
       ;; IME 制御（yes/no などの入力の時に IME を off にする）
@@ -144,7 +144,7 @@
   :ensure t
   :config
   (global-pangu-spacing-mode -1)
-  (setq pangu-spacing-real-insert-separtor nil)
+  (setopt pangu-spacing-real-insert-separtor nil)
   ;; org-mode で表が崩れないようにする
   (add-hook 'org-mode-hook
             (lambda ()

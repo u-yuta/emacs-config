@@ -23,9 +23,9 @@
   ;; 隠しファイルも表示される。
   ;; ファイルサイズは1K, 1.2Mのように読みやすく表示される。
   ;; ファイル名にバージョン番号がある場合、自然順で並べ替えられる。
-  (setq dired-listing-switches "-laGh1v --group-directories-first")
+  (setopt dired-listing-switches "-laGh1v --group-directories-first")
 
-  (setq dired-dwim-target t)
+  (setopt dired-dwim-target t)
   )
 
 ;; dired WSL用の設定

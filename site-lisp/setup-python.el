@@ -21,7 +21,7 @@
   :ensure nil
   :config
   ;; Remove guess indent python message
-  (setq python-indent-guess-indent-offset-verbose nil)
+  (setopt python-indent-guess-indent-offset-verbose nil)
 
   ;; REPLで補完文字列がバッファに挿入される問題の対策
   (with-eval-after-load 'corfu

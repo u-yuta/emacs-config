@@ -17,7 +17,7 @@
 
 
 ;; GPG設定
-(setq epg-pinentry-mode 'loopback)
+(setopt epg-pinentry-mode 'loopback)
 
 ;; password-storeの情報をauth-souceで使う
 (use-package auth-source-pass

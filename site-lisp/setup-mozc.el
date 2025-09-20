@@ -30,10 +30,10 @@
             :rev "d703e61"
             :lisp-dir "src/unix/emacs/")
   :config
-  (setq mozc-helper-program-name "mozc_emacs_helper.sh")
+  (setopt mozc-helper-program-name "mozc_emacs_helper.sh")
 
   ;; popup スタイル を使用する
-  (setq mozc-candidate-style 'popup)
+  (setopt mozc-candidate-style 'popup)
   )
 
 (use-package mozc-im :ensure t :after mozc)

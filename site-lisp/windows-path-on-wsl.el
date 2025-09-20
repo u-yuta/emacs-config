@@ -28,9 +28,9 @@
 
 (defun set-drvfs-alist ()
   (interactive)
-  (setq drvfs-alist
+  (setopt drvfs-alist
         (mapcar (lambda (x)
-                  (setq x (replace-regexp-in-string "|/.\\."
+                  (setopt x (replace-regexp-in-string "|/.\\."
                                                     (lambda (y)
                                                       (format "|//%o." (string-to-char (substring y 2 3))))
                                                     x))
@@ -49,8 +49,8 @@
 (defconst windows-path-style-regexp "\\`\\(.*/\\)?\\([a-zA-Z]:\\\\.*\\|[a-zA-Z]:/.*\\|\\\\\\\\.*\\|//.*\\)")
 
 (defun windows-path-convert-file-name (name)
-  (setq name (replace-regexp-in-string windows-path-style-regexp "\\2" name t nil))
-  (setq name (replace-regexp-in-string "\\\\" "/" name))
+  (setopt name (replace-regexp-in-string windows-path-style-regexp "\\2" name t nil))
+  (setopt name (replace-regexp-in-string "\\\\" "/" name))
   (let ((case-fold-search t))
     (cl-loop for (mountpoint . source) in drvfs-alist
              if (string-match (concat "^\\(" (regexp-quote source) "\\)\\($\\|/\\)") name)

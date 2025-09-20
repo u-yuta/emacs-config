@@ -18,7 +18,7 @@
 
 (use-package org-roam
   :ensure t
-  :init (setq org-roam-v2-ack t)
+  :init (setopt org-roam-v2-ack t)
   :after (org)
   :hook
   (after-init . org-roam-db-autosync-mode)
@@ -36,10 +36,10 @@
          (("C-c n I" . org-roam-insert-immediate)))
   :config
   ;; Configures display formatting for Org-roam node.
-  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:12}" 'face 'org-tag)))
+  (setopt org-roam-node-display-template (concat "${title:*} " (propertize "${tags:12}" 'face 'org-tag)))
 
   ;; org-roam capture template
-  (setq org-roam-capture-templates
+  (setopt org-roam-capture-templates
         '(("d" "default" plain "%?" :target
            (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
            :unnarrowed t)
@@ -66,7 +66,7 @@
   ;;         if you don't care about startup time, use
   ;;  :hook (after-init . org-roam-ui-mode)
   :config
-  (setq org-roam-ui-sync-theme t
+  (setopt org-roam-ui-sync-theme t
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))

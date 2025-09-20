@@ -29,19 +29,19 @@
 ;; ============================================
 
 ;; 起動時に scratch buffer を表示
-(setq initial-buffer-choice t)
-(setq initial-major-mode 'lisp-interaction-mode)
+(setopt initial-buffer-choice t)
+(setopt initial-major-mode 'lisp-interaction-mode)
 (setopt initial-scratch-message "")
 
 ;; 起動時の Warning を抑止する
-(setq byte-compile-warnings '(cl-functions))
+(setopt byte-compile-warnings '(cl-functions))
 
 ;; 自動リバート
 (global-auto-revert-mode 1)
 
 ;; ファイル/バッファ操作
-(setq confirm-kill-emacs 'yes-or-no-p)
-(setq set-mark-command-repeat-pop t)
+(setopt confirm-kill-emacs 'yes-or-no-p)
+(setopt set-mark-command-repeat-pop t)
 
 ;; 自動保存/バックアップ設定
 (let ((target-dir (expand-file-name "~/"))
@@ -54,10 +54,10 @@
   ;; バックアップファイル(*~)の作成先変更
   (add-to-list 'backup-directory-alist (cons target-dir dest-dir))
   ;; 自動保存リスト(.saves-<PID>-<HOSTNAME>)の作成先変更
-  (setq auto-save-list-file-prefix (expand-file-name ".saves-" dest-dir)))
+  (setopt auto-save-list-file-prefix (expand-file-name ".saves-" dest-dir)))
 
 ;; custom.el 設定
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setopt custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file))
 
@@ -85,25 +85,25 @@
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
 
 ;; システム判定
-(setq uy/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
-(setq uy/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
-(setq uy/system-windows-p (eq system-type 'windows-nt))
-(setq uy/os-text (cond
+(setopt uy/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
+(setopt uy/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
+(setopt uy/system-windows-p (eq system-type 'windows-nt))
+(setopt uy/os-text (cond
                   (uy/system-linux-p "Linux🐧")
                   (uy/system-msys-p "Msys")
                   (uy/system-windows-p "Windows🖥️")))
 ;; WSL上かどうかの判定
-(setq uy/wsl-p
+(setopt uy/wsl-p
       (and (string-match-p "WSL" (shell-command-to-string "uname -r"))
            (eq system-type 'gnu/linux)))
 
 
 ;; シェル設定
 (if uy/system-msys-p
-    (setq shell-file-name "/usr/bin/bash"))
+    (setopt shell-file-name "/usr/bin/bash"))
 (if uy/system-linux-p
-    (setq shell-file-name "/bin/bash"))
-(setq explicit-shell-file-name shell-file-name)
+    (setopt shell-file-name "/bin/bash"))
+(setopt explicit-shell-file-name shell-file-name)
 
 ;; ============================================
 ;; UI/外観設定
@@ -123,7 +123,7 @@
 (setopt desktop-buffers-not-to-save "^\*.+\*$")
 
 ;; モードライン設定
-(setq frame-title-format
+(setopt frame-title-format
       '(multiple-frames "%b"
                         (" " invocation-name "@" system-name " " uy/os-text
                          (:eval (if (buffer-file-name) " %f" " %b")))))
@@ -144,20 +144,20 @@
 (setq-default indent-tabs-mode nil)
 ;; (setq-default tab-width 4)  ;; Org 9.7 以降ではtab-widthが8以外になっているとエラーになる
 (setq-default fill-column 80)
-(setq case-fold-search nil)
+(setopt case-fold-search nil)
 
 ;; 括弧/引用符
 (electric-pair-mode 1)
-(setq electric-pair-preserve-balance nil)
+(setopt electric-pair-preserve-balance nil)
 
 ;; 警告音/ベル
-(setq visible-bell t)
+(setopt visible-bell t)
 
 ;; スクロール設定
-(setq scroll-conservatively 1)
-(setq scroll-margin 5)
-(setq next-screen-context-lines 1)
-(setq scroll-preserve-screen-position nil)
+(setopt scroll-conservatively 1)
+(setopt scroll-margin 5)
+(setopt next-screen-context-lines 1)
+(setopt scroll-preserve-screen-position nil)
 
 (defun uy/indent-defun ()
   "Indent the current defun."
@@ -207,10 +207,10 @@
 (use-package browse-url
   :ensure nil
   :config
-  (setq browse-url-browser-function 'browse-url-generic)
-  (when uy/wsl-p (setq browse-url-generic-program "wslview"))
+  (setopt browse-url-browser-function 'browse-url-generic)
+  (when uy/wsl-p (setopt browse-url-generic-program "wslview"))
   (when uy/system-windows-p
-    (setq browse-url-browser-function 'browse-url-default-browser))
+    (setopt browse-url-browser-function 'browse-url-default-browser))
   ;; (global-set-key (kbd "C-c u") 'browse-url-at-point)
   )
 
@@ -269,7 +269,7 @@
   ;; Cannot use :init (must use :config) because otherwise
   ;; project-find-functions is not yet initialized.
   :config
-  (setq project-vc-extra-root-markers '(".project.el"))  ;; Emacs 29.1以降で有効
+  (setopt project-vc-extra-root-markers '(".project.el"))  ;; Emacs 29.1以降で有効
   )
 
 ;; windmove
@@ -315,7 +315,7 @@
   :config
   (remove-hook 'server-switch-hook 'magit-commit-diff)
   ;; logの日時表示フォーマット設定
-  (setq magit-log-margin '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)))
+  (setopt magit-log-margin '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)))
 
 
 ;; treesitter
@@ -347,8 +347,8 @@
   :ensure t
   :defer t
   :config
-  (setq org-noter-notes-search-path (list (expand-file-name "share" org-roam-directory)))
-  (setq org-noter-default-notes-file-names '("resouce.notes.org"))
+  (setopt org-noter-notes-search-path (list (expand-file-name "share" org-roam-directory)))
+  (setopt org-noter-default-notes-file-names '("resouce.notes.org"))
   )
 ;; ============================================
 ;; Windows, WSL関連
@@ -369,7 +369,7 @@
   :mode
   ("README\\.md\\'" . gfm-mode)
   :init
-  (setq markdown-command '("pandoc" "--from=markdown" "--to=html5"))
+  (setopt markdown-command '("pandoc" "--from=markdown" "--to=html5"))
   (setopt markdown-asymmetric-header t)
   )
 
@@ -399,15 +399,15 @@
          (LaTeX-mode . TeX-PDF-mode))
   :config
   ;; デフォルトのTeXエンジンをLuaTeXに設定
-  (setq TeX-engine 'luatex)
-  (setq TeX-command-default "LuaLaTeX")
+  (setopt TeX-engine 'luatex)
+  (setopt TeX-command-default "LuaLaTeX")
   ;; LuaLaTeXのコンパイルコマンドを追加
   (add-to-list 'TeX-command-list
                '("LuaLaTeX" "lualatex -shell-escape -interaction=nonstopmode %s"
                  TeX-run-TeX nil t :help "Run LuaLaTeX"))
   ;; PDFビューアの設定（wslviewを使用）
-  (setq TeX-view-program-selection '((output-pdf "WSLView")))
-  (setq TeX-view-program-list '(("WSLView" "wslview %o"))))
+  (setopt TeX-view-program-selection '((output-pdf "WSLView")))
+  (setopt TeX-view-program-list '(("WSLView" "wslview %o"))))
 
 ;; CDLaTeX (LaTexでの数式入力の補助)
 (use-package cdlatex
@@ -536,7 +536,7 @@
   :vc (:url "https://github.com/u-yuta/yasnippet-snippets" :branch "main" :rev :newest)
   :after yasnippet
   :config
-  (setq yas-snippet-dirs (append yas-snippet-dirs (list yasnippet-snippets-dir))))
+  (setopt yas-snippet-dirs (append yas-snippet-dirs (list yasnippet-snippets-dir))))
 
 (require 'setup-completion)
 
@@ -554,7 +554,7 @@
   :ensure t
   :config
   ;; Take less on-screen space.
-  (setq vundo-compact-display t))
+  (setopt vundo-compact-display t))
 
 (use-package simple-httpd :ensure t :defer t)
 

@@ -29,13 +29,13 @@
 
   (defun uy/transient-maybe-disable-input-method ()
     (when current-input-method
-      (setq uy/transient-original-input-method current-input-method)
+      (setopt uy/transient-original-input-method current-input-method)
       (deactivate-input-method)))
 
   (defun uy/transient-restore-input-method ()
     (when uy/transient-original-input-method
       (activate-input-method uy/transient-original-input-method)
-      (setq uy/transient-original-input-method nil)))
+      (setopt uy/transient-original-input-method nil)))
 
   (add-hook 'transient-setup-buffer-hook #'uy/transient-maybe-disable-input-method)
   (add-hook 'transient-exit-hook #'uy/transient-restore-input-method)

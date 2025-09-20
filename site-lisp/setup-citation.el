@@ -18,19 +18,19 @@
 
 
 ;; Bibliography files
-(setq uy/bib-files '("~/doc_local/bibliography/references.bib"
+(setopt uy/bib-files '("~/doc_local/bibliography/references.bib"
                      "~/doc_local/bibliography/00Share.bib"))
 
 (with-eval-after-load 'org
   ;; Org Cite library
-  (setq org-cite-global-bibliography uy/bib-files)
-  (setq org-cite-export-processors
+  (setopt org-cite-global-bibliography uy/bib-files)
+  (setopt org-cite-export-processors
         '((md . (csl "chicago-fullnote-bibliography.csl"))   ; Footnote reliant
           ;;(latex . biblatex)                                 ; For humanities
           (odt . (csl "chicago-fullnote-bibliography.csl"))  ; Footnote reliant
           (t . (csl "modern-language-association.csl"))      ; Fallback
           ))
-  (setq org-cite-csl-styles-dir "~/Zotero/styles")  ; installed by Linux Zotero
+  (setopt org-cite-csl-styles-dir "~/Zotero/styles")  ; installed by Linux Zotero
   (require 'oc-csl)
   (use-package citeproc :ensure t)  ; oc-cslで使われる
   )
@@ -91,7 +91,7 @@
        :function #'citar-has-files
        :padding "  "
        :tag "has:files"))
-    (setq citar-indicators
+    (setopt citar-indicators
           (list citar-indicator-files-icons
                 citar-indicator-notes-icons
                 citar-indicator-links-icons))))
@@ -104,6 +104,6 @@
   (citar-org-roam-subdir "share")
   :config
   (citar-org-roam-mode)
-  (setq citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
+  (setopt citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
 
 (provide 'setup-citation)

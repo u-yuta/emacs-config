@@ -26,7 +26,7 @@
   (after-init . dape-breakpoint-load)
   :config
   ;; Info buffers to the right
-  (setq dape-buffer-window-arrangement 'right)
+  (setopt dape-buffer-window-arrangement 'right)
 
   (add-to-list 'dape-configs
   	           `(debugpy-uv-python

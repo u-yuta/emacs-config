@@ -17,7 +17,7 @@
 
 
 ;; テキストスケール変更の刻みを設定する（標準は 1.2）
-(setq text-scale-mode-step 1.1)
+(setopt text-scale-mode-step 1.1)
 
 ;; Show fringe indicators in visual line mode
 (setopt visual-line-fringe-indicators '(nil t))
@@ -26,10 +26,10 @@
 (use-package ef-themes
   :ensure t
   :config
-  (setq ef-themes-to-toggle '(ef-owl ef-cyprus))
-  (setq ef-themes-mixed-fonts t
+  (setopt ef-themes-to-toggle '(ef-owl ef-cyprus))
+  (setopt ef-themes-mixed-fonts t
         ef-themes-variable-pitch-ui t)
-  (setq ef-themes-headings ; read the manual's entry or the doc string
+  (setopt ef-themes-headings ; read the manual's entry or the doc string
         '((0 variable-pitch 1.2)
           (1 variable-pitch 1.2)
           (2 variable-pitch 1.1)

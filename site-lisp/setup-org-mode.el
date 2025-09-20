@@ -33,42 +33,42 @@
 
   :init
   ;; 保存先
-  (setq org-directory "~/Documents/org/")
-  (setq uy/journal-directory (file-name-concat org-directory "p1-journal"))
-  (setq org-agenda-files '("s0-agenda/shared-agenda.org"))  ;; shared directory
-  (setq org-startup-folded nil)
+  (setopt org-directory "~/Documents/org/")
+  (setopt uy/journal-directory (file-name-concat org-directory "p1-journal"))
+  (setopt org-agenda-files '("s0-agenda/shared-agenda.org"))  ;; shared directory
+  (setopt org-startup-folded nil)
 
   :config  
   ;; 基本設定
   ;; Hide the first N-1 stars in a headline : nil --> t
-  (setq org-hide-leading-stars t)
+  (setopt org-hide-leading-stars t)
   ;; RET will follow the link : nil --> t
-  (setq org-return-follows-link t)
+  (setopt org-return-follows-link t)
   ;; Todo 完了日時を記録
-  (setq org-log-done 'time)
+  (setopt org-log-done 'time)
   ;; 見出し直後のみインデント調整をする
-  (setq org-adapt-indentation nil)
+  (setopt org-adapt-indentation nil)
   ;; ordered サブタスクの先頭のみを表示する
-  (setq org-enforce-todo-dependencies t)
+  (setopt org-enforce-todo-dependencies t)
   ;; ^, _ による上付き化、下付き化を{}で囲んだ文字列に対してのみ有効にする 
-  (setq org-use-sub-superscripts "{}")
+  (setopt org-use-sub-superscripts "{}")
 
   ;; IDをタイムスタンプにする
-  (setq org-id-method 'ts)
-  (setq org-id-ts-format "%Y%m%dT%H%M%S")  ;; 秒の小数点以下は省略（denote）
-  (setq org-attach-id-to-path-function-list
+  (setopt org-id-method 'ts)
+  (setopt org-id-ts-format "%Y%m%dT%H%M%S")  ;; 秒の小数点以下は省略（denote）
+  (setopt org-attach-id-to-path-function-list
         '(org-attach-id-ts-folder-format
           org-attach-id-uuid-folder-format
           org-attach-id-fallback-folder-format))
 
-  (setq org-agenda-dim-blocked-tasks 'invisible)
+  (setopt org-agenda-dim-blocked-tasks 'invisible)
   ;; org-captureを呼び出したときに不要なIDが追加されるのを避ける
-  (setq org-id-link-to-org-use-id 'create-if-interactive)
+  (setopt org-id-link-to-org-use-id 'create-if-interactive)
   
   ;; org-indent-modeをtにすると、見出しレベルに合わせてインデント表示する。
   ;;;; invalid face reference
   (require 'org-indent)
-  (setq org-indent-indentation-per-level 1)
+  (setopt org-indent-indentation-per-level 1)
 
   ;; Font size control of LateX previews in Org files
   (plist-put org-format-latex-options :scale 1.25)
@@ -88,7 +88,7 @@
           '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
             (sequence "WAITING(w!)" "HOLD(h!)" "|" "SOMEDAY(s!)" "CANCELLED(c!)")))
 
-  (setq org-tag-persistent-alist
+  (setopt org-tag-persistent-alist
         '((:startgroup . nil)
           (:startgrouptag)
           ("project") (:grouptags) ("PJ@.+")  ;; tag hierarchy, 
@@ -112,26 +112,26 @@
     (file-name-concat uy/journal-directory (format-time-string "journal-%Y-%m.org")))
 
   ;; org-modeのcapture template
-  (setq org-capture-templates
+  (setopt org-capture-templates
         '(("j" "Journal" entry
            (file+olp+datetree (lambda () (uy/journal-file-name-year-month)))
            "* %U %?\n")
           ))
 
-  (setq myroamfiles (directory-files org-directory t "org$"))
+  (setopt myroamfiles (directory-files org-directory t "org$"))
   (defun uy/org-files-list-except-journal ()
     "Return a list of all org files except those starting with 'journal'."
     (let ((org-files (org-files-list)))
       (seq-filter (lambda (file)
                     (not (string-match-p "/journal[^/]*\\.org\\'" file)))
                   org-files)))
-  (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
+  (setopt org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
                                    (uy/org-files-list-except-journal :maxlevel . 4)  ;; all agenda and opened files
                                    (myroamfiles :maxlevel . 4)
                                    )))
   ;; add file name to refile target path list
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-use-outline-path 'file)
+  (setopt org-outline-path-complete-in-steps nil)
+  (setopt org-refile-use-outline-path 'file)
 
   ;; org-agendaでのアイテム表示のカスタマイズ
   (setopt org-agenda-prefix-format
@@ -172,22 +172,22 @@
             (delete-directory old-attach-dir)
             (message "Attachments moved from %s to %s" old-attach-dir new-attach-dir))))))
 
-  (setq org-agenda-window-setup 'current-window)
-  (setq org-agenda-skip-scheduled-if-done t)
-  (setq org-return-follows-link t)  ;; RET to follow link
-  (setq org-agenda-columns-add-appointments-to-effort-sum t)
-  (setq org-agenda-time-grid
+  (setopt org-agenda-window-setup 'current-window)
+  (setopt org-agenda-skip-scheduled-if-done t)
+  (setopt org-return-follows-link t)  ;; RET to follow link
+  (setopt org-agenda-columns-add-appointments-to-effort-sum t)
+  (setopt org-agenda-time-grid
         '((daily today require-timed)
           (0900 1000 1200 1300 1500 1700) "......" "----------------"))
-  (setq org-columns-default-format
+  (setopt org-columns-default-format
         "%50ITEM(Todo) %TODO %1PRIORITY %5Effort(Effort){:} %5CLOCKSUM(Spent){:} %8TAGS")
 
   (add-hook 'org-agenda-mode-hook
             (lambda ()
               (local-set-key (kbd "S") 'org-save-all-org-buffers)))
 
-  (setq org-use-speed-commands t)
-  (setq org-image-actual-width nil)
+  (setopt org-use-speed-commands t)
+  (setopt org-image-actual-width nil)
   
   ;; active Babel languages
   (org-babel-do-load-languages
@@ -201,11 +201,11 @@
      ))
 
   ;; Export
-  (setq org-export-default-language "ja")
-  (setq org-export-with-creator nil)
+  (setopt org-export-default-language "ja")
+  (setopt org-export-with-creator nil)
   
   ;; save the clock history across Emacs sessions
-  (setq org-clock-persist 'history)
+  (setopt org-clock-persist 'history)
   (org-clock-persistence-insinuate)
 
   ;; org-modeのエクスポート時に、マルチバイト文字間では、
@@ -222,19 +222,19 @@
       (let ((regexp "[[:multibyte:]]")
             (string text))
         ;; org-mode 默认将一个换行符转换为空格，但中文不需要这个空格，删除。
-        (setq string
+        (setopt string
               (replace-regexp-in-string
                (format "\\(%s\\) *\n *\\(%s\\)" regexp regexp)
                "\\1\\2" string))
         ;; 删除粗体之后的空格
         (dolist (str '("</b>" "</code>" "</del>" "</i>"))
-          (setq string
+          (setopt string
                 (replace-regexp-in-string
                  (format "\\(%s\\)\\(%s\\)[ ]+\\(%s\\)" regexp str regexp)
                  "\\1\\2\\3" string)))
         ;; 删除粗体之前的空格
         (dolist (str '("<b>" "<code>" "<del>" "<i>" "<span class=\"underline\">"))
-          (setq string
+          (setopt string
                 (replace-regexp-in-string
                  (format "\\(%s\\)[ ]+\\(%s\\)\\(%s\\)" regexp str regexp)
                  "\\1\\2\\3" string)))
@@ -252,9 +252,9 @@
   ;; https://git.sr.ht/~bzg/org-contrib
   (use-package org-contrib :ensure t)
   
-  (setq org-latex-default-class "my:lualatex")
-  (setq org-latex-pdf-process   '("latexmk -lualatex %f"))
-  (setq org-latex-classes
+  (setopt org-latex-default-class "my:lualatex")
+  (setopt org-latex-pdf-process   '("latexmk -lualatex %f"))
+  (setopt org-latex-classes
         '(("my:lualatex"
            "\\documentclass{ltjsarticle}
         "
@@ -270,7 +270,7 @@
            ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
            ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))))
 
-  (setq org-edit-src-content-indentation 0)
+  (setopt org-edit-src-content-indentation 0)
   
   ;; インデントを気にせずに yank/copy する
   ;; https://emacs.stackexchange.com/questions/31646/how-to-paste-with-indent より転載
@@ -301,7 +301,7 @@
           (st (syntax-table))
           (indent nil))
       (with-temp-buffer
-        (setq indent-tabs-mode itm
+        (setopt indent-tabs-mode itm
               tab-width tw)
         (set-syntax-table st)
         (insert-buffer-substring buf beginning end)
@@ -311,14 +311,14 @@
                     (not (eobp)))
           (let ((length (current-column)))
             (when (or (not indent) (< length indent))
-              (setq indent length)))
+              (setopt indent length)))
           (forward-line 1))
         (if (not indent)
             (error "Region is entirely whitespace")
           ;; Un-indent the buffer contents by the length of the minimum
           ;; indent level, and copy to the kill ring.
           (when pad
-            (setq indent (- indent (prefix-numeric-value pad))))
+            (setopt indent (- indent (prefix-numeric-value pad))))
           (indent-rigidly (point-min) (point-max) (- indent))
           (copy-region-as-kill (point-min) (point-max))))))
   (define-key org-mode-map (kbd "C-c M-w") 'my-copy-region-unindented)
@@ -342,19 +342,19 @@
     :ensure t
     :vc (:url "https://github.com/yjwen/org-reveal")
     :config
-    (setq org-reveal-root "file://d:/app/reveal.js"))
+    (setopt org-reveal-root "file://d:/app/reveal.js"))
 
   ;; PlantUMLの設定
   ;; （PlangUMLのJARファイルをローカルで実行する。Java環境が必要。）
-  (setq org-plantuml-exec-mode 'jar)
-  (setq org-plantuml-jar-path "~/.local/bin/plantuml.jar")
+  (setopt org-plantuml-exec-mode 'jar)
+  (setopt org-plantuml-jar-path "~/.local/bin/plantuml.jar")
   )
 
 (use-package org-bullets
   :ensure t
   :commands (org-bullets-mode)
   :init (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-  (setq org-bullets-bullet-list '("◉" "●" "◆" "►" "▸" "•"))
+  (setopt org-bullets-bullet-list '("◉" "●" "◆" "►" "▸" "•"))
   )
 
 ;; org-bookmark-heading
@@ -365,8 +365,8 @@
   :ensure t
   :after org
   :config
-  (setq org-download-method 'attach)
-  (setq org-download-screenshot-method
+  (setopt org-download-method 'attach)
+  (setopt org-download-screenshot-method
         "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\""))
 
 ;; el-easydraw
