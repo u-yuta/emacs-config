@@ -33,9 +33,6 @@
 (setopt initial-major-mode 'lisp-interaction-mode)
 (setopt initial-scratch-message "")
 
-;; 起動時の Warning を抑止する
-(setopt byte-compile-warnings '(cl-functions))
-
 ;; 自動リバート
 (global-auto-revert-mode 1)
 
