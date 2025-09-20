@@ -36,7 +36,7 @@
   (setopt org-directory "~/Documents/org/")
   (setopt uy/journal-directory (file-name-concat org-directory "p1-journal"))
   (setopt org-agenda-files '("s0-agenda/shared-agenda.org"))  ;; shared directory
-  (setopt org-startup-folded nil)
+  (setopt org-startup-folded 'nofold)
 
   :config  
   ;; 基本設定
@@ -51,7 +51,7 @@
   ;; ordered サブタスクの先頭のみを表示する
   (setopt org-enforce-todo-dependencies t)
   ;; ^, _ による上付き化、下付き化を{}で囲んだ文字列に対してのみ有効にする 
-  (setopt org-use-sub-superscripts "{}")
+  (setopt org-use-sub-superscripts '{})
 
   ;; IDをタイムスタンプにする
   (setopt org-id-method 'ts)
