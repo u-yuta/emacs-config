@@ -39,16 +39,16 @@
     :models '(deepseek-chat deepseek-coder))
   ;; OpenRouter
   (gptel-make-openai "OpenRouter"  ;; Any name you want
-  :host "openrouter.ai"
-  :endpoint "/api/v1/chat/completions"
-  :stream t
-  :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
-  :models '(google/gemini-2.5-pro
-            google/gemini-2.5-flash
-            openai/gpt-5
-            qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
-            z-ai/glm-4.5-air:free
-            ))
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
+    :models '(google/gemini-2.5-pro
+              google/gemini-2.5-flash
+              openai/gpt-5
+              qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
+              z-ai/glm-4.5-air:free
+              ))
   ;; Novita AI
   (gptel-make-openai "Novita"     ;Any name you want
     :host "api.novita.ai"
@@ -117,7 +117,7 @@
   :bind (("C-c d" . aidermacs-transient-menu))
 
   :config
-  ; Enable minor mode for Aider files
+  ;; Enable minor mode for Aider files
   (aidermacs-setup-minor-mode)
 
   (setopt aidermacs-auto-commits nil)
@@ -143,7 +143,7 @@
           ("context7" . (:command "npx" :args ("-y" "@upstash/context7-mcp@latest")))
           ("markitdown" .
            (:command "docker"
-            :args ("run" "--rm" "-i" "-v"
+                     :args ("run" "--rm" "-i" "-v"
                             ,(concat (file-name-concat (getenv "HOME") "Documents/AI") ":/workdir")
                             "markitdown-mcp:latest")))))
   )
