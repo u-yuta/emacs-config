@@ -82,7 +82,7 @@
   (require 'gptel-integrations)
 
   ;; ディレクティブ
-  (setopt gptel-directives
+  (setq gptel-directives
         '((default     . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
           (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
           (writing     . "You are a large language model and a writing assistant. Respond concisely.")
@@ -134,7 +134,7 @@
   :ensure t
   :vc (:url "https://github.com/lizqwerscott/mcp.el" :rev :newest)
   :config
-  (setopt mcp-hub-servers
+  (setq mcp-hub-servers
         `(("filesystem"
            . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(file-name-concat (getenv "HOME") "Documents" "AI"))))
           ("fetch" . (:command "uvx" :args ("mcp-server-fetch")))

@@ -366,7 +366,7 @@
   :after org
   :config
   (setopt org-download-method 'attach)
-  (setopt org-download-screenshot-method
+  (setq org-download-screenshot-method
         "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\""))
 
 ;; el-easydraw
