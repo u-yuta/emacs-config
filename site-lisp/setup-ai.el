@@ -103,6 +103,256 @@
           ;; 専門家ディレクティブ（日本語のみ）
           (scientist-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、物理学、数学、工学など複数の科学分野に深い知識を持つ科学者として振る舞います。現在の科学的コンセンサスを反映した正確かつ証拠に基づいた回答を日本語で提供してください。適切な場合は正確な科学用語を使用し、複雑な概念も明確に説明してください。競合する科学理論がある場合はそれらを認識し、特定の科学的事実について不確かな場合は限界を認めてください。")
           (engineer-ja . "あなたはEmacsに組み込まれた大規模言語モデルであり、機械工学、電気工学、精密工学、ソフトウェア工学など様々な工学分野に精通した経験豊富なエンジニアとして振る舞います。実際の制約、基準、ベストプラクティスを考慮した実用的で技術的に正確な回答を日本語で提供してください。適切な工学用語と単位を使用し、回答では安全性、効率性、実現可能性を考慮してください。適切な場合は、異なる工学的アプローチ間のトレードオフについても言及してください。")))
+
+  ;; gptel tool: file/Read file contents
+  (gptel-make-tool
+   :name "read_file"
+   :function (lambda (filepath)
+               (let ((expanded-path (expand-file-name filepath)))
+                 (unless (file-exists-p expanded-path)
+                   (error "File does not exist: %s" expanded-path))
+                 (with-temp-buffer
+                   (insert-file-contents expanded-path)
+                   (buffer-string))))
+   :description "Read and return the contents of a file"
+   :args (list '(:name "filepath"
+                       :type string
+                       :description "The full path to the file to read"))
+   :category "filesystem")
+  ;; gptel tool: file/List directory
+  (gptel-make-tool
+   :function (lambda (directory)
+	       (mapconcat #'identity
+			  (directory-files directory)
+			  "\n"))
+   :name "list_directory"
+   :description "List the contents of a given directory"
+   :args (list '(:name "directory"
+		       :type string
+		       :description "The path to the directory to list"))
+   :category "filesystem")
+
+  ;; gptel tool: file/Create new file
+  (gptel-make-tool
+   :name "create_file"
+   :function (lambda (path filename content)
+               (let ((full-path (expand-file-name filename path)))
+                 (when (file-exists-p full-path)
+                   (error "File already exists: %s" full-path))
+                 (unless (file-directory-p path)
+                   (make-directory path t))
+                 (with-temp-buffer
+                   (insert content)
+                   (write-file full-path))
+                 (format "Successfully created file %s in %s" filename path)))
+   :description "Create a new file with the specified content"
+   :args (list '(:name "path"
+                       :type string
+                       :description "The directory where the file will be created")
+               '(:name "filename"
+                       :type string
+                       :description "The name of the file to create")
+               '(:name "content"
+                       :type string
+                       :description "The content to write to the file"))
+   :category "filesystem")
+
+  ;; gptel tool: file/Edit existing file
+  (gptel-make-tool
+   :name "edit_file"
+   :function (lambda (filepath content)
+               (let ((expanded-path (expand-file-name filepath)))
+                 (unless (file-exists-p expanded-path)
+                   (error "File does not exist: %s" expanded-path))
+                 (with-temp-buffer
+                   (insert content)
+                   (write-file expanded-path))
+                 (format "Successfully edited file: %s" expanded-path)))
+   :description "Edit an existing file by replacing its content"
+   :args (list '(:name "filepath"
+                       :type string
+                       :description "The full path to the file to edit")
+               '(:name "content"
+                       :type string
+                       :description "The new content to replace the file with"))
+   :category "filesystem")
+
+  ;; gptel tool: web/Read webpage
+  ;; Returns plain text content extracted from HTML
+  (gptel-make-tool
+   :name "read_webpage"
+   :function (lambda (url &optional max-chars)
+               (condition-case err
+                   (let* ((max-length (or max-chars 3000))
+                          (buffer (url-retrieve-synchronously url t t 15)))
+                     
+                     (if (not buffer)
+                         (format "Error: Failed to retrieve content from %s" url)
+                       
+                       (with-current-buffer buffer
+                         (goto-char (point-min))
+                         
+                         ;; Check HTTP status
+                         (unless (re-search-forward "^HTTP/[0-9.]+ 200" nil t)
+                           (kill-buffer)
+                           (error "HTTP request failed for %s" url))
+                         
+                         ;; Skip to body
+                         (re-search-forward "\n\n" nil t)
+                         
+                         ;; Parse HTML and render as text
+                         (let* ((dom (libxml-parse-html-region (point) (point-max)))
+                                (rendered-buffer (generate-new-buffer " *shr-render*"))
+                                (content ""))
+                           
+                           ;; Render DOM to plain text using shr
+                           (with-current-buffer rendered-buffer
+                             (shr-insert-document dom)
+                             (setq content (buffer-substring-no-properties 
+                                            (point-min) 
+                                            (min (+ (point-min) max-length) 
+                                                 (point-max))))
+                             (kill-buffer))
+                           
+                           (kill-buffer buffer)
+                           
+                           (if (< (length content) 50)
+                               (format "Error: Retrieved content from %s is too short or empty" url)
+                             (format "Content from %s (first %d characters):\n\n%s\n\n[Content truncated. Full page at: %s]"
+                                     url
+                                     (length content)
+                                     content
+                                     url))))))
+                 
+                 (error (format "Error reading webpage %s: %s" url (error-message-string err)))))
+   
+   :description "Fetch and read webpage content as plain text (HTML tags removed)"
+   :args (list '(:name "url"
+                       :type string
+                       :description "URL of the webpage to read")
+               '(:name "max-chars"
+                       :type integer
+                       :description "Maximum characters to return (default 3000)"
+                       :optional t))
+   :category "web")
+
+  ;; gptel tool: web/Fetch raw HTML
+  (gptel-make-tool
+   :name "fetch_webpage_html"
+   :function (lambda (url &optional max-chars)
+               (condition-case err
+                   (let* ((max-length (or max-chars 2000))
+                          (buffer (url-retrieve-synchronously url t t 15)))
+                     
+                     (if (not buffer)
+                         (format "Error: Failed to retrieve HTML from %s" url)
+                       
+                       (with-current-buffer buffer
+                         (goto-char (point-min))
+                         
+                         ;; Check HTTP status
+                         (unless (re-search-forward "^HTTP/[0-9.]+ 200" nil t)
+                           (kill-buffer)
+                           (error "HTTP request failed for %s" url))
+                         
+                         ;; Skip to body and get HTML
+                         (re-search-forward "\n\n" nil t)
+                         (let ((html (buffer-substring-no-properties 
+                                      (point) 
+                                      (min (+ (point) max-length) (point-max)))))
+                           (kill-buffer)
+                           
+                           (format "HTML from %s (first %d characters):\n\n%s\n\n[HTML truncated]"
+                                   url
+                                   (length html)
+                                   html)))))
+                 
+                 (error (format "Error fetching HTML from %s: %s" url (error-message-string err)))))
+   
+   :description "Fetch raw HTML content from a webpage (not rendered, includes HTML tags)"
+   :args (list '(:name "url"
+                       :type string
+                       :description "URL of the webpage to fetch")
+               '(:name "max-chars"
+                       :type integer
+                       :description "Maximum characters to return (default 2000)"
+                       :optional t))
+   :category "web")
+
+  ;; gptel tool: web/Search Wikipedia
+  (gptel-make-tool
+   :name "search_wikipedia"
+   :function (lambda (query)
+               (condition-case err
+                   (let* ((search-url (format "https://en.wikipedia.org/w/api.php?action=opensearch&search=%s&limit=5&format=json" 
+                                              (url-hexify-string query)))
+                          (buffer (url-retrieve-synchronously search-url t t 10)))
+                     (if (not buffer)
+                         (format "Error: Failed to retrieve Wikipedia results for '%s'" query)
+                       (with-current-buffer buffer
+                         (goto-char (point-min))
+                         (re-search-forward "\n\n" nil t)
+                         (let* ((json-object-type 'plist)
+                                (json-array-type 'list)
+                                (json-key-type 'keyword)
+                                (data (json-read))
+                                (titles (nth 1 data))
+                                (descriptions (nth 2 data))
+                                (urls (nth 3 data))
+                                (results ""))
+                           (kill-buffer)
+                           (dotimes (i (min 5 (length titles)))
+                             (setq results 
+                                   (concat results
+                                           (format "%d. %s\n   %s\n   %s\n\n"
+                                                   (1+ i)
+                                                   (nth i titles)
+                                                   (nth i descriptions)
+                                                   (nth i urls)))))
+                           (if (string-empty-p results)
+                               (format "No Wikipedia results found for '%s'" query)
+                             (format "Wikipedia search results for '%s':\n\n%s" query results))))))
+                 (error (format "Error during Wikipedia search: %s" (error-message-string err)))))
+   :description "Search Wikipedia and return formatted results with titles, descriptions and URLs"
+   :args (list '(:name "query"
+                       :type string
+                       :description "Search query for Wikipedia"))
+   :category "web")
+
+  ;; Get full Wikipedia article content
+  (gptel-make-tool
+   :name "get_wikipedia_article"
+   :function (lambda (title)
+               (condition-case err
+                   (let* ((api-url (format "https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro=1&explaintext=1&titles=%s&format=json"
+                                           (url-hexify-string title)))
+                          (buffer (url-retrieve-synchronously api-url t t 10)))
+                     (if (not buffer)
+                         (format "Error: Failed to retrieve Wikipedia article for '%s'" title)
+                       (with-current-buffer buffer
+                         (goto-char (point-min))
+                         (re-search-forward "\n\n" nil t)
+                         (let* ((json-object-type 'plist)
+                                (json-array-type 'list)
+                                (json-key-type 'keyword)
+                                (data (json-read))
+                                (pages (plist-get (plist-get data :query) :pages))
+                                (page (cadr pages))  ; Get first page
+                                (extract (plist-get page :extract))
+                                (page-title (plist-get page :title)))
+                           (kill-buffer)
+                           (if (not extract)
+                               (format "No article found for '%s'" title)
+                             (format "Wikipedia article: %s\n\n%s\n\n(This is the introduction section only. For full article, visit: https://en.wikipedia.org/wiki/%s)"
+                                     page-title
+                                     (substring extract 0 (min 2000 (length extract)))
+                                     (url-hexify-string title)))))))
+                 (error (format "Error retrieving Wikipedia article: %s" (error-message-string err)))))
+   :description "Get the full introduction text of a Wikipedia article by title"
+   :args (list '(:name "title"
+                       :type string
+                       :description "Exact title of the Wikipedia article to retrieve"))
+   :category "web")
   )
 
 ;; gptel-magit
