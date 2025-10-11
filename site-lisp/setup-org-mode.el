@@ -261,7 +261,7 @@
            ("\\section\{%s\}" . "\\section*\{%s\}")
            ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
            ("\\subsubsection\{%s\}" . "\\subsubsection*\{%s\}"))
-          ("my:beamer"
+          ("beamer"
            "\\documentclass[unicode,12pt]{beamer}
 \\usepackage{luatexja}
 \\usepackage[yu-win]{luatexja-preset}
