@@ -60,7 +60,9 @@
   :ensure t
   :config
   (add-hook 'org-mode-hook (lambda ()
-                             (push '(?l . ("\\[" . "\\]")) evil-surround-pairs-alist)))   ;; \[...\]
+                             (push '(?l . ("\\(" . "\\)")) evil-surround-pairs-alist)))   ;; \(...\)
+  (add-hook 'org-mode-hook (lambda ()
+                             (push '(?L . ("\\[" . "\\]")) evil-surround-pairs-alist)))   ;; \[...\]
   (global-evil-surround-mode 1))
 
 (use-package evil-collection
