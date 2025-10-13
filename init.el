@@ -205,7 +205,7 @@
   :ensure nil
   :config
   (setopt browse-url-browser-function 'browse-url-generic)
-  (when uy/wsl-p (setopt browse-url-generic-program "wslview"))
+  (when uy/wsl-p (setopt browse-url-generic-program "explorer.exe"))
   (when uy/system-windows-p
     (setopt browse-url-browser-function 'browse-url-default-browser))
   ;; (global-set-key (kbd "C-c u") 'browse-url-at-point)
