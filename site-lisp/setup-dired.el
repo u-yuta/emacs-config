@@ -44,10 +44,12 @@
       ;; wslview は wslutilities/wslu https://github.com/wslutilities/wslu に含まれる
       (interactive "P")
       (let* ((path (dired-get-filename))
-             (target (if arg (file-name-directory path) path)))
+             (target (if arg (file-name-directory path) path))
+             (shell-command-switch "-ic")  ;; ~/.bashrc を読み込むため
+             )
         (message "Opening on Windows: %s..." target)
         (shell-command (mapconcat #'shell-quote-argument
-                                  (list "wslview" target)
+                                  (list "open" target)
                                   " "))
         (message "Opened on Windows: %s." target)))
 
