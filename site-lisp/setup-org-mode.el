@@ -364,10 +364,30 @@
 (use-package org-download
   :ensure t
   :after org
+  :init
+  (setopt org-download-screenshot-basename "__screenshot.png")
   :config
-  (setopt org-download-method 'attach)
+  ;; org-modeのattachment機能を使わず、カレントディレクトリにファイル保存する
+  (setopt org-download-method 'directory)  
+  (setopt org-download-image-dir nil)  ;; current directory
+  (setopt org-download-heading-lvl nil)  ;; no subdirectories
+  (setopt org-download-timestamp "")
+
+  ;; org-download-screenshot でクリップボードの画像を保存する
   (setq org-download-screenshot-method
-        "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\""))
+        "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\"")
+
+  ;; Prompt file name
+  (setopt org-download-file-format-function 'uy/org-download-file-format)
+  (defun uy/org-download-file-format (filename)
+    (read-file-name
+     "File name: "
+     nil nil nil
+     (concat
+      (format-time-string "%Y%m%dT%H%M%S--")
+      filename
+      )))
+  )
 
 ;; el-easydraw
 (use-package edraw-org
