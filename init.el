@@ -563,6 +563,10 @@
 (use-package vterm
     :ensure t)
 
+;; Find file by zoxide
+(use-package zoxide
+  :ensure t)
+
 (when uy/wsl-p 
   (use-package notmuch
     :commands notmuch-hello)

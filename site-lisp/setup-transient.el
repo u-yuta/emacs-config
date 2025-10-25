@@ -63,6 +63,7 @@
     ("c" "locate" consult-locate)
     ("p" "project" project-find-file)
     ("r" "recent" recentf)
+    ("z" "zoxide" zoxide-find-file)
     ]
    ]
   )
