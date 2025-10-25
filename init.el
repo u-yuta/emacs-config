@@ -384,6 +384,12 @@
   :ensure t
   :mode "\\.nix\\'")
 
+;; PlantUML
+(use-package plantuml-mode
+  :ensure t
+  :config
+  (setopt plantuml-default-exec-mode 'executable))
+
 ;; ============================================
 ;; LaTeX
 ;; ============================================

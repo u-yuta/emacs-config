@@ -346,7 +346,7 @@
 
   ;; PlantUMLの設定
   ;; （PlangUMLのJARファイルをローカルで実行する。Java環境が必要。）
-  (setopt org-plantuml-exec-mode 'jar)
+  (setopt org-plantuml-exec-mode 'plantuml)
   (setopt org-plantuml-jar-path "~/.local/bin/plantuml.jar")
   )
 
