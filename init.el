@@ -388,7 +388,8 @@
 (use-package plantuml-mode
   :ensure t
   :config
-  (setopt plantuml-default-exec-mode 'executable))
+  (setopt plantuml-default-exec-mode 'executable)
+  (setopt plantuml-indent-level 2))
 
 ;; ============================================
 ;; LaTeX
