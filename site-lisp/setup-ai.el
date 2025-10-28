@@ -22,6 +22,7 @@
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
+  (setopt gptel-default-mode 'org-mode)  ;; default model
 
   ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
   ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
