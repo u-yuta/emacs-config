@@ -356,6 +356,54 @@
    :category "web")
   )
 
+;; gptel-quick
+;; Show a short summary or explanation of the word at point, or an active region, in a popup.
+;; When the popup is active,
+;; - press + to get a longer summary,
+;; - M-w (or kill-ring-save) to copy the response,
+;; - or C-g (or keyboard-quit) to clear it.
+(use-package gptel-quick
+  :ensure t
+  :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
+  :config
+  (keymap-set embark-general-map "?" #'gptel-quick)
+  (setopt gptel-quick-system-message
+          (lambda (count)
+            (format "日本語で%d語以内で説明せよ。ですます調ではなく常体で答えること。" count)))
+
+  
+  (defun gptel-quick (query-text &optional count)
+    "Explain or summarize region or thing at point with an LLM.
+  
+  QUERY-TEXT is the text being explained.  COUNT is the approximate
+  word count of the response."
+    (interactive
+     (list (cond
+            ((use-region-p) (buffer-substring-no-properties (region-beginning)
+                                                            (region-end)))
+            ((and (derived-mode-p 'pdf-view-mode)
+                  (pdf-view-active-region-p))
+             (mapconcat #'identity (pdf-view-active-region-text) "\n\n"))
+            (t (thing-at-point 'sexp)))
+           current-prefix-arg))
+    
+    (when (xor gptel-quick-backend gptel-quick-model)
+      (error "gptel-quick-backend and gptel-quick-model must be both set or unset"))
+    
+    (let* ((count (or count gptel-quick-word-count))
+           (gptel-max-tokens (floor (+ (sqrt (length query-text))
+                                       (* count 2.5))))
+           (gptel-use-curl t)  ;; Multibyte text によるエラー回避のため、 gptel-use-curl t とする
+           (gptel-use-context (and gptel-quick-use-context 'system))
+           (gptel-backend (or gptel-quick-backend gptel-backend))
+           (gptel-model (or gptel-quick-model gptel-model)))
+      (gptel-request query-text
+        :system (funcall gptel-quick-system-message count)
+        :context (list query-text count
+                       (posn-at-point (and (use-region-p) (region-beginning))))
+        :callback #'gptel-quick--callback-posframe)))
+  )
+
 ;; gptel-magit
 (use-package gptel-magit
   :ensure t
