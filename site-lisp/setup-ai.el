@@ -444,7 +444,13 @@
            (:command "docker"
                      :args ("run" "--rm" "-i" "-v"
                             ,(concat (file-name-concat (getenv "HOME") "Documents/AI") ":/workdir")
-                            "markitdown-mcp:latest")))))
+                            "markitdown-mcp:latest")))
+          ("holoviz" .
+           (:command "uvx"
+                     :args ("--from"
+                            "git+https://github.com/MarcSkovMadsen/holoviz-mcp[panel-extensions]"
+                            "holoviz-mcp" ))
+           )))
   )
 
 (provide 'setup-ai)
