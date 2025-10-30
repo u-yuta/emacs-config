@@ -407,7 +407,14 @@
 ;; gptel-magit
 (use-package gptel-magit
   :ensure t
-  :hook (magit-mode . gptel-magit-install))
+  :hook (magit-mode . gptel-magit-install)
+  :config
+  ;; 自動でフォーマット（fill-region） が行われるのを防ぐ
+  (defun gptel-magit--format-commit-message (message)
+    "Bypass formatting"
+    ;; message をそのまま返す
+    message)
+  )
 
 ;; aidermacs
 (use-package aidermacs
