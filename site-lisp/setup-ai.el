@@ -342,9 +342,98 @@
                        :type string
                        :description "Exact title of the Wikipedia article to retrieve"))
    :category "web")
+
+  ;; gptel tool: Emacs document
+  (gptel-make-tool
+   :name "get_emacs_function_doc"
+   :function (lambda (function-name)
+               (save-window-excursion  ;; keep window layout
+                 (describe-function (intern function-name))
+                 (with-current-buffer "*Help*"
+                   (let ((result (buffer-string)))
+                     (kill-buffer)
+                     result))))
+   :description "Get the documentation for an Emacs Lisp function/commands."
+   :args (list '(:name "function-name"
+                       :type string
+                       :description "Name of the Emacs Lisp function/commands to look up"))
+   :category "emacs")
+  (gptel-make-tool
+   :name "get_emacs_variable_doc"
+   :function (lambda (variable-name)
+               (save-window-excursion  ;; keep window layout
+                 (describe-variable (intern variable-name))
+                 (with-current-buffer "*Help*"
+                   (let ((result (buffer-string)))
+                     (kill-buffer)
+                     result))))
+   :description "Get the documentation for an Emacs Lisp variable."
+   :args (list '(:name "variable-name"
+                       :type string
+                       :description "Name of the Emacs Lisp variable to look up"))
+   :category "emacs")
+  (gptel-make-tool
+   :name "search_emacs_symbol"
+   :function (lambda (pattern-regexp)
+               (save-window-excursion  ;; keep window layout
+                 (apropos pattern-regexp)
+                 (with-current-buffer "*Apropos*"
+                   (let ((result (buffer-string)))
+                     (kill-buffer)
+                     result))))
+   :description "Search for Emasc Lisp symbols that matches PATTERN-REGEXP,
+and get the brief despriptions.
+Useful for discovering functions/commands/variables related to specific topic or feature."
+   :args (list '(:name "pattern-regexp"
+                       :type string
+                       :description "regexp pattern to search Emacs lisp symbols"))
+   :category "emacs")
+  (gptel-make-tool
+   :name "search_emacs_function"
+   :function (lambda (pattern-regexp)
+               (save-window-excursion  ;; keep window layout
+                 (apropos-function pattern-regexp)
+                 (with-current-buffer "*Apropos*"
+                   (let ((result (buffer-string)))
+                     (kill-buffer)
+                     result))))
+   :description "Search for Emasc Lisp functions that matches PATTERN-REGEXP,
+and get the brief despriptions.
+Useful for discovering functions/commands related to specific topic or feature."
+   :args (list '(:name "pattern-regexp"
+                       :type string
+                       :description "regexp pattern to search Emacs lisp symbols"))
+   :category "emacs")
+  (gptel-make-tool
+   :name "search_emacs_variable"
+   :function (lambda (pattern-regexp)
+               (save-window-excursion  ;; keep window layout
+                 (apropos-variable pattern-regexp)
+                 (with-current-buffer "*Apropos*"
+                   (let ((result (buffer-string)))
+                     (kill-buffer)
+                     result))))
+   :description "Search for Emasc Lisp variables that matches PATTERN-REGEXP,
+and get the brief despriptions.
+Useful for discovering variables related to specific topic or feature."
+   :args (list '(:name "pattern-regexp"
+                       :type string
+                       :description "regexp pattern to search Emacs lisp symbols"))
+   :category "emacs")
   )
 
+
+  
+  (defun uy/get-emacs-document-variable (variable-name)
+    (save-window-excursion  ;; prevent changing window layout
+      (describe-variable (intern variable-name))
+      (with-current-buffer "*Help*"
+        (let ((result (buffer-string)))
+          (kill-buffer)
+          result))))
+
 ;; gptel-quick
+;; 
 ;; Show a short summary or explanation of the word at point, or an active region, in a popup.
 ;; When the popup is active,
 ;; - press + to get a longer summary,
