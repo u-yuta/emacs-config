@@ -311,6 +311,7 @@
   :bind (("C-x g" . magit-status))
   :config
   (remove-hook 'server-switch-hook 'magit-commit-diff)
+  (remove-hook 'git-commit-setup-hook 'git-commit-turn-on-auto-fill)
   ;; logの日時表示フォーマット設定
   (setopt magit-log-margin '(t "%Y-%m-%d %H:%M:%S" magit-log-margin-width t 18)))
 
