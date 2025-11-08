@@ -120,7 +120,6 @@
 ;; Applications
 (transient-define-prefix uy/transient-app-map ()
    ["AI"
-    ("d" "aider" aidermacs-transient-menu)
     ("g" "gptel" gptel-menu)]
    ["Others"
     ("t" "vterm" vterm)]
