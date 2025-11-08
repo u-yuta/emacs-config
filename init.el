@@ -86,9 +86,9 @@
 (setopt uy/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
 (setopt uy/system-windows-p (eq system-type 'windows-nt))
 (setopt uy/os-text (cond
-                  (uy/system-linux-p "Linux🐧")
+                  (uy/system-linux-p "Linux")
                   (uy/system-msys-p "Msys")
-                  (uy/system-windows-p "Windows🖥️")))
+                  (uy/system-windows-p "Windows")))
 ;; WSL上かどうかの判定
 (setopt uy/wsl-p
       (and (string-match-p "WSL" (shell-command-to-string "uname -r"))
