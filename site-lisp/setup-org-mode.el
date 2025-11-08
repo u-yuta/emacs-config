@@ -253,10 +253,11 @@
   (use-package org-contrib :ensure t)
   
   (setopt org-latex-default-class "my:lualatex")
-  (setopt org-latex-pdf-process   '("latexmk -lualatex %f"))
+  (setopt org-latex-pdf-process   '("latexmk -lualatex -shell-escape %f"))
   (setopt org-latex-classes
         '(("my:lualatex"
            "\\documentclass{ltjsarticle}
+\\usepackage {svg}
         "
            ("\\section\{%s\}" . "\\section*\{%s\}")
            ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
@@ -265,6 +266,7 @@
            "\\documentclass[unicode,12pt]{beamer}
 \\usepackage{luatexja}
 \\usepackage[yu-win]{luatexja-preset}
+\\usepackage {svg}
 \\renewcommand{\\kanjifamilydefault}{\\gtdefault}% 既定をゴシック体に"
            ("\\section\{%s\}" . "\\section*\{%s\}")
            ("\\subsection\{%s\}" . "\\subsection*\{%s\}")
