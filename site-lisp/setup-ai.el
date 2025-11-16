@@ -443,7 +443,7 @@ Useful for discovering variables related to specific topic or feature."
   :ensure t
   :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
   :config
-  (keymap-set embark-general-map "?" #'gptel-quick)
+  (with-eval-after-load 'embark (keymap-set embark-general-map "?" #'gptel-quick))
   (setopt gptel-quick-system-message
           (lambda (count)
             (format "日本語で%d語以内で説明せよ。ですます調ではなく常体で答えること。" count)))
@@ -485,6 +485,7 @@ Useful for discovering variables related to specific topic or feature."
 (use-package gptel-magit
   :ensure t
   :hook (magit-mode . gptel-magit-install)
+  :after markdown-mode
   :config
   ;; 自動でフォーマット（fill-region） が行われるのを防ぐ
   (defun gptel-magit--format-commit-message (message)
