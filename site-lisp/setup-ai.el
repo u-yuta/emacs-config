@@ -422,16 +422,6 @@ Useful for discovering variables related to specific topic or feature."
    :category "emacs")
   )
 
-
-  
-  (defun uy/get-emacs-document-variable (variable-name)
-    (save-window-excursion  ;; prevent changing window layout
-      (describe-variable (intern variable-name))
-      (with-current-buffer "*Help*"
-        (let ((result (buffer-string)))
-          (kill-buffer)
-          result))))
-
 ;; gptel-quick
 ;; 
 ;; Show a short summary or explanation of the word at point, or an active region, in a popup.
