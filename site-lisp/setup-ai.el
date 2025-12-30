@@ -491,6 +491,21 @@ Useful for discovering variables related to specific topic or feature."
     message)
   )
 
+;; agent-shell
+;; A native Emacs shell to interact with LLM agents powered by ACP (Agent Client Protocol)
+;; `agent-shell' depends on `shell-maker' and `acp'
+(use-package acp
+  :ensure t)
+(use-package shell-maker
+  :ensure t)
+(use-package agent-shell
+    :ensure t
+    :vc (:url "https://github.com/xenodium/agent-shell" :rev "6eae9d8")
+    ;; :ensure-system-package
+    ;; ((codex-acp . "npm install -g @zed-industries/codex-acp")
+    ;;  (claude-code-acp "npm install -g @zed-industries/claude-code-acp"))
+    )
+
 ;; aidermacs
 (use-package aidermacs
   :ensure t
