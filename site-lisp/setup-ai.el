@@ -56,16 +56,17 @@
     :endpoint "/v3/openai/chat/completions"
     :stream t
     :key #'(lambda () (uy/get-auth-secret "novita.ai"))
-    :models '(;; qwen/qwen3-4b-fp8
+    :models '(
               qwen/qwen3-235b-a22b-instruct-2507
               qwen/qwen3-coder-480b-a35b-instruct
+              qwen/qwen3-next-80b-a3b-instruct
               deepseek/deepseek-v3-0324
+              deepseek/deepseek-v3.2-exp
               deepseek/deepseek-r1-0528
-              ;; deepseek/deepseek-r1-distill-llama-8b
-              meta-llama/llama-4-scout-17b-16e-instruct
+              minimax/minimax-m2
               openai/gpt-oss-120b
               openai/gpt-oss-20b
-              zai-org/glm-4.5
+              zai-org/glm-4.6
               ))
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
