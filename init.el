@@ -581,6 +581,7 @@
   )
 
 (require 'setup-auth-source)
+(require 'setup-gptel)
 (require 'setup-ai)
 (require 'setup-helpful)
 
