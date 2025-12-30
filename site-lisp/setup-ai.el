@@ -18,7 +18,7 @@
 ;; gptel: Interact with LLMs
 (use-package gptel
   :ensure t
-  :vc (:url "https://github.com/karthink/gptel" :rev "81618f2") ;; v0.9.9
+  :vc (:url "https://github.com/karthink/gptel" :rev "b672649") ;; 2025-12-28 latest
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
