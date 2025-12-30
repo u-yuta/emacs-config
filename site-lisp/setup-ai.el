@@ -422,6 +422,13 @@ Useful for discovering variables related to specific topic or feature."
    :category "emacs")
   )
 
+;; gptel-agent
+(use-package gptel-agent
+  :vc (:url "https://github.com/karthink/gptel-agent"
+       :rev :newest)
+  :ensure t
+  :config (gptel-agent-update))         ;Read files from agents directories
+
 ;; gptel-quick
 ;; 
 ;; Show a short summary or explanation of the word at point, or an active region, in a popup.
