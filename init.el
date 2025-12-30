@@ -317,7 +317,7 @@
 
 
 ;; treesitter
-(require-if-exists init-treesitter)
+(require 'init-treesitter nil t)
 
 ;; ============================================
 ;; 日本語環境、日本語入力
@@ -353,7 +353,7 @@
 ;; ============================================
 
 ;; Windows パス と UNC パス を使えるようにするための設定 (WSL 用)
-(when uy/wsl-p (require-if-exists windows-path-on-wsl))
+(when uy/wsl-p (require 'windows-path-on-wsl nil t))
 
 ;; ============================================
 ;; プログラム、マークアップ言語関連

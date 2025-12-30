@@ -15,12 +15,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;; ライブラリがあったら require するマクロ
-(defmacro require-if-exists (library &rest body)
-  `(when (locate-library ,(symbol-name library))
-     (require ',library) ,@body))
-
-
 ;;; Garbage collection
 ;; Increase the GC threshold for faster startup
 ;; The default is 800 kilobytes.  Measured in bytes.
