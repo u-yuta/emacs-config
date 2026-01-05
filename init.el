@@ -567,10 +567,6 @@
 ;; Eat: Emulate A Terminal
 (use-package eat :ensure t :defer t)
 
-;; vterm
-(use-package vterm
-    :ensure t)
-
 ;; Find file by zoxide
 (use-package zoxide
   :ensure t)

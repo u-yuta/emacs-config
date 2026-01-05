@@ -122,7 +122,7 @@
    ["AI"
     ("g" "gptel" gptel-menu)]
    ["Others"
-    ("t" "vterm" vterm)]
+    ]
   )
 
 ;; Goto key map
