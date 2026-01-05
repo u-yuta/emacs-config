@@ -15,161 +15,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;; gptel: Interact with LLMs
-(use-package gptel
-  :ensure t
-  :vc (:url "https://github.com/karthink/gptel" :rev "b672649") ;; 2025-12-28 latest
-  :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
-  :config
-  (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
-  (setopt gptel-default-mode 'org-mode)  ;; default model
-
-  ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
-  ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
-
-  ;; Gemini
-  (gptel-make-gemini "Gemini"
-    :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
-    :stream t)
-  ;; DeepSeek
-  (gptel-make-openai "DeepSeek"       ;Any name you want
-    :host "api.deepseek.com"
-    :endpoint "/chat/completions"
-    :stream t
-    :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
-    :models '(deepseek-chat deepseek-coder))
-  ;; OpenRouter
-  (gptel-make-openai "OpenRouter"  ;; Any name you want
-    :host "openrouter.ai"
-    :endpoint "/api/v1/chat/completions"
-    :stream t
-    :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
-    :models '(google/gemini-2.5-pro
-              google/gemini-2.5-flash
-              openai/gpt-5
-              qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
-              z-ai/glm-4.5-air:free
-              ))
-  ;; Novita AI
-  (gptel-make-openai "Novita"     ;Any name you want
-    :host "api.novita.ai"
-    :endpoint "/v3/openai/chat/completions"
-    :stream t
-    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
-    :models '(
-              qwen/qwen3-235b-a22b-instruct-2507
-              qwen/qwen3-coder-480b-a35b-instruct
-              qwen/qwen3-next-80b-a3b-instruct
-              deepseek/deepseek-v3-0324
-              deepseek/deepseek-v3.2-exp
-              deepseek/deepseek-r1-0528
-              minimax/minimax-m2
-              openai/gpt-oss-120b
-              openai/gpt-oss-20b
-              zai-org/glm-4.6
-              ))
-  ;; Ollama
-  (gptel-make-ollama "Ollama"             ;Any name of your choosing
-    :host "localhost:11434"               ;Where it's running
-    :stream t                             ;Stream responses
-    ;; List of models
-    :models '(gemma:2b
-              hf.co/alfredplpl/gemma-2-baku-2b-it-gguf
-              Llama-3.1-Swallow-Instruct
-              qwen2.5-coder-instruct
-              )
-    )
-
-  ;; MCP利用
-  (require 'gptel-integrations)
-
-  ;; ディレクティブ
-  (setq gptel-directives
-        '((default     . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
-          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-          (writing     . "You are a large language model and a writing assistant. Respond concisely.")
-          (chat        . "You are a large language model and a conversation partner. Respond concisely.")
-          
-          ;; 日本語応答用ディレクティブ
-          (default-ja  . "あなたはEmacsに組み込まれた大規模言語モデルであり、役立つアシスタントです。常に日本語で簡潔に応答してください。")
-          ))
-
-  ;; Setup gptel tools
-  (uy/gptel-setup-filesystem-tools)
-  (uy/gptel-setup-web-tools)
-  (uy/gptel-setup-emacs-tools))
-
-;; gptel-agent
-(use-package gptel-agent
-  :vc (:url "https://github.com/karthink/gptel-agent"
-       :rev :newest)
-  :ensure t
-  :config (gptel-agent-update))         ;Read files from agents directories
-
-;; gptel-quick
-;; 
-;; Show a short summary or explanation of the word at point, or an active region, in a popup.
-;; When the popup is active,
-;; - press + to get a longer summary,
-;; - M-w (or kill-ring-save) to copy the response,
-;; - or C-g (or keyboard-quit) to clear it.
-(use-package gptel-quick
-  :ensure t
-  :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
-  :config
-  (with-eval-after-load 'embark (keymap-set embark-general-map "?" #'gptel-quick))
-  (setopt gptel-quick-system-message
-          (lambda (count)
-            (format "日本語で%d語以内で説明せよ。ですます調ではなく常体で答えること。" count)))
-
-  
-  (defun gptel-quick (query-text &optional count)
-    "Explain or summarize region or thing at point with an LLM.
-  
-  QUERY-TEXT is the text being explained.  COUNT is the approximate
-  word count of the response."
-    (interactive
-     (list (cond
-            ((use-region-p) (buffer-substring-no-properties (region-beginning)
-                                                            (region-end)))
-            ((and (derived-mode-p 'pdf-view-mode)
-                  (pdf-view-active-region-p))
-             (mapconcat #'identity (pdf-view-active-region-text) "\n\n"))
-            (t (thing-at-point 'sexp)))
-           current-prefix-arg))
-    
-    (when (xor gptel-quick-backend gptel-quick-model)
-      (error "gptel-quick-backend and gptel-quick-model must be both set or unset"))
-    
-    (let* ((count (or count gptel-quick-word-count))
-           (gptel-max-tokens (floor (+ (sqrt (length query-text))
-                                       (* count 2.5))))
-           (gptel-use-curl t)  ;; Multibyte text によるエラー回避のため、 gptel-use-curl t とする
-           (gptel-use-context (and gptel-quick-use-context 'system))
-           (gptel-backend (or gptel-quick-backend gptel-backend))
-           (gptel-model (or gptel-quick-model gptel-model)))
-      (gptel-request query-text
-        :system (funcall gptel-quick-system-message count)
-        :context (list query-text count
-                       (posn-at-point (and (use-region-p) (region-beginning))))
-        :callback #'gptel-quick--callback-posframe)))
-  )
-
-;; gptel-magit
-(use-package gptel-magit
-  :ensure t
-  :hook (magit-mode . gptel-magit-install)
-  :after markdown-mode
-  :config
-  ;; 自動でフォーマット（fill-region） が行われるのを防ぐ
-  (defun gptel-magit--format-commit-message (message)
-    "Bypass formatting"
-    ;; message をそのまま返す
-    message)
-  )
-
-;;; Tool setup functions
-
+;;; gptel tool setup functions
 (defun uy/gptel-setup-filesystem-tools ()
   "Setup filesystem-related gptel tools."
   ;; gptel tool: file/Read file contents
@@ -503,5 +349,167 @@ Useful for discovering variables related to specific topic or feature."
                        :type string
                        :description "regexp pattern to search Emacs lisp symbols"))
    :category "emacs"))
+
+(defun uy/gptel-setup-journaling-tools ()
+  (gptel-make-tool
+   :name "get_current_datetime"
+   :function (lambda () (current-time-string))
+   :description "Get the current local time."
+   :category "journal"))
+
+;; gptel: Interact with LLMs
+(use-package gptel
+  :ensure t
+  :vc (:url "https://github.com/karthink/gptel" :rev "b672649") ;; 2025-12-28 latest
+  :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
+  :config
+  (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
+  (setopt gptel-default-mode 'org-mode)  ;; default model
+
+  ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
+  ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
+
+  ;; Gemini
+  (gptel-make-gemini "Gemini"
+    :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
+    :stream t)
+  ;; DeepSeek
+  (gptel-make-openai "DeepSeek"       ;Any name you want
+    :host "api.deepseek.com"
+    :endpoint "/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
+    :models '(deepseek-chat deepseek-coder))
+  ;; OpenRouter
+  (gptel-make-openai "OpenRouter"  ;; Any name you want
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
+    :models '(google/gemini-2.5-pro
+              google/gemini-2.5-flash
+              openai/gpt-5
+              qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
+              z-ai/glm-4.5-air:free
+              ))
+  ;; Novita AI
+  (gptel-make-openai "Novita"     ;Any name you want
+    :host "api.novita.ai"
+    :endpoint "/v3/openai/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
+    :models '(
+              qwen/qwen3-235b-a22b-instruct-2507
+              qwen/qwen3-coder-480b-a35b-instruct
+              qwen/qwen3-next-80b-a3b-instruct
+              deepseek/deepseek-v3-0324
+              deepseek/deepseek-v3.2
+              deepseek/deepseek-r1-0528
+              minimax/minimax-m2
+              openai/gpt-oss-120b
+              openai/gpt-oss-20b
+              zai-org/glm-4.7
+              ))
+  ;; Ollama
+  (gptel-make-ollama "Ollama"             ;Any name of your choosing
+    :host "localhost:11434"               ;Where it's running
+    :stream t                             ;Stream responses
+    ;; List of models
+    :models '(gemma:2b
+              hf.co/alfredplpl/gemma-2-baku-2b-it-gguf
+              Llama-3.1-Swallow-Instruct
+              qwen2.5-coder-instruct
+              )
+    )
+
+  ;; MCP利用
+  (require 'gptel-integrations)
+
+  ;; ディレクティブ
+  (setq gptel-directives
+        '((default     . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
+          (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+          (writing     . "You are a large language model and a writing assistant. Respond concisely.")
+          (chat        . "You are a large language model and a conversation partner. Respond concisely.")
+          
+          ;; 日本語応答用ディレクティブ
+          (default-ja  . "あなたはEmacsに組み込まれた大規模言語モデルであり、役立つアシスタントです。常に日本語で簡潔に応答してください。")
+          ))
+
+  ;; Setup gptel tools
+  (uy/gptel-setup-filesystem-tools)
+  (uy/gptel-setup-web-tools)
+  (uy/gptel-setup-emacs-tools)
+  (uy/gptel-setup-journaling-tools))
+
+;; gptel-agent
+(use-package gptel-agent
+  :vc (:url "https://github.com/karthink/gptel-agent"
+       :rev :newest)
+  :ensure t
+  :config (gptel-agent-update))         ;Read files from agents directories
+
+;; gptel-quick
+;; 
+;; Show a short summary or explanation of the word at point, or an active region, in a popup.
+;; When the popup is active,
+;; - press + to get a longer summary,
+;; - M-w (or kill-ring-save) to copy the response,
+;; - or C-g (or keyboard-quit) to clear it.
+(use-package gptel-quick
+  :ensure t
+  :vc (:url "https://github.com/karthink/gptel-quick" :rev :newest)
+  :config
+  (with-eval-after-load 'embark (keymap-set embark-general-map "?" #'gptel-quick))
+  (setopt gptel-quick-system-message
+          (lambda (count)
+            (format "日本語で%d語以内で説明せよ。ですます調ではなく常体で答えること。" count)))
+
+  
+  (defun gptel-quick (query-text &optional count)
+    "Explain or summarize region or thing at point with an LLM.
+  
+  QUERY-TEXT is the text being explained.  COUNT is the approximate
+  word count of the response."
+    (interactive
+     (list (cond
+            ((use-region-p) (buffer-substring-no-properties (region-beginning)
+                                                            (region-end)))
+            ((and (derived-mode-p 'pdf-view-mode)
+                  (pdf-view-active-region-p))
+             (mapconcat #'identity (pdf-view-active-region-text) "\n\n"))
+            (t (thing-at-point 'sexp)))
+           current-prefix-arg))
+    
+    (when (xor gptel-quick-backend gptel-quick-model)
+      (error "gptel-quick-backend and gptel-quick-model must be both set or unset"))
+    
+    (let* ((count (or count gptel-quick-word-count))
+           (gptel-max-tokens (floor (+ (sqrt (length query-text))
+                                       (* count 2.5))))
+           (gptel-use-curl t)  ;; Multibyte text によるエラー回避のため、 gptel-use-curl t とする
+           (gptel-use-context (and gptel-quick-use-context 'system))
+           (gptel-backend (or gptel-quick-backend gptel-backend))
+           (gptel-model (or gptel-quick-model gptel-model)))
+      (gptel-request query-text
+        :system (funcall gptel-quick-system-message count)
+        :context (list query-text count
+                       (posn-at-point (and (use-region-p) (region-beginning))))
+        :callback #'gptel-quick--callback-posframe)))
+  )
+
+;; gptel-magit
+(use-package gptel-magit
+  :ensure t
+  :hook (magit-mode . gptel-magit-install)
+  :after markdown-mode
+  :config
+  ;; 自動でフォーマット（fill-region） が行われるのを防ぐ
+  (defun gptel-magit--format-commit-message (message)
+    "Bypass formatting"
+    ;; message をそのまま返す
+    message)
+  )
+
 
 (provide 'setup-gptel)
