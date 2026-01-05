@@ -23,12 +23,13 @@
 (use-package shell-maker
   :ensure t)
 (use-package agent-shell
-    :ensure t
-    :vc (:url "https://github.com/xenodium/agent-shell" :rev "6eae9d8")
-    ;; :ensure-system-package
-    ;; ((codex-acp . "npm install -g @zed-industries/codex-acp")
-    ;;  (claude-code-acp "npm install -g @zed-industries/claude-code-acp"))
-    )
+  :ensure t
+  :vc (:url "https://github.com/xenodium/agent-shell" :rev "6eae9d8")
+  :config
+  (setopt agent-shell-openai-codex-environment
+          (agent-shell-make-environment-variables :inherit-env t))
+  (setopt agent-shell-prefer-viewport-interaction t)
+  )
 
 ;; mcp.el
 (use-package mcp-hub
