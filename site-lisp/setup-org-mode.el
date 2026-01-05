@@ -196,6 +196,7 @@
      (python . t)
      (mermaid . t)
      (plantuml . t)
+     (d2 . t)
      ))
 
   ;; Export
@@ -410,6 +411,16 @@
   :ensure t
   :config
   (setopt ob-mermaid-cli-path "mmdc"))
+
+;; ob-d2
+(use-package ob-d2
+  :vc (:url "https://github.com/dmacvicar/ob-d2" :rev :newest)
+  :ensure t
+  :defer t)
+
+;; d2-mode
+(use-package d2-mode
+  :ensure t)
 
 ;; Tableの形式をその場で変換する関数。
 (defun org-table-transform-in-place ()
