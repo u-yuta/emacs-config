@@ -78,11 +78,9 @@
   (setopt org-archive-location "%s_archive::datetree/")
 
   ;; リンクを開くプログラムの指定
-  ;; Windowsの関連付けでファイルを開くために wslview を使う。
-  ;; （wslviewは wslutilities/wslu https://github.com/wslutilities/wslu に含まれる）
-  (add-to-list 'org-file-apps '("\\.xlsx?\\'" . "wslview %s"))
-  (add-to-list 'org-file-apps '("\\.docx?\\'" . "wslview %s"))
-  (add-to-list 'org-file-apps '("\\.pptx?\\'" . "wslview %s"))
+  (add-to-list 'org-file-apps '("\\.xlsx?\\'" . "open %s"))
+  (add-to-list 'org-file-apps '("\\.docx?\\'" . "open %s"))
+  (add-to-list 'org-file-apps '("\\.pptx?\\'" . "open %s"))
   
   (setopt org-todo-keywords
           '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
