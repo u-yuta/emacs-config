@@ -109,4 +109,32 @@
   (citar-org-roam-mode)
   (setopt citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
 
+;; citar-denote
+;; 主要なコマンド
+;; - `citar-denote-open-note`：ノートが紐づいた文献だけに絞った Citar メニューを開き、既存の文献ノートを開く。
+;; - `citar-denote-find-citation`：Denote コレクション内で「引用されている」文献を一覧し、該当ノートを開く。
+;; - `citar-denote-dwim`：現在の Denote バッファの参照情報に基づき、関連する添付・リンク・ノート等を“適切に”開く入口。
+;; - `citar-denote-open-reference-entry`：参照（reference）として指定した文献の元エントリ（BibTeX/CSL 等）を開いて編集できるようにする。
+;; - `citar-denote-add-reference`：現在のノートに citation key を参照行として追加し、必要なら通常ノートを文献ノートへ変換する。
+;; - `citar-denote-remove-reference`：現在の文献ノートから参照（citation key）を削除し、参照がなくなればタグ除去やリネームも行う。
+;; - `citar-denote-find-reference`：現在のバッファの参照に関連して、他ノート側で参照／引用しているノートを探す。
+;; - `citar-denote-link-reference`：ノートが存在する文献を選び、現在の Denote バッファへ該当ノートへのリンクを挿入する。
+(use-package citar-denote
+  :ensure t
+  :demand t
+  :after (:any citar denote)
+  :custom
+  (citar-denote-file-type 'org)
+  (citar-denote-keyword "bib")
+  (citar-denote-signature nil)
+  (citar-denote-subdir t)
+  (citar-denote-template nil)
+  (citar-denote-title-format "author-year-title")
+  (citar-denote-title-format-andstr "and")
+  (citar-denote-title-format-authors 1)
+  (citar-denote-use-bib-keywords nil)
+  :init
+  (citar-denote-mode))
+
+
 (provide 'setup-citation)
