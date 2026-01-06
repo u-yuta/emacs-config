@@ -44,7 +44,10 @@
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (citar-notes-paths (list (expand-file-name "share" org-roam-directory)))
+  (citar-notes-paths
+   (list (expand-file-name "w3-area" org-roam-directory)
+         (expand-file-name "s3-area" org-roam-directory)
+         (expand-file-name "p3-area" org-roam-directory)))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup)
@@ -92,16 +95,16 @@
        :padding "  "
        :tag "has:files"))
     (setopt citar-indicators
-          (list citar-indicator-files-icons
-                citar-indicator-notes-icons
-                citar-indicator-links-icons))))
+            (list citar-indicator-files-icons
+                  citar-indicator-notes-icons
+                  citar-indicator-links-icons))))
 
 ;; citar-org-roam: provide tighter Citar and Org-Roam integration
 (use-package citar-org-roam
   :ensure t
   :after (citar org-roam)
   :custom
-  (citar-org-roam-subdir "share")
+  (citar-org-roam-subdir "s3-area")
   :config
   (citar-org-roam-mode)
   (setopt citar-org-roam-note-title-template "${author} (${year}) -- ${title}"))
