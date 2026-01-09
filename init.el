@@ -569,7 +569,12 @@
 
 ;; Find file by zoxide
 (use-package zoxide
-  :ensure t)
+  :ensure t
+  :config
+  (defun dired-jump-with-zoxide (&optional other-window)
+     (interactive "P")
+     (zoxide-open-with nil (lambda (file) (dired-jump other-window file)) t))
+  )
 
 (when uy/wsl-p 
   (use-package notmuch
