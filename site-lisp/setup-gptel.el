@@ -366,6 +366,9 @@ Useful for discovering variables related to specific topic or feature."
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
   (setopt gptel-default-mode 'org-mode)  ;; default model
 
+  ;; gptel-modeでRETしても送信しない
+  (define-key gptel-mode-map (kbd "RET") nil)
+
   ;; OpenAIのモデルはデフォルトで ChatGPT:<model> として使える 
   ;; API key は gptelのマニュアルの Securing API keys with authinfo に従って設定
 
