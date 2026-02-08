@@ -54,7 +54,7 @@
     ("h" "Home index"
      (lambda () (interactive) (find-file (file-name-concat org-directory "00_index_home.org"))))
     ("m" "Documents/YYYY/mm"
-     (lambda () (interactive) (find-file (format-time-string "~/Documents/%Y/%m"))))
+     (lambda () (interactive) (find-file (format-time-string "~/Documents/%Y/%m/"))))
     ("." "Emacs init"
      (lambda () (interactive) (find-file user-init-file)))
    ]
