@@ -360,7 +360,7 @@ Useful for discovering variables related to specific topic or feature."
 ;; gptel: Interact with LLMs
 (use-package gptel
   :ensure t
-  :vc (:url "https://github.com/karthink/gptel" :rev "b672649") ;; 2025-12-28 latest
+  :vc (:url "https://github.com/karthink/gptel" :rev "b34a135") ;; 2026-02-12 latest
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
@@ -447,8 +447,7 @@ Useful for discovering variables related to specific topic or feature."
 
 ;; gptel-agent
 (use-package gptel-agent
-  :vc (:url "https://github.com/karthink/gptel-agent"
-       :rev :newest)
+  :vc (:url "https://github.com/karthink/gptel-agent" :rev "2e6ba04")  ;; 2026-02-12 latest
   :ensure t
   :config (gptel-agent-update))         ;Read files from agents directories
 
