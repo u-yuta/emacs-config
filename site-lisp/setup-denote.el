@@ -87,7 +87,7 @@
   Add this function to the `after-save-hook'."
     (let ((denote-rename-confirmations nil)
           (denote-save-buffers t)) ; to save again post-rename
-      (when (and buffer-file-name (denote-file-is-note-p buffer-file-name))
+      (when (and buffer-file-name (denote-file-has-denoted-filename-p buffer-file-name))
         (ignore-errors (denote-rename-file-using-front-matter buffer-file-name))
         (message "Buffer saved; Denote file renamed"))))
 
