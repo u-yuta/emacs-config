@@ -555,6 +555,12 @@
   (pdf-tools-install)
   (pdf-loader-install))
 
+(use-package persistent-scratch
+  :ensure t
+  :config
+  (persistent-scratch-setup-default) ;; enable autosave and restore the last saved state
+  )
+
 ;; visual undo-tree
 (use-package vundo
   :ensure t
