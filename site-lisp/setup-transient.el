@@ -46,7 +46,7 @@
   ["Find file"
    ["File"
     ("j" "Journal"
-     (lambda () (interactive) (find-file (uy/journal-file-name-year-month))))
+     (lambda () (interactive) (find-file (uy/journal-file-today-create-if-not-exist))))
     ("a" "Agenda"
      (lambda () (interactive) (find-file uy/org-agenda-file)))
     ("A" "Shared Agenda"

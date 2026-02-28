@@ -104,17 +104,36 @@
           (:endgroup . nil)
           ))
 
-  (defun uy/journal-file-name-year-month ()
+  ;; Journal settings
+  (defun uy/journal-file-today ()
     "Return a string representing the journal file path in the formatting
-    '<journal-directory>/journal-YYYY-mm.org' using current year and month."
-    (file-name-concat uy/journal-directory (format-time-string "journal-%Y-%m.org")))
+    '<journal-directory>/journal-yyyy-mm-dd.org' using current year and month."
+    (file-name-concat uy/journal-directory (format-time-string "%Y/journal-%Y%m%d.org")))
 
-  ;; org-modeのcapture template
+  (defun uy/journal-entry-template ()
+    "Return a capture template string"
+    (concat
+     "* " (format-time-string "%F %A") "\n"
+     "** 予定\n\n** やること\n\n** タスクキュー\n\n** メモ\n\n** 日報\n\n"
+     ))
+  (defun uy/journal-file-today-create-if-not-exist ()
+    "Create today's journal file with template if it doesn't exist. Return the journal file path."
+    (let ((file (uy/journal-file-today)))
+      (unless (file-exists-p file)
+        (make-directory (file-name-directory file) t)
+        (with-temp-file file
+          (insert (uy/journal-entry-template))))
+      file))
+
   (setopt org-capture-templates
-        '(("j" "Journal" entry
-           (file+olp+datetree (lambda () (uy/journal-file-name-year-month)))
-           "* %U %?\n")
-          ))
+    '(
+      ("j" "Journal memo" entry
+       (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "メモ")
+        "* %U %?\n")
+      ("t" "Journal add task" item
+       (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "タスクキュー"))
+      )
+    )
 
   (setopt myroamfiles (directory-files org-directory t "org$"))
   (defun uy/org-files-list-except-journal ()
