@@ -126,14 +126,15 @@
       file))
 
   (setopt org-capture-templates
-    '(
-      ("j" "Journal memo" entry
-       (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "メモ")
-        "* %U %?\n")
-      ("t" "Journal add task" item
-       (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "タスクキュー"))
-      )
-    )
+          '(
+            ("j" "Journal memo" entry
+             (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "メモ")
+             "* %U %?\n%a")
+            ("t" "Journal add task" entry
+             (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "タスクキュー")
+             "* %U %?\n%a")
+            )
+          )
 
   (setopt myroamfiles (directory-files org-directory t "org$"))
   (defun uy/org-files-list-except-journal ()
