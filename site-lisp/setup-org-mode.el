@@ -110,12 +110,7 @@
     '<journal-directory>/journal-yyyy-mm-dd.org' using current year and month."
     (file-name-concat uy/journal-directory (format-time-string "%Y/journal-%Y%m%d.org")))
 
-  (defun uy/journal-entry-template ()
-    "Return a capture template string"
-    (concat
-     "* " (format-time-string "%F %A") "\n"
-     "** 予定\n\n** やること\n\n** タスクキュー\n\n** メモ\n\n** 日報\n\n"
-     ))
+  ;; Journal utilities
   (defun uy/journal-file-today-create-if-not-exist ()
     "Create today's journal file with template if it doesn't exist. Return the journal file path."
     (let ((file (uy/journal-file-today)))
@@ -125,6 +120,47 @@
           (insert (uy/journal-entry-template))))
       file))
 
+  (require 'time-date) ;; days-to-time
+  
+  (defun uy/journal-files-from-today-back (n)
+    "今日を含めて、今日からN日前まで(両端含む)の既存のjournal fileパスのリストを返す。
+戻り順は新しい→古い。N=0なら今日だけ。N<0はerror。"
+    (unless (integerp n)
+      (signal 'wrong-type-argument (list 'integerp n)))
+    (when (< n 0)
+      (error "N must be >= 0, got %s" n))
+    (let ((now (current-time))
+          (res nil))
+      (dotimes (i (1+ n) (seq-filter #'file-exists-p res))
+        (let ((time (time-subtract now (days-to-time i))))
+          (push (file-name-concat
+                 uy/journal-directory
+                 (format-time-string "%Y" time)
+                 (format-time-string "journal-%Y%m%d.org" time))
+                res)))))
+  
+  (defun uy/journal-select-from-today-back (n)
+    "直近N日前までの既存journalファイルをミニバッファで選択して返す。キャンセル時はnil。"
+    (let* ((cands (uy/journal-files-from-today-back n))
+           (choice (completing-read "Journal: " cands nil t)))
+      (and (stringp choice) (not (string-empty-p choice)) choice)))
+  
+  (defun uy/journal-find-from-today-back-month ()
+    "直近30日前までの既存journalファイルから選択し、開く。
+  キャンセル時は何もしない。"
+    (interactive)
+    (let ((file (uy/journal-select-from-today-back 30)))
+      (when file
+        (find-file file))))
+
+  ;; Capture template
+  (defun uy/journal-entry-template ()
+    "Return a capture template string"
+    (concat
+     "* " (format-time-string "%F %A") "\n"
+     "** 予定\n\n** やること\n\n** タスクキュー\n\n** メモ\n\n** 日報\n\n"
+     ))
+ 
   (setopt org-capture-templates
           '(
             ("j" "Journal memo" entry
