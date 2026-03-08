@@ -20,8 +20,6 @@
   :ensure t
   :init (setopt org-roam-v2-ack t)
   :after (org)
-  :hook
-  (after-init . org-roam-db-autosync-mode)
   :custom
   (org-roam-directory org-directory)
   :bind (
@@ -55,6 +53,30 @@
     "Scan the current buffer for Org-ID locations and update them."
     (interactive)
     (org-id-update-id-locations (list (buffer-file-name (current-buffer)))))
+
+  (setopt org-roam-file-extensions '("org" "md")) ;; enable Org-roam for markdown
+
+  (use-package md-roam
+    :ensure t
+    :vc (:url "https://github.com/nobiot/md-roam" :branch "main" :rev :newest)
+    :config
+    (md-roam-mode 1)  ;; needs to be turned on before `org-roam-db-autosync-mode'
+    (setopt md-roam-file-extension "md")
+    (setopt md-roam-regex-id "\\(^identifier:[ \t]*\\)\\(.*\\)")  ;; DenoteのIDフォーマット
+
+    ;; `yyyymmddTHHMMSS--' で始まるファイルを検索対象とする（Denoteと共通化）
+    (defun md-roam--markdown-file-p (file)
+      "FILE が md-roam の処理対象（指定の拡張子かつタイムスタンプ開始）か判定する。"
+      (when (stringp file)
+        (let ((ext-re (format "\\.%s$" (regexp-quote md-roam-file-extension)))
+              ;; タイムスタンプ形式 (例: 20231027T103000--...) の正規表現
+              (name-re "^[0-9]\\{8\\}T[0-9]\\{6\\}--")
+              (filename (file-name-nondirectory file)))
+          (and (string-match-p ext-re file)      ; 拡張子のチェック
+               (string-match-p name-re filename) ; ファイル名の先頭チェック
+               ))))
+    )
+    (org-roam-db-autosync-mode 1)
   )
 
 (use-package org-roam-ui
