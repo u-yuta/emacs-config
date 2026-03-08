@@ -402,16 +402,18 @@ Useful for discovering variables related to specific topic or feature."
     :stream t
     :key #'(lambda () (uy/get-auth-secret "novita.ai"))
     :models '(
+              qwen/qwen3.5-397b-a17b
+              qwen/qwen3.5-35b-a3b
+              qwen/qwen3-coder-next
               qwen/qwen3-235b-a22b-instruct-2507
-              qwen/qwen3-coder-480b-a35b-instruct
               qwen/qwen3-next-80b-a3b-instruct
               deepseek/deepseek-v3-0324
               deepseek/deepseek-v3.2
               deepseek/deepseek-r1-0528
-              minimax/minimax-m2
+              minimax/minimax-m2.5
               openai/gpt-oss-120b
               openai/gpt-oss-20b
-              zai-org/glm-4.7
+              zai-org/glm-5
               ))
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
