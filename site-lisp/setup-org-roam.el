@@ -34,7 +34,14 @@
          (("C-c n I" . org-roam-insert-immediate)))
   :config
   ;; Configures display formatting for Org-roam node.
-  (setopt org-roam-node-display-template (concat "${title:*} " (propertize "${tags:12}" 'face 'org-tag)))
+  ;; https://github.com/org-roam/org-roam/wiki/User-contributed-Tricks#filtering-by-subdirectory
+  (cl-defmethod org-roam-node-directories ((node org-roam-node))
+    (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
+        (format "%s/" (car (split-string dirs "/")))
+      ""))
+  (setopt org-roam-node-display-template "${directories:12} ${title:80} ${tags:10}"
+          org-roam-node-annotation-function
+          (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
 
   ;; org-roam capture template
   (setopt org-roam-capture-templates
