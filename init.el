@@ -345,7 +345,7 @@
   :ensure t
   :defer t
   :config
-  (setopt org-noter-notes-search-path (list (expand-file-name "share" org-roam-directory)))
+  (setopt org-noter-notes-search-path (list (expand-file-name "share" org-directory)))
   (setopt org-noter-default-notes-file-names '("resouce.notes.org"))
   )
 ;; ============================================
