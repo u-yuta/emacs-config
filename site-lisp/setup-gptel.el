@@ -415,6 +415,20 @@ Useful for discovering variables related to specific topic or feature."
               openai/gpt-oss-20b
               zai-org/glm-5
               ))
+  ;; Novita AI (Qwen 3.5 non-thinking mode)
+  ;; https://huggingface.co/Qwen/Qwen3.5-397B-A17B#instruct-or-non-thinking-mode
+  (gptel-make-openai "Novita(nothink)"
+    :host "api.novita.ai"
+    :endpoint "/v3/openai/chat/completions"
+    :stream t
+    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
+    :models '(
+              qwen/qwen3.5-397b-a17b
+              qwen/qwen3.5-35b-a3b
+              zai-org/glm-5
+              )
+    :request-params '(:enable_thinking :json-false))
+
   ;; Ollama
   (gptel-make-ollama "Ollama"             ;Any name of your choosing
     :host "localhost:11434"               ;Where it's running
