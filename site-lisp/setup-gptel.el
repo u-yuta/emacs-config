@@ -451,7 +451,10 @@ Useful for discovering variables related to specific topic or feature."
 (use-package gptel-agent
   :vc (:url "https://github.com/karthink/gptel-agent" :rev "2e6ba04")  ;; 2026-02-12 latest
   :ensure t
-  :config (gptel-agent-update))         ;Read files from agents directories
+  :config
+  (add-to-list 'gptel-agent-dirs "~/.emacs.d/agents")
+  (gptel-agent-update)  ;; Read files from agents directories
+  )         
 
 ;; gptel-quick
 ;; 
