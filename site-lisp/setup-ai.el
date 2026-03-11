@@ -25,11 +25,23 @@
 (use-package agent-shell
   :ensure t
   :vc (:url "https://github.com/xenodium/agent-shell" :rev "6761394")  ;; v0.46.1
+  :bind (:map agent-shell-mode-map
+              ("RET" . newline)
+              ("C-c C-c" . shell-maker-submit)
+              ("C-c C-k" . agent-shell-interrupt))
   :config
   (setopt agent-shell-openai-codex-environment
           (agent-shell-make-environment-variables :inherit-env t))
   (setopt agent-shell-prefer-viewport-interaction t)
-  )
+
+  (evil-define-key 'insert agent-shell-mode-map (kbd "RET") #'newline)
+
+  ;; *agent-shell-diff* バッファをEmacs stateで始める。Evilのキーバインドにするには `C-z'。
+  (add-hook 'diff-mode-hook
+	    (lambda ()
+	      (when (string-match-p "\\*agent-shell-diff\\*" (buffer-name))
+		(evil-emacs-state)))))
+
 
 ;; mcp.el
 (use-package mcp-hub
