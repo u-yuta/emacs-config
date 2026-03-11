@@ -168,7 +168,7 @@
              "* %U %?\n%a")
             ("t" "Journal add task" entry
              (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "タスクキュー")
-             "* %U %?\n%a")
+             "* %?\n")
             )
           )
 
