@@ -24,7 +24,7 @@
   :ensure t)
 (use-package agent-shell
   :ensure t
-  :vc (:url "https://github.com/xenodium/agent-shell" :rev "6eae9d8")
+  :vc (:url "https://github.com/xenodium/agent-shell" :rev "6761394")  ;; v0.46.1
   :config
   (setopt agent-shell-openai-codex-environment
           (agent-shell-make-environment-variables :inherit-env t))
