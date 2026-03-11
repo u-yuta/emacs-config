@@ -40,6 +40,60 @@
             "noexport"  ;; org-mode機能
             ))
 
+  ;; title だけ slug 規則を差し替え、英語タイトルでは Denote 標準に近い形を維持する。
+  ;; CJK を含むタイトルでは空白と . を残して、ファイル名の可読性を優先する。
+  (defun uy/denote-sluggify-title (str)
+    "Make STR an appropriate slug for title.
+Preserve letter case.  If STR contains CJK characters, keep spaces
+and dots for readability while removing Denote's usual punctuation,
+except for dots."
+    (if (string-match-p "\\(?:\\cc\\|\\cj\\|\\ck\\)" str)
+        (replace-regexp-in-string
+         "[][{}!@#$%^&*()+'\"?,|;:~`‘’“”/=]*"
+         ""
+         str)
+      (denote-slug-hyphenate
+       (replace-regexp-in-string
+        "[][{}!@#$%^&*()+'\"?,|;:~`‘’“”/=]*"
+        ""
+        str))))
+
+  (defun uy/denote-sluggify-and-apply-rules (component str)
+    "Make STR an appropriate slug for file name COMPONENT.
+This keeps dots in title components while delegating other rules to
+Denote's standard machinery."
+    (let* ((slug-function (alist-get component denote-file-name-slug-functions))
+           (str-slug (cond
+                      ((eq component 'title)
+                       (funcall (or slug-function #'uy/denote-sluggify-title) str))
+                      ((eq component 'keyword)
+                       (replace-regexp-in-string
+                        "_"
+                        ""
+                        (funcall (or slug-function #'denote-sluggify-keyword) str)))
+                      ((eq component 'identifier)
+                       (denote--valid-identifier
+                        (funcall (or slug-function #'identity) str)))
+                      ((eq component 'signature)
+                       (funcall (or slug-function #'denote-sluggify-signature) str)))))
+      (denote--trim-right-token-characters
+       (denote--replace-consecutive-token-characters
+        (if (eq component 'title)
+            str-slug
+          (denote--remove-dot-characters str-slug))
+        component)
+       component)))
+
+  (setopt denote-file-name-slug-functions
+          '((identifier . identity)
+            (title . uy/denote-sluggify-title)
+            (signature . denote-sluggify-signature)
+            (keyword . denote-sluggify-keyword)))
+
+  ;; Denote 本体が後段で title の . を消すため、その処理だけ差し替える。
+  (advice-add 'denote-sluggify-and-apply-rules :override
+              #'uy/denote-sluggify-and-apply-rules)
+
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
   ;; "[D]" followed by the file's title.  Read the doc string of
