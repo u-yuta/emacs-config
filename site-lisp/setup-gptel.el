@@ -357,12 +357,41 @@ Useful for discovering variables related to specific topic or feature."
    :description "Get the current local time."
    :category "journal"))
 
+;; Macher: A project-aware LLM editing toolset for Emacs, built on gptel.
+(use-package macher
+  :ensure t
+  :custom
+  ;; The org UI has structured navigation and nice content folding.
+  (macher-action-buffer-ui 'org)
+
+  :config
+  ;; Recommended - register macher tools and presets with gptel.
+  (macher-install)
+
+  ;; Recommended - enable macher infrastructure for tools/prompts in
+  ;; any buffer.  (Actions and presets will still work without this.)
+  (macher-enable)
+
+  ;; Adjust buffer positioning to taste.
+  ;; (add-to-list
+  ;;  'display-buffer-alist
+  ;;  '("\\*macher:.*\\*"
+  ;;    (display-buffer-in-side-window)
+  ;;    (side . bottom)))
+  ;; (add-to-list
+  ;;  'display-buffer-alist
+  ;;  '("\\*macher-patch:.*\\*"
+  ;;    (display-buffer-in-side-window)
+  ;;    (side . right)))
+  )
+
 ;; gptel: Interact with LLMs
 (use-package gptel
   :ensure t
   :vc (:url "https://github.com/karthink/gptel" :rev "b34a135") ;; 2026-02-12 latest
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
+  (require 'macher nil t)
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
   (setopt gptel-default-mode 'org-mode)  ;; default model
   (setopt gptel-expert-commands t) ;; display additional options in the transient menu 
