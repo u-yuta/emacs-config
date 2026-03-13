@@ -131,7 +131,7 @@
       (error "N must be >= 0, got %s" n))
     (let ((now (current-time))
           (res nil))
-      (dotimes (i (1+ n) (seq-filter #'file-exists-p res))
+      (dotimes (i (1+ n) (nreverse (seq-filter #'file-exists-p res)))
         (let ((time (time-subtract now (days-to-time i))))
           (push (file-name-concat
                  uy/journal-directory
@@ -140,11 +140,24 @@
                 res)))))
   
   (defun uy/journal-select-from-today-back (n)
-    "直近N日前までの既存journalファイルをミニバッファで選択して返す。キャンセル時はnil。"
-    (let* ((cands (uy/journal-files-from-today-back n))
-           (choice (completing-read "Journal: " cands nil t)))
-      (and (stringp choice) (not (string-empty-p choice)) choice)))
-  
+    "直近N日前までの既存journalファイルをミニバッファで選択して返す。"
+    (let* ((cands (uy/journal-files-from-today-back n)))
+      (when cands
+        (condition-case nil
+            (if (boundp 'vertico-sort-function)
+                (let ((vertico-sort-function nil))
+                  (completing-read "Journal: " cands nil t))
+              (completing-read "Journal: " cands nil t))
+          (quit nil)))))
+
+  (defun uy/journal-find-from-today-back-week ()
+    "直近30日前までの既存journalファイルから選択し、開く。
+  キャンセル時は何もしない。"
+    (interactive)
+    (let ((file (uy/journal-select-from-today-back 7)))
+      (when file
+        (find-file file))))
+
   (defun uy/journal-find-from-today-back-month ()
     "直近30日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
