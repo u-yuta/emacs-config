@@ -587,6 +587,7 @@
     :commands notmuch-hello)
   )
 
+(require 'setup-vulpea)
 (require 'setup-auth-source)
 (require 'setup-gptel)
 (require 'setup-ai)

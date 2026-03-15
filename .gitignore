@@ -40,6 +40,7 @@ auto-save-list/
 /tree-sitter/
 /url/
 /var/
+/vulpea.db
 /tabsession.el
 .lsp-session-v1
 .mc-lists.el
