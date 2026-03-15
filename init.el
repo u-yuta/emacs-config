@@ -592,6 +592,7 @@
   )
 
 (require 'setup-vulpea)
+(require 'my-vtree)
 (require 'setup-auth-source)
 (require 'setup-gptel)
 (require 'setup-ai)
