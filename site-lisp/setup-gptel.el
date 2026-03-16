@@ -153,9 +153,6 @@
           ))
 
   ;; Setup gptel tools
-  (uy/gptel-setup-filesystem-tools)
-  (uy/gptel-setup-web-tools)
-  (uy/gptel-setup-emacs-tools)
   (uy/gptel-setup-journaling-tools))
 
 ;; gptel-agent
