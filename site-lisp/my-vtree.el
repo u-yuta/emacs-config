@@ -33,13 +33,17 @@
   "Property key that stores parent note ID."
   :type 'string)
 
+(defcustom my-vtree-order-key "ORDER"
+  "Property key that stores note order among siblings."
+  :type 'string)
+
 (defun my-vtree-current-note ()
   "Return current buffer's file-level Vulpea note, or nil."
   (when-let* ((path (buffer-file-name))
               (notes (vulpea-db-query-by-file-paths (list path) 0)))
     (car notes)))
 
-(defun my-vtree-note-property (note key)
+(defun my-vtree-note-prop-value (note key)
   "Return property value of KEY from NOTE.
 KEY is compared leniently against string/symbol keys."
   (when note
@@ -53,24 +57,48 @@ KEY is compared leniently against string/symbol keys."
 
 (defun my-vtree-note-parent-id (note)
   "Return NOTE's parent ID from PARENT property, or nil."
-  (when-let ((val (my-vtree-note-property note my-vtree-parent-key)))
+  (when-let ((val (my-vtree-note-prop-value note my-vtree-parent-key)))
     (let ((s (string-trim (format "%s" val))))
       (unless (string-empty-p s)
         s))))
+
+(defun my-vtree-note-order (note)
+  "Return NOTE's sibling order, or nil."
+  (when-let ((val (my-vtree-note-prop-value note my-vtree-order-key)))
+    (let ((s (string-trim (format "%s" val))))
+      (unless (string-empty-p s)
+        (string-to-number s)))))
 
 (defun my-vtree-note-parent (note)
   "Return parent note of NOTE, or nil."
   (when-let ((parent-id (my-vtree-note-parent-id note)))
     (vulpea-db-get-by-id parent-id)))
 
+(defun my-vtree-note-child-p (note candidate)
+  "Return non-nil when CANDIDATE is a child of NOTE."
+  (let ((id (vulpea-note-id note)))
+    (and (not (equal (vulpea-note-id candidate) id))
+         (equal (my-vtree-note-parent-id candidate) id))))
+
+(defun my-vtree-sort-notes (notes)
+  "Return NOTES sorted for display."
+  (seq-sort-by
+   (lambda (note)
+     (list (or (my-vtree-note-order note) most-positive-fixnum)
+           (my-vtree-note-label note)))
+   (lambda (a b)
+     (or (< (car a) (car b))
+         (and (= (car a) (car b))
+              (string-lessp (cadr a) (cadr b)))))
+   notes))
+
 (defun my-vtree-note-children (note)
   "Return file-level child notes of NOTE."
-  (let ((id (vulpea-note-id note)))
-    (seq-filter
-     (lambda (candidate)
-       (and (not (equal (vulpea-note-id candidate) id))
-            (equal (my-vtree-note-parent-id candidate) id)))
-     (vulpea-db-query-by-level 0))))
+  (my-vtree-sort-notes
+   (seq-filter
+    (lambda (candidate)
+      (my-vtree-note-child-p note candidate))
+    (vulpea-db-query-by-level 0))))
 
 (defun my-vtree-note-label (note)
   "Return display label for NOTE."
@@ -83,6 +111,38 @@ KEY is compared leniently against string/symbol keys."
 (defun my-vtree-visit-note (note)
   "Visit NOTE."
   (find-file (vulpea-note-path note)))
+
+(defun my-vtree-child-candidates (children)
+  "Return completion candidates for CHILDREN."
+  (mapcar
+   (lambda (note)
+     (cons (format "%s [%s]"
+                   (my-vtree-note-label note)
+                   (vulpea-note-id note))
+           note))
+   children))
+
+(defun my-vtree-neighborhood-data (note)
+  "Return display data for NOTE neighborhood."
+  (list :current note
+        :parent (my-vtree-note-parent note)
+        :children (my-vtree-note-children note)))
+
+(defun my-vtree-insert-neighborhood (data)
+  "Insert neighborhood DATA into current buffer."
+  (let ((current (plist-get data :current))
+        (parent (plist-get data :parent))
+        (children (plist-get data :children)))
+    (insert (format "Current: %s\n\n" (my-vtree-note-label current)))
+    (insert "Parent:\n")
+    (insert (if parent
+                (format "- %s\n" (my-vtree-note-label parent))
+              "- (none)\n"))
+    (insert "\nChildren:\n")
+    (if children
+        (dolist (child children)
+          (insert (format "- %s\n" (my-vtree-note-label child))))
+      (insert "- (none)\n"))))
 
 (defun my-vtree-visit-parent ()
   "Visit current note's parent."
@@ -107,9 +167,7 @@ If multiple children exist, ask user to choose."
           (`(,only)
            (my-vtree-visit-note only))
           (_
-           (let* ((alist (mapcar (lambda (n)
-                                   (cons (my-vtree-note-label n) n))
-                                 children))
+           (let* ((alist (my-vtree-child-candidates children))
                   (choice (completing-read "Child: " alist nil t)))
              (when-let ((selected (cdr (assoc choice alist))))
                (my-vtree-visit-note selected))))))
@@ -119,22 +177,12 @@ If multiple children exist, ask user to choose."
   "Show current note's parent and children."
   (interactive)
   (if-let* ((note (my-vtree-current-note)))
-      (let* ((parent (my-vtree-note-parent note))
-             (children (my-vtree-note-children note))
+      (let* ((data (my-vtree-neighborhood-data note))
              (buf (get-buffer-create "*my-vtree-neighborhood*")))
         (with-current-buffer buf
           (setq buffer-read-only nil)
           (erase-buffer)
-          (insert (format "Current: %s\n\n" (my-vtree-note-label note)))
-          (insert "Parent:\n")
-          (insert (if parent
-                      (format "- %s\n" (my-vtree-note-label parent))
-                    "- (none)\n"))
-          (insert "\nChildren:\n")
-          (if children
-              (dolist (child children)
-                (insert (format "- %s\n" (my-vtree-note-label child))))
-            (insert "- (none)\n"))
+          (my-vtree-insert-neighborhood data)
           (goto-char (point-min))
           (view-mode 1))
         (display-buffer buf))
