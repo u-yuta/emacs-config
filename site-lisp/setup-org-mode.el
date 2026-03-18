@@ -61,6 +61,9 @@
           org-attach-id-uuid-folder-format
           org-attach-id-fallback-folder-format))
 
+  ;; 親のIDをattachmentに使う
+  (setopt org-attach-use-inheritance t)
+
   (setopt org-agenda-dim-blocked-tasks 'invisible)
   ;; org-captureを呼び出したときに不要なIDが追加されるのを避ける
   (setopt org-id-link-to-org-use-id 'create-if-interactive)
