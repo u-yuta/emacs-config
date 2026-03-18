@@ -385,6 +385,10 @@
   :ensure t
   :mode "\\.nix\\'")
 
+;; Gnuplot
+(use-package gnuplot
+  :ensure t)
+
 ;; PlantUML
 (use-package plantuml-mode
   :ensure t

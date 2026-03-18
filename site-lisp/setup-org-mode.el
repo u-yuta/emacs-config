@@ -269,6 +269,7 @@
      (mermaid . t)
      (plantuml . t)
      (d2 . t)
+     (gnuplot . t)
      ))
 
   ;; Export
