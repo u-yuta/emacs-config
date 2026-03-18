@@ -60,6 +60,7 @@
   (require 'macher nil t)
   (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
   (setopt gptel-default-mode 'org-mode)  ;; default model
+  (setopt gptel-track-media t)
   (setopt gptel-expert-commands t) ;; display additional options in the transient menu 
 
   ;; gptel-modeでRETしても送信しない
