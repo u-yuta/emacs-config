@@ -22,26 +22,8 @@
   :ensure t
   :bind (("C-c n f" . vulpea-find))
   :config
-  (defun uy/org-symlink-directories (&optional base-dir)
-    "Return symlinked directories directly under BASE-DIR.
-BASE-DIR defaults to ~/Documents/org."
-    (let* ((base (file-name-as-directory
-                  (expand-file-name (or base-dir "~/Documents/org")))))
-      (seq-filter
-       (lambda (path)
-         (and (file-symlink-p path)
-              (file-directory-p path)))
-       (directory-files base t directory-files-no-dot-files-regexp))))
-
-  (defun uy/vulpea-sync-directories ()
-    "Return directories for vulpea-db-sync-directories including symlink dirs."
-    (delete-dups
-     (append
-      (list (expand-file-name "~/Documents"))
-      (mapcar #'file-truename (uy/org-symlink-directories)))))
-
   ;; 1. Configure (defaults to org-directory, so often not needed)
-  (setq vulpea-db-sync-directories (uy/vulpea-sync-directories))
+  (setq vulpea-db-sync-directories '("~/Documents"))
 
   ;; 2. Build database (first time only)
   ;; (vulpea-db-sync-full-scan)
