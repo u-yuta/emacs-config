@@ -31,6 +31,7 @@
                                            vterm-mode
                                            eat-mode
                                            jupyter-repl-mode
+                                           vulpea-ui-sidebar-mode
                                            )))
   ;; Magit のコミットメッセージ編集画面でInsert modeにする
   (add-hook 'with-editor-mode-hook 'evil-insert-state)

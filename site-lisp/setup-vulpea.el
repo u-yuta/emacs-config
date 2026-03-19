@@ -43,4 +43,19 @@
   :bind (("C-c n b" . vulpea-ui-sidebar-toggle))
   :ensure t)
 
+;; A journaling interface for vulpea that integrates seamlessly with vulpea-ui sidebar.
+(use-package vulpea-journal
+  :ensure t
+  :after (vulpea vulpea-ui)
+  :bind (("C-c j" . vulpea-journal))
+  :config
+  (vulpea-journal-setup)
+  (setopt vulpea-journal-default-template
+          (vulpea-journal-template-daily
+           :file-name (file-name-concat uy/journal-directory "%Y/journal-%Y%m%d.org")
+           :title "%Y-%m-%d %A"
+           :tags '("journal")
+           :body (concat
+                  "* 予定\n\n* やること\n\n* タスクキュー\n\n* メモ\n\n* 日報\n\n"))))
+
 (provide 'setup-vulpea)
