@@ -40,8 +40,11 @@
 
 ;; Sidebar infrastructure and widget framework for vulpea notes.
 (use-package vulpea-ui
-  :bind (("C-c n b" . vulpea-ui-sidebar-toggle))
-  :ensure t)
+  :bind (("C-c n b" . vulpea-ui-sidebar-toggle)
+         ("<f9>" . vulpea-ui-sidebar-toggle))
+  :ensure t
+  :config
+  (setopt vulpea-ui-sidebar-size 0.25))
 
 ;; A journaling interface for vulpea that integrates seamlessly with vulpea-ui sidebar.
 (use-package vulpea-journal
