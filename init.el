@@ -82,23 +82,23 @@
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
 
 ;; システム判定
-(setopt uy/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
-(setopt uy/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
-(setopt uy/system-windows-p (eq system-type 'windows-nt))
-(setopt uy/os-text (cond
-                  (uy/system-linux-p "Linux")
-                  (uy/system-msys-p "Msys")
-                  (uy/system-windows-p "Windows")))
+(setopt my/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
+(setopt my/system-msys-p (string-match-p "Msys" (shell-command-to-string "uname -o")))
+(setopt my/system-windows-p (eq system-type 'windows-nt))
+(setopt my/os-text (cond
+                  (my/system-linux-p "Linux")
+                  (my/system-msys-p "Msys")
+                  (my/system-windows-p "Windows")))
 ;; WSL上かどうかの判定
-(setopt uy/wsl-p
+(setopt my/wsl-p
       (and (string-match-p "WSL" (shell-command-to-string "uname -r"))
            (eq system-type 'gnu/linux)))
 
 
 ;; シェル設定
-(if uy/system-msys-p
+(if my/system-msys-p
     (setopt shell-file-name "/usr/bin/bash"))
-(if uy/system-linux-p
+(if my/system-linux-p
     (setopt shell-file-name "/bin/bash"))
 (setopt explicit-shell-file-name shell-file-name)
 
@@ -122,7 +122,7 @@
 ;; モードライン設定
 (setopt frame-title-format
       '(multiple-frames "%b"
-                        (" " invocation-name "@" system-name " " uy/os-text
+                        (" " invocation-name "@" system-name " " my/os-text
                          (:eval (if (buffer-file-name) " %f" " %b")))))
 
 ;; 行番号表示
@@ -156,14 +156,14 @@
 (setopt next-screen-context-lines 1)
 (setopt scroll-preserve-screen-position nil)
 
-(defun uy/indent-defun ()
+(defun my/indent-defun ()
   "Indent the current defun."
   (interactive)
   (save-excursion
     (mark-defun)
     (indent-region (region-beginning) (region-end))))
 
-(defun uy/insert-timestamp ()
+(defun my/insert-timestamp ()
   "Insert timestamp"
   (interactive)
   (insert (format-time-string "%Y%m%dT%H%M%S")))
@@ -205,8 +205,8 @@
   :ensure nil
   :config
   (setopt browse-url-browser-function 'browse-url-generic)
-  (when uy/wsl-p (setopt browse-url-generic-program "explorer.exe"))
-  (when uy/system-windows-p
+  (when my/wsl-p (setopt browse-url-generic-program "explorer.exe"))
+  (when my/system-windows-p
     (setopt browse-url-browser-function 'browse-url-default-browser))
   ;; (global-set-key (kbd "C-c u") 'browse-url-at-point)
   )
@@ -353,7 +353,7 @@
 ;; ============================================
 
 ;; Windows パス と UNC パス を使えるようにするための設定 (WSL 用)
-(when uy/wsl-p (require 'windows-path-on-wsl nil t))
+(when my/wsl-p (require 'windows-path-on-wsl nil t))
 
 ;; ============================================
 ;; プログラム、マークアップ言語関連
@@ -586,7 +586,7 @@
      (zoxide-open-with nil (lambda (file) (dired-jump other-window file)) t))
   )
 
-(when uy/wsl-p 
+(when my/wsl-p 
   (use-package notmuch
     :commands notmuch-hello)
   )

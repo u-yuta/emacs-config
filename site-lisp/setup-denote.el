@@ -42,7 +42,7 @@
 
   ;; title だけ slug 規則を差し替え、英語タイトルでは Denote 標準に近い形を維持する。
   ;; CJK を含むタイトルでは空白と . を残して、ファイル名の可読性を優先する。
-  (defun uy/denote-sluggify-title (str)
+  (defun my/denote-sluggify-title (str)
     "Make STR an appropriate slug for title.
 Preserve letter case.  If STR contains CJK characters, keep spaces
 and dots for readability while removing Denote's usual punctuation,
@@ -58,14 +58,14 @@ except for dots."
         ""
         str))))
 
-  (defun uy/denote-sluggify-and-apply-rules (component str)
+  (defun my/denote-sluggify-and-apply-rules (component str)
     "Make STR an appropriate slug for file name COMPONENT.
 This keeps dots in title components while delegating other rules to
 Denote's standard machinery."
     (let* ((slug-function (alist-get component denote-file-name-slug-functions))
            (str-slug (cond
                       ((eq component 'title)
-                       (funcall (or slug-function #'uy/denote-sluggify-title) str))
+                       (funcall (or slug-function #'my/denote-sluggify-title) str))
                       ((eq component 'keyword)
                        (replace-regexp-in-string
                         "_"
@@ -86,13 +86,13 @@ Denote's standard machinery."
 
   (setopt denote-file-name-slug-functions
           '((identifier . identity)
-            (title . uy/denote-sluggify-title)
+            (title . my/denote-sluggify-title)
             (signature . denote-sluggify-signature)
             (keyword . denote-sluggify-keyword)))
 
   ;; Denote 本体が後段で title の . を消すため、その処理だけ差し替える。
   (advice-add 'denote-sluggify-and-apply-rules :override
-              #'uy/denote-sluggify-and-apply-rules)
+              #'my/denote-sluggify-and-apply-rules)
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have, for example, a literal
@@ -112,7 +112,7 @@ Denote's standard machinery."
 \n")
 
   ;; Documents/YYYY/mm にノートを作るコマンド
-  (defun uy/denote-in-documents-current-month ()
+  (defun my/denote-in-documents-current-month ()
     "Create a Denote-format note in `~/Documents/YYYY/mm'."
     (interactive)
     (let ((denote-directory (format-time-string "~/Documents/%Y/%m"))
@@ -120,7 +120,7 @@ Denote's standard machinery."
       (call-interactively 'denote)))
 
   ;; 指定したディレクトリ内で正規表現にマッチするノートを日付降順で一覧表示する
-  (defun uy/denote-sort-dired-by-date-descending (denote-dir)
+  (defun my/denote-sort-dired-by-date-descending (denote-dir)
     "Display Denote files in dired sorted by date in descending (newest first) order,
   prompting for the directory."
     (interactive
@@ -174,17 +174,17 @@ This can be used as the value for the DATE argument of the
                 (timestamp (or (org-entry-get pos "DATE")
                                (org-entry-get pos "CREATED")
                                (org-entry-get pos "CLOSED")
-                               (uy/org--get-date-in-title)  ;; added
+                               (my/org--get-date-in-title)  ;; added
                                )))
       (date-to-time timestamp)))
 
-  (defun uy/org--get-date-in-title ()
+  (defun my/org--get-date-in-title ()
     """headingからタイムスタンプを抽出する"""
     (let ((heading (org-get-heading t t)))
       (when (string-match (org-re-timestamp 'all) heading)
         (match-string 0 heading))))
 
-  (defun uy/denote-org-extract-org-subtree-to-current-month-dir ()
+  (defun my/denote-org-extract-org-subtree-to-current-month-dir ()
     (interactive nil org-mode)
     (let ((denote-directory (format-time-string "~/Documents/%Y/%m")))
       (denote-org-extract-org-subtree))

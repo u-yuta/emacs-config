@@ -18,12 +18,12 @@
 
 
 ;; Bibliography files
-(setopt uy/bib-files '("~/doc_local/bibliography/references.bib"
+(setopt my/bib-files '("~/doc_local/bibliography/references.bib"
                      "~/doc_local/bibliography/00Share.bib"))
 
 (with-eval-after-load 'org
   ;; Org Cite library
-  (setopt org-cite-global-bibliography uy/bib-files)
+  (setopt org-cite-global-bibliography my/bib-files)
   (setopt org-cite-export-processors
         '((md . (csl "chicago-fullnote-bibliography.csl"))   ; Footnote reliant
           ;;(latex . biblatex)                                 ; For humanities
@@ -40,7 +40,7 @@
   :ensure t
   :after oc
   :custom
-  (citar-bibliography uy/bib-files)
+  (citar-bibliography my/bib-files)
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
@@ -54,7 +54,7 @@
 
   :config
   ;; WindowsのZoteroで作成した文献リストのfileフィールドをWSLのパスに変換する
-  (defun uy/citar-file--parser-windows-path-to-wsl (file-field)
+  (defun my/citar-file--parser-windows-path-to-wsl (file-field)
     "Split FILE-FIELD by `;' and convert Windows paths to WSL paths.
   Each filename in FILE-FIELD is converted using `wslpath -u <filename>`.
   Returns a list of original and converted paths."
@@ -70,9 +70,9 @@
              (list trimmed wslpath)))))
      (citar-file--split-escaped-string file-field ?\;)))
 
-  (when uy/wsl-p
+  (when my/wsl-p
     ;; Add the custom parser to citar-file-parser-functions
-    (add-to-list 'citar-file-parser-functions 'uy/citar-file--parser-windows-path-to-wsl))
+    (add-to-list 'citar-file-parser-functions 'my/citar-file--parser-windows-path-to-wsl))
 
   ;; 文献リストのUIにEmojiを表示する
   (with-eval-after-load 'emojify

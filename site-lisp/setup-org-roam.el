@@ -51,12 +51,12 @@
           ))
   
   ;; Manage ID locations
-  (defun uy/org-id-update-org-roam-files ()
+  (defun my/org-id-update-org-roam-files ()
     "Update Org-ID locations for all Org-roam files."
     (interactive)
     (org-id-update-id-locations (org-roam-list-files)))
   
-  (defun uy/org-id-update-id-current-file ()
+  (defun my/org-id-update-id-current-file ()
     "Scan the current buffer for Org-ID locations and update them."
     (interactive)
     (org-id-update-id-locations (list (buffer-file-name (current-buffer)))))
@@ -106,7 +106,7 @@
   :config
   (setopt org-ql-warn-no-heading nil)
 
-  (defun uy/find-org-entries-by-heading-in-directory ()
+  (defun my/find-org-entries-by-heading-in-directory ()
     "Find org entries with specific heading text in all org files in a directory."
     (interactive)
     (let* ((directory (read-directory-name "Search org files in directory: "))

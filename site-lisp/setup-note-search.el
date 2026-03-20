@@ -33,7 +33,7 @@
           '(("Documents"  ?d  "~/Documents")
             ("org"  ?o  "~/Documents/org")))
   ;; Set org-roam integration, denote integration, or org-heading integration e.g.:
-  (setopt consult-notes-org-headings-files `(,(uy/journal-file-today)
+  (setopt consult-notes-org-headings-files `(,(my/journal-file-today)
                                              "~/Documents/org/s0-agenda"))
   (consult-notes-org-headings-mode)
   (when (locate-library "denote")

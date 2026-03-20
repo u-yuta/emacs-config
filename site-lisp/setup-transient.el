@@ -24,31 +24,31 @@
   :ensure nil
   :config
   ;; Input methodをtransient起動時に無効化する
-  (defvar uy/transient-original-input-method nil
+  (defvar my/transient-original-input-method nil
     "transient 起動前に有効だった input-method を保存する変数。")
 
-  (defun uy/transient-maybe-disable-input-method ()
+  (defun my/transient-maybe-disable-input-method ()
     (when current-input-method
-      (setopt uy/transient-original-input-method current-input-method)
+      (setopt my/transient-original-input-method current-input-method)
       (deactivate-input-method)))
 
-  (defun uy/transient-restore-input-method ()
-    (when uy/transient-original-input-method
-      (activate-input-method uy/transient-original-input-method)
-      (setopt uy/transient-original-input-method nil)))
+  (defun my/transient-restore-input-method ()
+    (when my/transient-original-input-method
+      (activate-input-method my/transient-original-input-method)
+      (setopt my/transient-original-input-method nil)))
 
-  (add-hook 'transient-setup-buffer-hook #'uy/transient-maybe-disable-input-method)
-  (add-hook 'transient-exit-hook #'uy/transient-restore-input-method)
+  (add-hook 'transient-setup-buffer-hook #'my/transient-maybe-disable-input-method)
+  (add-hook 'transient-exit-hook #'my/transient-restore-input-method)
   )
 
 ;; よく使うファイルを開く
-(transient-define-prefix uy/transient-open-file-menu ()
+(transient-define-prefix my/transient-open-file-menu ()
   ["Find file"
    ["File"
     ("j" "Journal"
-     (lambda () (interactive) (find-file (uy/journal-file-today-create-if-not-exist))))
+     (lambda () (interactive) (find-file (my/journal-file-today-create-if-not-exist))))
     ("a" "Agenda"
-     (lambda () (interactive) (find-file uy/org-agenda-file)))
+     (lambda () (interactive) (find-file my/org-agenda-file)))
     ("A" "Shared Agenda"
      (lambda () (interactive) (find-file (file-name-concat org-directory "s0-agenda/shared-agenda.org"))))
     ("h" "Home index"
@@ -68,7 +68,7 @@
    ]
   )
 
-(global-set-key (kbd "C-c f") 'uy/transient-open-file-menu)
+(global-set-key (kbd "C-c f") 'my/transient-open-file-menu)
 
 ;; TransientベースのUIを追加する ----------------------------------------------
 (use-package casual
@@ -91,25 +91,25 @@
   )
 
 ;; Leader key menu -----------------------
-(global-set-key (kbd "C-c m") 'uy/transient-leader-menu)
+(global-set-key (kbd "C-c m") 'my/transient-leader-menu)
 
-(transient-define-prefix uy/transient-leader-menu ()
+(transient-define-prefix my/transient-leader-menu ()
   ["Leader key menu"
-   ("a" "App" uy/transient-app-map)
+   ("a" "App" my/transient-app-map)
    ("b" "Buffers" consult-buffer)
-   ("c" "Capture" uy/transient-capture-map)
+   ("c" "Capture" my/transient-capture-map)
    ;; ("d" "Dired" (lambda () (interactive) (dired default-directory)))  ;; open current dir
    ("d" "Dired" dired-at-point)  ;; open current dir
-   ("h" "Help" uy/transient-help-map)  ;; defined in Helpful configuration
-   ("i" "Insert" uy/transient-insert-map)
-   ("f" "File" uy/transient-open-file-menu)
-   ("g" "Goto" uy/transient-goto-map)
-   ("s" "Search" uy/transient-search-map)
-   ("w" "Window" uy/transient-window-map)]
+   ("h" "Help" my/transient-help-map)  ;; defined in Helpful configuration
+   ("i" "Insert" my/transient-insert-map)
+   ("f" "File" my/transient-open-file-menu)
+   ("g" "Goto" my/transient-goto-map)
+   ("s" "Search" my/transient-search-map)
+   ("w" "Window" my/transient-window-map)]
   )
 
 ;; Help
-(transient-define-prefix uy/transient-help-map ()
+(transient-define-prefix my/transient-help-map ()
    ["Help"
     ("f" "function and command" helpful-callable)
     ("v" "variable" helpful-variable)
@@ -118,7 +118,7 @@
     ("." "at-point" helpful-at-point)])
 
 ;; Applications
-(transient-define-prefix uy/transient-app-map ()
+(transient-define-prefix my/transient-app-map ()
    ["AI"
     ("g" "gptel" gptel-menu)]
    ["Others"
@@ -126,7 +126,7 @@
   )
 
 ;; Goto key map
-(transient-define-prefix uy/transient-goto-map ()
+(transient-define-prefix my/transient-goto-map ()
    ["Goto"
     ("e" "compile-error" consult-compile-error)
     ("f" "flymake" consult-flymake)
@@ -140,10 +140,10 @@
   )
 
 ;; Search key map
-(transient-define-prefix uy/transient-search-map ()
+(transient-define-prefix my/transient-search-map ()
   ["Search"
    ["In files"
-    ("D" "rg dir file-pattern" uy/consult-ripgrep-in-directory)
+    ("D" "rg dir file-pattern" my/consult-ripgrep-in-directory)
     ("g" "grep" consult-grep)
     ("G" "Git grep" consult-git-grep)
     ("r" "Ripgrep" consult-ripgrep)
@@ -156,19 +156,19 @@
   )
 
 ;; Insert key map
-(transient-define-prefix uy/transient-insert-map ()
+(transient-define-prefix my/transient-insert-map ()
    [["Insert"
-    ("t" "timestamp" uy/insert-timestamp)
+    ("t" "timestamp" my/insert-timestamp)
     ("y" "yas-insert-snippet" yas-insert-snippet)]
     ["Completion"
     ("i" "completion-at-point" completion-at-point)
     ("x" "yas-expand" yas-expand)]]
   )
-(global-set-key (kbd "C-c i") 'uy/transient-insert-map)
-(global-set-key (kbd "M-i") 'uy/transient-insert-map)
+(global-set-key (kbd "C-c i") 'my/transient-insert-map)
+(global-set-key (kbd "M-i") 'my/transient-insert-map)
 
 ;; Window key map
-(transient-define-prefix uy/transient-window-map ()
+(transient-define-prefix my/transient-window-map ()
   ["Window"
    ["Manipulate"
     ("c" "delete" evil-window-delete)
@@ -198,10 +198,10 @@
 
 ;; org-mode capture key map
 ;; menu to access org[-roam]-capture and custom note-creation function
-(transient-define-prefix uy/transient-capture-map ()
+(transient-define-prefix my/transient-capture-map ()
   ["Org-mode capture"
    ("j" "Journal" (lambda () (interactive) (org-capture nil "j")))
-   ("l" "Lab note" uy/create-new-lab-note)
+   ("l" "Lab note" my/create-new-lab-note)
    ("w" "Work" (lambda () (interactive) (org-roam-capture nil "w")))
    ("s" "Share" (lambda () (interactive) (org-roam-capture nil "s")))
    ]

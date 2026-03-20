@@ -16,7 +16,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; gptel tool setup functions
-(defun uy/gptel-setup-journaling-tools ()
+(defun my/gptel-setup-journaling-tools ()
   (gptel-make-tool
    :name "get_current_datetime"
    :function (lambda () (current-time-string))
@@ -71,21 +71,21 @@
 
   ;; Gemini
   (gptel-make-gemini "Gemini"
-    :key #'(lambda () (uy/get-auth-secret "generativelanguage.googleapis.com"))
+    :key #'(lambda () (my/get-auth-secret "generativelanguage.googleapis.com"))
     :stream t)
   ;; DeepSeek
   (gptel-make-openai "DeepSeek"       ;Any name you want
     :host "api.deepseek.com"
     :endpoint "/chat/completions"
     :stream t
-    :key #'(lambda () (uy/get-auth-secret "api.deepseek.com"))
+    :key #'(lambda () (my/get-auth-secret "api.deepseek.com"))
     :models '(deepseek-chat deepseek-coder))
   ;; OpenRouter
   (gptel-make-openai "OpenRouter"  ;; Any name you want
     :host "openrouter.ai"
     :endpoint "/api/v1/chat/completions"
     :stream t
-    :key #'(lambda () (uy/get-auth-secret "openrouter.ai"))
+    :key #'(lambda () (my/get-auth-secret "openrouter.ai"))
     :models '(google/gemini-2.5-pro
               google/gemini-2.5-flash
               openai/gpt-5.2 openai/gpt-5.3-codex
@@ -98,7 +98,7 @@
     :host "api.novita.ai"
     :endpoint "/v3/openai/chat/completions"
     :stream t
-    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
+    :key #'(lambda () (my/get-auth-secret "novita.ai"))
     :models '(
               qwen/qwen3.5-397b-a17b
               qwen/qwen3.5-35b-a3b
@@ -119,7 +119,7 @@
     :host "api.novita.ai"
     :endpoint "/v3/openai/chat/completions"
     :stream t
-    :key #'(lambda () (uy/get-auth-secret "novita.ai"))
+    :key #'(lambda () (my/get-auth-secret "novita.ai"))
     :models '(
               qwen/qwen3.5-397b-a17b
               qwen/qwen3.5-35b-a3b
@@ -154,7 +154,7 @@
           ))
 
   ;; Setup gptel tools
-  (uy/gptel-setup-journaling-tools))
+  (my/gptel-setup-journaling-tools))
 
 ;; gptel-agent
 (use-package gptel-agent

@@ -123,7 +123,7 @@
          ("M-s k" . consult-keep-lines)
          ("M-s u" . consult-focus-lines)
          ("C-c R" . bms/org-roam-rg-search)    ;; 追加
-         ("M-s D" . uy/consult-ripgrep-in-directory)  ;; 追加
+         ("M-s D" . my/consult-ripgrep-in-directory)  ;; 追加
          ;; Isearch integration
          ("M-s e" . consult-isearch-history)
          :map isearch-mode-map
@@ -186,7 +186,7 @@
   ;; You may want to use `embark-prefix-help-command' or which-key instead.
   (keymap-set consult-narrow-map (concat consult-narrow-key " ?") #'consult-narrow-help)
 
-  (defun uy/consult-ripgrep-in-directory (dir-path &optional file-pattern initial)
+  (defun my/consult-ripgrep-in-directory (dir-path &optional file-pattern initial)
     "DIR-PATH内のFILE-PATTERNにマッチするファイルに対してripgrep検索を実行"
     (interactive 
      (list (read-directory-name "Directory: ")

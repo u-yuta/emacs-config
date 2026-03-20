@@ -36,7 +36,7 @@
   (setopt org-directory "~/Documents/org/")
   (defun my/org-path (path)
     (file-name-concat org-directory path))
-  (setopt uy/journal-directory
+  (setopt my/journal-directory
           (seq-find #'file-directory-p
                     (mapcar #'my/org-path
                             '("personal/p1-journal" "work/w1-journal"))))
@@ -46,7 +46,7 @@
                               '("personal/p0-agenda/agenda.org"
                                 "work/w0-agenda/agenda.org"
                                 "share/s0-agenda/shared-agenda.org"))))
-  (setopt uy/org-agenda-file (car org-agenda-files))
+  (setopt my/org-agenda-file (car org-agenda-files))
   (setopt org-startup-folded 'nofold)
 
   :config  
@@ -119,24 +119,24 @@
           ))
 
   ;; Journal settings
-  (defun uy/journal-file-today ()
+  (defun my/journal-file-today ()
     "Return a string representing the journal file path in the formatting
     '<journal-directory>/journal-yyyy-mm-dd.org' using current year and month."
-    (file-name-concat uy/journal-directory (format-time-string "%Y/journal-%Y%m%d.org")))
+    (file-name-concat my/journal-directory (format-time-string "%Y/journal-%Y%m%d.org")))
 
   ;; Journal utilities
-  (defun uy/journal-file-today-create-if-not-exist ()
+  (defun my/journal-file-today-create-if-not-exist ()
     "Create today's journal file with template if it doesn't exist. Return the journal file path."
-    (let ((file (uy/journal-file-today)))
+    (let ((file (my/journal-file-today)))
       (unless (file-exists-p file)
         (make-directory (file-name-directory file) t)
         (with-temp-file file
-          (insert (uy/journal-entry-template))))
+          (insert (my/journal-entry-template))))
       file))
 
   (require 'time-date) ;; days-to-time
   
-  (defun uy/journal-files-from-today-back (n)
+  (defun my/journal-files-from-today-back (n)
     "今日を含めて、今日からN日前まで(両端含む)の既存のjournal fileパスのリストを返す。
 戻り順は新しい→古い。N=0なら今日だけ。N<0はerror。"
     (unless (integerp n)
@@ -148,14 +148,14 @@
       (dotimes (i (1+ n) (nreverse (seq-filter #'file-exists-p res)))
         (let ((time (time-subtract now (days-to-time i))))
           (push (file-name-concat
-                 uy/journal-directory
+                 my/journal-directory
                  (format-time-string "%Y" time)
                  (format-time-string "journal-%Y%m%d.org" time))
                 res)))))
   
-  (defun uy/journal-select-from-today-back (n)
+  (defun my/journal-select-from-today-back (n)
     "直近N日前までの既存journalファイルをミニバッファで選択して返す。"
-    (let* ((cands (uy/journal-files-from-today-back n)))
+    (let* ((cands (my/journal-files-from-today-back n)))
       (when cands
         (condition-case nil
             (if (boundp 'vertico-sort-function)
@@ -164,24 +164,24 @@
               (completing-read "Journal: " cands nil t))
           (quit nil)))))
 
-  (defun uy/journal-find-from-today-back-week ()
+  (defun my/journal-find-from-today-back-week ()
     "直近30日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
     (interactive)
-    (let ((file (uy/journal-select-from-today-back 7)))
+    (let ((file (my/journal-select-from-today-back 7)))
       (when file
         (find-file file))))
 
-  (defun uy/journal-find-from-today-back-month ()
+  (defun my/journal-find-from-today-back-month ()
     "直近30日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
     (interactive)
-    (let ((file (uy/journal-select-from-today-back 30)))
+    (let ((file (my/journal-select-from-today-back 30)))
       (when file
         (find-file file))))
 
   ;; Capture template
-  (defun uy/journal-entry-template ()
+  (defun my/journal-entry-template ()
     "Return a capture template string"
     (concat
      "* " (format-time-string "%F %A") "\n"
@@ -191,23 +191,23 @@
   (setopt org-capture-templates
           '(
             ("j" "Journal memo" entry
-             (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "メモ")
+             (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "メモ")
              "* %U %?\n%a")
             ("t" "Journal add task" entry
-             (file+headline (lambda () (uy/journal-file-today-create-if-not-exist)) "タスクキュー")
+             (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "タスクキュー")
              "* %?\n")
             )
           )
 
   (setopt myroamfiles (directory-files org-directory t "org$"))
-  (defun uy/org-files-list-except-journal ()
+  (defun my/org-files-list-except-journal ()
     "Return a list of all org files except those starting with 'journal'."
     (let ((org-files (org-files-list)))
       (seq-filter (lambda (file)
                     (not (string-match-p "/journal[^/]*\\.org\\'" file)))
                   org-files)))
   (setopt org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
-                                   (uy/org-files-list-except-journal :maxlevel . 4)  ;; all agenda and opened files
+                                   (my/org-files-list-except-journal :maxlevel . 4)  ;; all agenda and opened files
                                    (myroamfiles :maxlevel . 4)
                                    )))
   ;; add file name to refile target path list
@@ -222,7 +222,7 @@
             (search . " %i %-12:c")))
 
   ;; リファイルするとともにattachmentsもリファイル先に移動する
-  (defun uy/org-refile-with-attachments-keep-id ()
+  (defun my/org-refile-with-attachments-keep-id ()
     "Refile current heading and move attachments to the new location, keeping the same ID."
     (interactive)
     ;; TODO attach-dir が存在しない場合はIDの追加などを行わないようにする
@@ -463,8 +463,8 @@
         "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\"")
 
   ;; Prompt file name
-  (setopt org-download-file-format-function 'uy/org-download-file-format)
-  (defun uy/org-download-file-format (filename)
+  (setopt org-download-file-format-function 'my/org-download-file-format)
+  (defun my/org-download-file-format (filename)
     (read-file-name
      "File name: "
      nil nil nil

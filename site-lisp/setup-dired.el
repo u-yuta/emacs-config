@@ -29,7 +29,7 @@
   )
 
 ;; dired WSL用の設定
-(when uy/wsl-p
+(when my/wsl-p
   (use-package dired
     :ensure nil
     :bind (:map dired-mode-map

@@ -139,7 +139,7 @@
 (use-package olivetti
   :ensure t)
 
-(when (not uy/system-windows-p)  ;; Windowsでは遅くなるのでオフ
+(when (not my/system-windows-p)  ;; Windowsでは遅くなるのでオフ
   (use-package git-gutter
     :ensure t
     :custom

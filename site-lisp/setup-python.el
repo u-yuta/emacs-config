@@ -30,7 +30,7 @@
               ;; バッファローカル変数として corfu-auto を nil に設定
               (setq-local corfu-auto nil))))
 
-  (defun uy/configure-python-interpreter ()
+  (defun my/configure-python-interpreter ()
     "現在の環境に応じてPythonインタープリターを設定"
     (if (executable-find "ipython")
         (progn
@@ -41,17 +41,17 @@
         (setq-local python-shell-interpreter-args "-i"))))
 
   ;; Pythonモード開始時
-  (add-hook 'python-mode-hook #'uy/configure-python-interpreter)
+  (add-hook 'python-mode-hook #'my/configure-python-interpreter)
 
   ;; direnv (envrc.el) によるバッファごとの環境切替に連動させる
   (with-eval-after-load 'envrc
     (add-hook 'envrc-mode-hook
               (lambda ()
                 (when (derived-mode-p 'python-mode)
-                  (uy/configure-python-interpreter)))))
+                  (my/configure-python-interpreter)))))
 
   ;; Pythonインタープリターを `uv run python' で起動するコマンド
-  (defun uy/run-python-uv ()
+  (defun my/run-python-uv ()
     "Run an inferior Python process with shell interpreter command `uv run python'."
     (interactive
      (let ((python-shell-interpreter "uv")
@@ -63,7 +63,7 @@
   (setopt python-shell-interpreter-args "run python -i")
 
   ;; Pythonのインタープリターにてbuffer-file を `__file__' に設定するコマンド
-  (defun uy/python-shell-set-buffer-path-as-dunder-file ()
+  (defun my/python-shell-set-buffer-path-as-dunder-file ()
     """Set buffer-file path as __file__ in Python interpreter."""
     (interactive)
     (let ((cmd (concat "from pathlib import Path; __file__ = Path(\"" (buffer-file-name) "\").resolve()")))

@@ -44,7 +44,7 @@
 (set-fontset-font t 'emoji emoji-font-fallback nil 'append)
 ;; 絵文字コード範囲を追加設定する
 ;; 標準で設定されている emoji 範囲 (127744 128512) に含まれていない絵文字ブロックの定義
-(setopt uy/emoji-unicode-ranges-add ;; Unicode絵文字ブロック
+(setopt my/emoji-unicode-ranges-add ;; Unicode絵文字ブロック
         '((#x1F300 . #x1F5FF) ;; "Misc Symbols and Pictographs"
           (#x1F600 . #x1F64F) ;; "Emoticons"
           (#x1F650 . #x1F67F) ;; "Ornamental Dingbats"
@@ -54,7 +54,7 @@
           (#x2600 . #x26FF) ;; "Miscellaneous Symbols"
           (#x2700 . #x27BF) ;; "Dingbats"
           ))
-(dolist (range-info uy/emoji-unicode-ranges-add)
+(dolist (range-info my/emoji-unicode-ranges-add)
   (set-fontset-font t range-info emoji-font)
   (set-fontset-font t range-info emoji-font-fallback nil 'append))
 
@@ -68,7 +68,7 @@
 ;; Dingbats (U+2700-27BF): ✀✁✂✃✄✅✆✇✈✉
 
 ;; 日本語IME設定
-(if uy/system-windows-p
+(if my/system-windows-p
     ;; Windows用の日本語IME設定
     (use-package tr-ime
       :config

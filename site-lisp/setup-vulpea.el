@@ -52,7 +52,7 @@
   (vulpea-journal-setup)
   (setopt vulpea-journal-default-template
           (vulpea-journal-template-daily
-           :file-name (file-name-concat uy/journal-directory "%Y/journal-%Y%m%d.org")
+           :file-name (file-name-concat my/journal-directory "%Y/journal-%Y%m%d.org")
            :title "%Y-%m-%d %A"
            :tags '("journal")
            :body (concat

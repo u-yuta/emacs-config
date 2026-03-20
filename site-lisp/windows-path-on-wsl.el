@@ -15,7 +15,7 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-(defun uy/wsl-to-windows-path (path)  
+(defun my/wsl-to-windows-path (path)  
   "WSL2上でのパスをWindowsのパスに変換する（コマンドwslpathがインストール済みとする）"
   (string-trim (shell-command-to-string (concat "wslpath -w " path))))
 
