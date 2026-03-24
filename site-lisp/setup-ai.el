@@ -33,16 +33,7 @@
   (setopt agent-shell-openai-codex-environment
           (agent-shell-make-environment-variables :inherit-env t))
   (setopt agent-shell-prefer-viewport-interaction t)
-
-  (evil-define-key 'insert agent-shell-mode-map (kbd "RET") #'newline)
-
-  ;; *agent-shell-diff* バッファをEmacs stateで始める。Evilのキーバインドにするには `C-z'。
-  (add-hook 'diff-mode-hook
-	    (lambda ()
-	      (when (string-match-p "\\*agent-shell-diff\\*" (buffer-name))
-		(evil-emacs-state)))))
-
-
+  )
 ;; mcp.el
 (use-package mcp-hub
   :ensure t

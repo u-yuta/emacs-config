@@ -167,35 +167,6 @@
 (global-set-key (kbd "C-c i") 'my/transient-insert-map)
 (global-set-key (kbd "M-i") 'my/transient-insert-map)
 
-;; Window key map
-(transient-define-prefix my/transient-window-map ()
-  ["Window"
-   ["Manipulate"
-    ("c" "delete" evil-window-delete)
-    ("o" "delete other" delete-other-windows)
-    ("x" "exchange" evil-window-exchange)
-    ("v" "split vertically" evil-window-vsplit)
-    ("s" "split" evil-window-split)
-    ("q" "quit" evil-quit)
-    ]
-   ["Goto"
-    ("h" "left" evil-window-left)
-    ("j" "down" evil-window-down)
-    ("k" "up" evil-window-up)
-    ("l" "right" evil-window-right)
-    ("p" "previous (recent)" evil-window-mru)
-    ("w" "next" evil-window-next)
-    ]
-   ["Size"
-    ("+" "increase height" evil-window-increase-height :transient t)
-    ("-" "decrease height" evil-window-decrease-height :transient t)
-    (">" "increase width" evil-window-increase-width :transient t)
-    ("<" "decrease width" evil-window-decrease-width :transient t)
-    ("=" "balance" balance-windows)
-    ]
-   ]
-  )
-
 ;; org-mode capture key map
 ;; menu to access org[-roam]-capture and custom note-creation function
 (transient-define-prefix my/transient-capture-map ()
@@ -208,4 +179,3 @@
   )
 
 (provide 'setup-transient)
-

@@ -492,9 +492,6 @@
   (setf (alist-get ?. avy-dispatch-alist) 'avy-action-embark) ;; `.` に割当
   )
 
-;; Evil
-(require 'setup-evil)  ;; in site-lisp
-
 ;; Denote
 (require 'setup-denote)
 
