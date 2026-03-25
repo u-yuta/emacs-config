@@ -58,8 +58,8 @@
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (require 'macher nil t)
-  (setopt gptel-model 'Novita:openai/gpt-oss-120b)  ;; default model
-  (setopt gptel-default-mode 'org-mode)  ;; default model
+  ;; (setopt gptel-model 'gpt-oss-120b)  ;; default model
+  (setopt gptel-default-mode 'org-mode)  ;; default mode
   (setopt gptel-track-media t)
   (setopt gptel-expert-commands t) ;; display additional options in the transient menu 
 
