@@ -126,12 +126,11 @@
 
   ;; Journal utilities
   (defun my/journal-file-today-create-if-not-exist ()
-    "Create today's journal file with template if it doesn't exist. Return the journal file path."
+    "Create today's journal file if it doesn't exist. Return the journal file path."
     (let ((file (my/journal-file-today)))
       (unless (file-exists-p file)
         (make-directory (file-name-directory file) t)
-        (with-temp-file file
-          (insert (my/journal-entry-template))))
+        (with-temp-file file))
       file))
 
   (require 'time-date) ;; days-to-time
