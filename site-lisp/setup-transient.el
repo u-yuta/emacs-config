@@ -45,8 +45,7 @@
 (transient-define-prefix my/transient-open-file-menu ()
   ["Find file"
    ["File"
-    ("j" "Journal"
-     (lambda () (interactive) (find-file (my/journal-file-today-create-if-not-exist))))
+    ("j" "Journal" vulpea-journal)
     ("a" "Agenda"
      (lambda () (interactive) (find-file my/org-agenda-file)))
     ("A" "Shared Agenda"
