@@ -34,10 +34,12 @@
   (setopt denote-prompts '(subdirectory title))
   
   (setopt denote-known-keywords
-          '("journal" "labnote" "moc" ;; 種類・用途
-            "screenshot" "scan" ;; 種類
-            "emacs" "math" "linux" "llm" "python"  ;; 話題
-            "noexport"  ;; org-mode機能
+          ;; 役割で分ける
+          '("ref"   ;; 理解のための情報（読むもの）
+            "data"  ;; 計算・再現のための入力
+            "work"  ;; 処理・中間状態       
+            "note"  ;; 解釈・知識
+            "index" ;; 構造・接続
             ))
 
   ;; title だけ slug 規則を差し替え、英語タイトルでは Denote 標準に近い形を維持する。
