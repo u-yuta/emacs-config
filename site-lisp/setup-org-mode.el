@@ -191,10 +191,10 @@
           '(
             ("j" "Journal memo" entry
              (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "メモ")
-             "* %U %?\n%a")
+             "** %U %?\n%a")
             ("t" "Journal add task" entry
              (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "タスクキュー")
-             "* %?\n")
+             "** %?\n")
             )
           )
 
