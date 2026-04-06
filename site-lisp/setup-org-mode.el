@@ -92,9 +92,19 @@
   (setopt org-archive-location "%s_archive::datetree/")
 
   ;; リンクを開くプログラムの指定
-  (add-to-list 'org-file-apps '("\\.xlsx?\\'" . "open %s"))
-  (add-to-list 'org-file-apps '("\\.docx?\\'" . "open %s"))
-  (add-to-list 'org-file-apps '("\\.pptx?\\'" . "open %s"))
+  (defun my/org-open-in-windows (path _link)
+    "Open PATH with Windows file association via explorer.exe (WSL)."
+    (let* ((path (expand-file-name path))
+           ;; wslpath -w の結果には末尾改行が入るので trim
+           (winpath (string-trim
+                     (shell-command-to-string
+                      (format "wslpath -w %s" (shell-quote-argument path))))))
+      ;; explorer.exe に渡す（関連付けで開く）
+      (call-process "explorer.exe" nil 0 nil winpath)))
+
+  (add-to-list 'org-file-apps '("\\.xlsx?\\'" . my/org-open-in-windows))
+  (add-to-list 'org-file-apps '("\\.docx?\\'" . my/org-open-in-windows))
+  (add-to-list 'org-file-apps '("\\.pptx?\\'" . my/org-open-in-windows))
   
   (setopt org-todo-keywords
           '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
