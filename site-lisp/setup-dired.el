@@ -37,20 +37,19 @@
                 )
     :config
     (setf dired-kill-when-opening-new-dired-buffer t)
-
+    
     (defun dired-open-file-on-windows (arg)
-      "Open file (or its parent directory with prefix) on Windows using wslview.
-       With prefix ARG (C-u), open the parent directory instead."
-      ;; wslview は wslutilities/wslu https://github.com/wslutilities/wslu に含まれる
+      "Open file (or its parent directory with prefix) on Windows.
+With prefix ARG (C-u), open the parent directory instead."
       (interactive "P")
-      (let* ((path (dired-get-filename))
-             (target (if arg (file-name-directory path) path))
-             (shell-command-switch "-ic")  ;; ~/.bashrc を読み込むため
-             )
+      (let* ((path   (dired-get-filename))
+             (target (expand-file-name (if arg (file-name-directory path) path)))
+             (winpath (string-trim
+                       (shell-command-to-string
+                        (format "wslpath -w %s" (shell-quote-argument target))))))
         (message "Opening on Windows: %s..." target)
-        (shell-command (mapconcat #'shell-quote-argument
-                                  (list "open" target)
-                                  " "))
+        ;; Windows 側の関連付けで開く
+        (call-process "explorer.exe" nil 0 nil winpath)
         (message "Opened on Windows: %s." target)))
 
     )
