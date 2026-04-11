@@ -23,41 +23,22 @@
 (setopt visual-line-fringe-indicators '(nil t))
 
 ;; Theme
-(use-package ef-themes
+(use-package modus-themes
   :ensure t
   :config
-  (setopt ef-themes-to-toggle '(ef-owl ef-cyprus))
-  (setopt ef-themes-mixed-fonts t
-        ef-themes-variable-pitch-ui t)
-  (setopt ef-themes-headings ; read the manual's entry or the doc string
-        '((0 variable-pitch 1.2)
-          (1 variable-pitch 1.2)
-          (2 variable-pitch 1.1)
-          (3 variable-pitch 1.1) ; absence of weight means `bold'
-          (t variable-pitch 1.05)
+  (setopt modus-themes-common-palette-overrides
+        '((fg-heading-1 fg-main)
+          (fg-heading-2 fg-main)
+          (fg-heading-3 fg-main)
+          (fg-heading-4 fg-main)
+          (fg-heading-5 fg-main)
+          (fg-heading-6 fg-main)
+          (fg-heading-7 fg-main)
+          (fg-heading-8 fg-main)
+          (prose-done fg-dim)  ;; DONE heading
           ))
-
-  ;; マウスポインターの色をテーマに合わせて変更する
-  (defun set-mouse-pointer-color-to-cursor-color ()
-    "マウスカーソルの色をカーソルの色と同じにする。"
-    (let ((cursor-color (face-attribute 'cursor :background nil t)))
-      (when cursor-color
-        (set-mouse-color cursor-color))))
-
-  ;; ef-themesのロード後に実行されるようにフックを設定
-  (add-hook 'ef-themes-post-load-hook #'set-mouse-pointer-color-to-cursor-color)
-
-  (ef-themes-select 'ef-owl)
+  (load-theme 'modus-operandi)
   )
-
-;; 表示色のカスタマイズ
-(custom-set-faces
- ;; ef-themesでは orgのデフォルト値を引き継いでいる
- '(org-done ((t (:foreground "dark gray"   
-                             :strike-through t))))
- '(org-headline-done 
-   ((((class color) (min-colors 16) (background dark)) 
-     (:foreground "dark gray" :strike-through t)))))
 
 ;; modeline 
 (use-package moody
