@@ -588,7 +588,6 @@
   )
 
 (require 'setup-vulpea)
-(require 'org-note-tree)
 (require 'setup-auth-source)
 (require 'setup-gptel)
 (require 'setup-ai)

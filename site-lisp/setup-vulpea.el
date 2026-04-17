@@ -61,4 +61,11 @@
            :body (concat
                   "* 予定\n\n* やること\n\n* タスクキュー\n\n* メモ\n\n* 日報\n\n"))))
 
+;; org-note-tree
+(use-package emacs
+  :after vulpea
+  :config
+  (require 'org-note-tree)
+  )
+
 (provide 'setup-vulpea)
