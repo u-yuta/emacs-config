@@ -22,8 +22,8 @@
   ;; Optional customizations
   :custom
   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
-  (corfu-auto t)                 ;; Enable auto completion
-  (corfu-excluded-modes '(text-mode))
+  (corfu-auto nil)               ;; Disable auto completion
+  (corfu-excluded-modes '(text-mode org-mode))
   
   ;; Recommended: Enable Corfu globally.
   ;; This is recommended since Dabbrev can be used globally (M-/).
