@@ -46,11 +46,10 @@
   :config
   (setopt vulpea-ui-sidebar-size 0.25))
 
-;; A journaling interface for vulpea that integrates seamlessly with vulpea-ui sidebar.
+;; A journaling interface for vulpea
 (use-package vulpea-journal
   :ensure t
-  :after (vulpea vulpea-ui)
-  :bind (("C-c j" . vulpea-journal))
+  :bind ("C-c j" . vulpea-journal)
   :config
   (vulpea-journal-setup)
   (setopt vulpea-journal-default-template
