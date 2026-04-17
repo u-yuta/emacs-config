@@ -33,7 +33,7 @@
 
   :init
   ;; 保存先
-  (setopt org-directory "~/Documents/org/")
+  (setopt org-directory (expand-file-name "~/Documents/org/"))
   (defun my/org-path (path)
     (file-name-concat org-directory path))
   (setopt my/journal-directory
