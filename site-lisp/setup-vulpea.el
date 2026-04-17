@@ -23,7 +23,7 @@
   :bind (("C-c n f" . vulpea-find))
   :config
   ;; 1. Configure (defaults to org-directory, so often not needed)
-  (setq vulpea-db-sync-directories '("~/Documents"))
+  (setq vulpea-db-sync-directories (list (expand-file-name "~/Documents")))
 
   ;; 2. Build database (first time only)
   ;; (vulpea-db-sync-full-scan)
