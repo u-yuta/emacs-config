@@ -550,7 +550,6 @@
 ;; pdf-tools
 (use-package pdf-tools
   :ensure t
-  :defer t
   :config
   ;; initialize
   (pdf-tools-install)
