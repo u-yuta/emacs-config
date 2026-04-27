@@ -39,7 +39,7 @@
   (setopt my/journal-directory
           (seq-find #'file-directory-p
                     (mapcar #'my/org-path
-                            '("personal/p1-journal" "work/w1-journal"))))
+                            '("personal/journal" "work/w1-journal"))))
   (setopt org-agenda-files
           (seq-filter #'file-exists-p
                       (mapcar #'my/org-path

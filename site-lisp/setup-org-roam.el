@@ -26,8 +26,8 @@
          (("C-c n f" . my/org-roam-node-find)
           ("C-c n g" . org-roam-graph)
           ("C-c n b" . org-roam-buffer-toggle)
-          ("C-c n d" . org-roam-dailies-capture-today)
           ("C-c n c" . my/org-roam-capture)
+          ("C-c j" . org-roam-dailies-capture-today)
           )
          :map org-mode-map
          (("C-c n i" . org-roam-node-insert))
@@ -89,6 +89,14 @@
 ") :unnarrowed t)
             ))
 
+  ;; org-roam dailies template
+  (setopt org-roam-dailies-directory my/journal-directory)
+  (setopt org-roam-dailies-capture-templates
+          '(("j" "journal" entry ""
+             :target (file+head "%<%Y/journal-%Y%m%d>.org"
+                                "#+title: %<%Y-%m-%d %A>\n#+filetags: :journal:\n\n* 予定\n\n* やること\n\n* タスクキュー\n\n* メモ\n\n* 日報\n\n")
+             :unnarrowed t)))
+  
   ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"
   (cl-defmethod org-roam-node-slug ((node org-roam-node))
     "Return the slug of NODE."
