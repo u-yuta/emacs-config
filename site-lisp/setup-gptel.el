@@ -100,6 +100,7 @@
     :stream t
     :key #'(lambda () (my/get-auth-secret "novita.ai"))
     :models '(
+              google/gemma-4-26b-a4b-it
               qwen/qwen3.5-397b-a17b
               qwen/qwen3.5-35b-a3b
               qwen/qwen3-coder-next
@@ -108,10 +109,11 @@
               deepseek/deepseek-v3-0324
               deepseek/deepseek-v3.2
               deepseek/deepseek-r1-0528
-              minimax/minimax-m2.5
+              minimax/minimax-m2.7
+              moonshotai/kimi-k2.6
               openai/gpt-oss-120b
               openai/gpt-oss-20b
-              zai-org/glm-5
+              zai-org/glm-5.1
               ))
   ;; Novita AI (Qwen 3.5 non-thinking mode)
   ;; https://huggingface.co/Qwen/Qwen3.5-397B-A17B#instruct-or-non-thinking-mode
@@ -123,7 +125,7 @@
     :models '(
               qwen/qwen3.5-397b-a17b
               qwen/qwen3.5-35b-a3b
-              zai-org/glm-5
+              zai-org/glm-5.1
               )
     :request-params '(:enable_thinking :json-false))
 
