@@ -43,6 +43,26 @@
           org-roam-node-annotation-function
           (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
 
+  ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"
+  (cl-defmethod org-roam-node-slug ((node org-roam-node))
+    "Return the slug of NODE."
+    (let ((title (org-roam-node-title node)))
+      (require 'ucs-normalize)
+      (let ((slug-trim-chars
+             '(#x300 #x301 #x302 #x303 #x304 #x306 #x307
+               #x308 #x309 #x30A #x30B #x30C #x31B #x323
+               #x324 #x325 #x327 #x32D #x32E #x330 #x331)))
+        (thread-last title
+                     (ucs-normalize-NFD-string)
+                     (seq-remove (lambda (char) (memq char slug-trim-chars)))
+                     (apply #'string)
+                     (ucs-normalize-NFC-string)
+                     (replace-regexp-in-string "[^[:alnum:]]" "-")
+                     (replace-regexp-in-string "--*" "-")
+                     (replace-regexp-in-string "^-" "")
+                     (replace-regexp-in-string "-$" "")
+                     (downcase)))))
+
   ;; org-roam capture template
   (setopt org-roam-capture-templates
         '(("d" "default" plain "%?" :target
