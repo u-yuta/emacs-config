@@ -23,11 +23,11 @@
   :custom
   (org-roam-directory org-directory)
   :bind (
-         (("C-c n f" . org-roam-node-find)
+         (("C-c n f" . my/org-roam-node-find)
           ("C-c n g" . org-roam-graph)
           ("C-c n b" . org-roam-buffer-toggle)
-          ("C-c n c" . org-roam-capture)
           ("C-c n d" . org-roam-dailies-capture-today)
+          ("C-c n c" . my/org-roam-capture)
           )
          :map org-mode-map
          (("C-c n i" . org-roam-node-insert))
@@ -43,6 +43,52 @@
           org-roam-node-annotation-function
           (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
 
+  ;; ノード作成時にIDのタイムスタンプとファイル名のタイムスタンプを一致させる
+  (defvar my/org-roam-capture-timestamp nil)
+
+  (defun my/org-roam-capture-timestamp ()
+    "Return one timestamp reused within the current capture."
+    (or my/org-roam-capture-timestamp
+        (setq my/org-roam-capture-timestamp
+              (format-time-string "%Y%m%dT%H%M%S"))))
+
+  (defun my/org-roam-node-find ()
+    "Run org-roam-node-find with a fresh shared timestamp."
+    (interactive)
+    (let ((my/org-roam-capture-timestamp nil))
+      (call-interactively #'org-roam-node-find)))
+
+  (defun my/org-roam-capture ()
+    "Run org-roam-node-find with a fresh shared timestamp."
+    (interactive)
+    (let ((my/org-roam-capture-timestamp nil))
+      (call-interactively #'org-roam-capture)))
+
+  ;; org-roam capture template
+  (setopt org-roam-capture-templates
+          '(
+            ("p" "personal note" plain "%?" :target
+             (file+head "personal/notes/%(my/org-roam-capture-timestamp)--${slug}.org" ":PROPERTIES:
+:ID: %(my/org-roam-capture-timestamp)
+:END:
+#+title: ${title}")
+             :unnarrowed t)
+            ("s" "shared note" plain "%?" :target
+             (file+head "share/notes/%(my/org-roam-capture-timestamp)--${slug}.org" ":PROPERTIES:
+:ID: %(my/org-roam-capture-timestamp)
+:END:
+#+title: ${title}")
+             :unnarrowed t)
+            ("t" "task note" plain "%?" :target
+             (file+head "share/notes/%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+:ID: %(my/org-roam-capture-timestamp)
+:TYPE: %^{TYPE|note|task|work|ref|data|index}
+:CONTEXT: %^{CONTEXT}
+:END:
+#+title: ${title}
+") :unnarrowed t)
+            ))
+
   ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"
   (cl-defmethod org-roam-node-slug ((node org-roam-node))
     "Return the slug of NODE."
@@ -50,8 +96,8 @@
       (require 'ucs-normalize)
       (let ((slug-trim-chars
              '(#x300 #x301 #x302 #x303 #x304 #x306 #x307
-               #x308 #x309 #x30A #x30B #x30C #x31B #x323
-               #x324 #x325 #x327 #x32D #x32E #x330 #x331)))
+                     #x308 #x309 #x30A #x30B #x30C #x31B #x323
+                     #x324 #x325 #x327 #x32D #x32E #x330 #x331)))
         (thread-last title
                      (ucs-normalize-NFD-string)
                      (seq-remove (lambda (char) (memq char slug-trim-chars)))
@@ -63,13 +109,6 @@
                      (replace-regexp-in-string "-$" "")
                      (downcase)))))
 
-  ;; org-roam capture template
-  (setopt org-roam-capture-templates
-        '(("d" "default" plain "%?" :target
-           (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
-           :unnarrowed t)
-          ))
-  
   (setopt org-roam-file-extensions '("org" "md")) ;; enable Org-roam for markdown
 
   (use-package md-roam
