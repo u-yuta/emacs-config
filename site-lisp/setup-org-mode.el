@@ -211,7 +211,6 @@
             )
           )
 
-  (setopt myroamfiles (directory-files org-directory t "org$"))
   (defun my/org-files-list-except-journal ()
     "Return a list of all org files except those starting with 'journal'."
     (let ((org-files (org-files-list)))
@@ -219,9 +218,8 @@
                     (not (string-match-p "/journal[^/]*\\.org\\'" file)))
                   org-files)))
   (setopt org-refile-targets (quote ((org-agenda-files :maxlevel . 3)
-                                   (my/org-files-list-except-journal :maxlevel . 4)  ;; all agenda and opened files
-                                   (myroamfiles :maxlevel . 4)
-                                   )))
+                                     (org-files-list :maxlevel . 4)  ;; all agenda and opened files
+                                     )))
   ;; add file name to refile target path list
   (setopt org-outline-path-complete-in-steps nil)
   (setopt org-refile-use-outline-path 'file)
