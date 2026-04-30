@@ -100,7 +100,8 @@
   ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"
   ;; `org-roam-node-slug' を `cl-defmethod' で再定義するため、
   ;; org-roam-node が generic 関数として定義された後に評価する。
-  (with-eval-after-load 'org-roam-node  
+  (require 'org-roam-node)
+  (with-eval-after-load 'org-roam-node
     (cl-defmethod org-roam-node-slug ((node org-roam-node))
       "Return the slug of NODE."
       (let ((title (org-roam-node-title node)))
