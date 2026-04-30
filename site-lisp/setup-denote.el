@@ -42,32 +42,27 @@
             "index" ;; 構造・接続
             ))
 
-  ;; title だけ slug 規則を差し替え、英語タイトルでは Denote 標準に近い形を維持する。
-  ;; CJK を含むタイトルでは空白と . を残して、ファイル名の可読性を優先する。
+  ;; title の slug 規則は Denote 標準をほぼ踏襲し、差分は 2 点のみ:
+  ;; 1) downcase しない（大文字小文字を保持）
+  ;; 2) . は保持する（後段の共通処理で消さない）
   (defun my/denote-sluggify-title (str)
     "Make STR an appropriate slug for title.
-Preserve letter case.  If STR contains CJK characters, keep spaces
-and dots for readability while removing Denote's usual punctuation,
-except for dots."
-    (if (string-match-p "\\(?:\\cc\\|\\cj\\|\\ck\\)" str)
-        (replace-regexp-in-string
-         "[][{}!@#$%^&*()+'\"?,|;:~`‘’“”/=]*"
-         ""
-         str)
-      (denote-slug-hyphenate
-       (replace-regexp-in-string
-        "[][{}!@#$%^&*()+'\"?,|;:~`‘’“”/=]*"
-        ""
-        str))))
+Compared to Denote defaults, this keeps letter case (no downcase)
+and is paired with custom post-processing that preserves dots."
+    (denote-slug-hyphenate
+     (replace-regexp-in-string
+      "[][{}!@#$%^&*()+'\"?,\|;:~`‘’“”/=]*"
+      ""
+      str)))
 
   (defun my/denote-sluggify-and-apply-rules (component str)
     "Make STR an appropriate slug for file name COMPONENT.
-This keeps dots in title components while delegating other rules to
-Denote's standard machinery."
+This follows Denote's standard machinery, except that dots are kept
+for the title component."
     (let* ((slug-function (alist-get component denote-file-name-slug-functions))
            (str-slug (cond
                       ((eq component 'title)
-                       (funcall (or slug-function #'my/denote-sluggify-title) str))
+                       (funcall (or slug-function #'denote-sluggify-title) str))
                       ((eq component 'keyword)
                        (replace-regexp-in-string
                         "_"
@@ -92,7 +87,7 @@ Denote's standard machinery."
             (signature . denote-sluggify-signature)
             (keyword . denote-sluggify-keyword)))
 
-  ;; Denote 本体が後段で title の . を消すため、その処理だけ差し替える。
+  ;; Denote 標準では後段で . を消すため、title だけ . を残すように差し替える。
   (advice-add 'denote-sluggify-and-apply-rules :override
               #'my/denote-sluggify-and-apply-rules)
 
