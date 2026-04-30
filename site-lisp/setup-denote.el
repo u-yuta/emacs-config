@@ -24,10 +24,7 @@
   :bind
   (("C-c n n" . denote)
    ("C-c n N" . denote-subdirectory)
-   ("C-c n r" . denote-rename-file)
-   ("C-c n l" . denote-link)
-   ("C-c n b" . denote-backlinks)
-   ("C-c n d" . denote-sort-dired))
+   ("C-c n r" . denote-rename-file)))
   :config
   (setopt denote-directory "~/Documents")
   ;; ノート作成時にサブディレクトリとタイトルを指定する
