@@ -45,9 +45,9 @@
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
   (citar-notes-paths
-   (list (expand-file-name "w3-area" org-directory)
-         (expand-file-name "s3-area" org-directory)
-         (expand-file-name "p3-area" org-directory)))
+   (list (expand-file-name "org/w3-area" org-directory)
+         (expand-file-name "org/s3-area" org-directory)
+         (expand-file-name "org/p3-area" org-directory)))
   :hook
   (LaTeX-mode . citar-capf-setup)
   (org-mode . citar-capf-setup)

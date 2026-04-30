@@ -49,9 +49,9 @@
     ("a" "Agenda"
      (lambda () (interactive) (find-file my/org-agenda-file)))
     ("A" "Shared Agenda"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "s0-agenda/shared-agenda.org"))))
+     (lambda () (interactive) (find-file (file-name-concat org-directory "org/s0-agenda/shared-agenda.org"))))
     ("h" "Home index"
-     (lambda () (interactive) (find-file (file-name-concat org-directory "00_index_home.org"))))
+     (lambda () (interactive) (find-file (file-name-concat org-directory "org/00_index_home.org"))))
     ("m" "Documents/YYYY/mm"
      (lambda () (interactive) (find-file (format-time-string "~/Documents/%Y/%m/"))))
     ("." "Emacs init"
