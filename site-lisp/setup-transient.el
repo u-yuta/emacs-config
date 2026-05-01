@@ -21,7 +21,7 @@
 ;; - :variable-pitch t を設定すると日本語を含む場合に表示幅が揃う
 
 (use-package transient
-  :ensure nil
+  :ensure t    ;; Magit のバージョン要求を満たすため
   :config
   ;; Input methodをtransient起動時に無効化する
   (defvar my/transient-original-input-method nil
