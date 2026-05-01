@@ -163,8 +163,10 @@
   :vc (:url "https://github.com/karthink/gptel-agent" :rev "2e6ba04")  ;; 2026-02-12 latest
   :ensure t
   :config
-  (add-to-list 'gptel-agent-dirs "~/.emacs.d/agents")
-  (gptel-agent-update)  ;; Read files from agents directories
+  (let ((agents-dir (expand-file-name "agents" user-emacs-directory)))
+    (add-to-list 'gptel-agent-dirs agents-dir)
+    (when (file-directory-p agents-dir)
+      (gptel-agent-update)))  ;; Read files from agents directories
   )         
 
 ;; gptel-quick
