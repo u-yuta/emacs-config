@@ -80,7 +80,7 @@
 #+title: ${title}")
              :unnarrowed t)
             ("t" "task note" plain "%?" :target
-             (file+head "share/notes/%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
 :ID: %(my/org-roam-capture-timestamp)
 :TYPE: %^{TYPE|note|task|work|ref|data|index}
 :CONTEXT: %^{CONTEXT}
