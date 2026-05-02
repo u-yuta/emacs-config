@@ -27,7 +27,7 @@
           ("C-c n g" . org-roam-graph)
           ("C-c n b" . org-roam-buffer-toggle)
           ("C-c n c" . my/org-roam-capture)
-          ("C-c j" . org-roam-dailies-capture-today)
+          ("C-c j" . org-roam-dailies-goto-today)
           )
          :map org-mode-map
          (("C-c n i" . org-roam-node-insert))
