@@ -201,14 +201,14 @@
                                             (list "-g" (concat "*" file-pattern "*")))
                                   consult-ripgrep-args)))
       (consult-ripgrep dir-path initial)))
-  )
 
-;; Using consult-ripgrep with org-roam for searching notes
-(defun bms/org-roam-rg-search ()
-  "Search org-roam directory using consult-ripgrep. With live-preview."
-  (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
-    (consult-ripgrep org-directory)))
+  ;; Using consult-ripgrep with org-roam for searching notes
+  (defun bms/org-roam-rg-search ()
+    "Search org-roam directory using consult-ripgrep. With live-preview."
+    (interactive)
+    (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-buffered --color=always --max-columns=500 --no-heading --line-number . -e ARG OPTS"))
+      (consult-ripgrep org-directory)))
+  )
 
 ;; Enable richer annotations using the Marginalia package
 (use-package marginalia
