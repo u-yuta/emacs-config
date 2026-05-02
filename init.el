@@ -340,14 +340,6 @@
 ;; 文献引用、citationの選定
 (require 'setup-citation)
 
-;; org-noter設定
-(use-package org-noter
-  :ensure t
-  :defer t
-  :config
-  (setopt org-noter-notes-search-path (list (expand-file-name "org/share" org-directory)))
-  (setopt org-noter-default-notes-file-names '("resouce.notes.org"))
-  )
 ;; ============================================
 ;; Windows, WSL関連
 ;; ============================================
