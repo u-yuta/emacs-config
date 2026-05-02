@@ -67,25 +67,31 @@
   ;; org-roam capture template
   (setopt org-roam-capture-templates
           '(
-            ("p" "personal note" plain "%?" :target
-             (file+head "personal/notes/%(my/org-roam-capture-timestamp)--${slug}.org" ":PROPERTIES:
-:ID: %(my/org-roam-capture-timestamp)
-:END:
-#+title: ${title}")
-             :unnarrowed t)
-            ("s" "shared note" plain "%?" :target
-             (file+head "share/notes/%(my/org-roam-capture-timestamp)--${slug}.org" ":PROPERTIES:
-:ID: %(my/org-roam-capture-timestamp)
-:END:
-#+title: ${title}")
-             :unnarrowed t)
             ("t" "task note" plain "%?" :target
              (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
 :ID: %(my/org-roam-capture-timestamp)
-:TYPE: %^{TYPE|note|task|work|ref|data|index}
-:CONTEXT: %^{CONTEXT}
+:STATUS: %^{STATUS|active|hold|done|archived}
 :END:
-#+title: ${title}
+#+title:      ${title}
+#+filetags:   :task:
+") :unnarrowed t)
+            ("p" "project note" plain "%?" :target
+             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+:ID: %(my/org-roam-capture-timestamp)
+:CONTEXT_TYPE: project
+:ROAM_ALIASES: %^{ROAM_ALIASES}
+:END:
+#+title:      ${title}
+#+filetags:   :index:
+") :unnarrowed t)
+            ("a" "area note" plain "%?" :target
+             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+:ID: %(my/org-roam-capture-timestamp)
+:CONTEXT_TYPE: area
+:ROAM_ALIASES: %^{ROAM_ALIASES}
+:END:
+#+title:      ${title}
+#+filetags:   :index:
 ") :unnarrowed t)
             ))
 
