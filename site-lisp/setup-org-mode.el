@@ -484,14 +484,6 @@
       )))
   )
 
-;; el-easydraw
-(use-package edraw-org
-  :ensure t
-  :after org
-  :vc (:url "https://github.com/misohena/el-easydraw" :rev :newest)
-  :config
-  (edraw-org-setup-default))
-
 ;; When using the org-export-in-background option (when using the
 ;; asynchronous export function), the following settings are
 ;; required. This is because Emacs started in a separate process does
