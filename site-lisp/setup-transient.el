@@ -56,7 +56,7 @@
      (lambda () (interactive) (find-file (format-time-string "~/Documents/%Y/%m/"))))
     ("." "Emacs init"
      (lambda () (interactive) (find-file user-init-file)))
-   ]
+    ]
    ["Command"
     ("f" "find-file" find-file-at-point)
     ("c" "locate" consult-locate)
@@ -66,7 +66,6 @@
     ]
    ]
   )
-
 (global-set-key (kbd "C-c f") 'my/transient-open-file-menu)
 
 ;; TransientベースのUIを追加する ----------------------------------------------

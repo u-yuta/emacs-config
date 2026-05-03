@@ -20,6 +20,7 @@
   :ensure t
   :init (setopt org-roam-v2-ack t)
   :after (org)
+  :commands org-roam-dailies-goto-today  ;; workaround for transient error: `already defined as something else than a generic function'
   :custom
   (org-roam-directory org-directory)
   :bind (
