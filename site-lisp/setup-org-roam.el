@@ -172,23 +172,14 @@
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
 
-(use-package org-ql
+(use-package org-roam-ql
   :ensure t
-  :after org-roam  ;; org-roam-list-files を使っている
-  :config
-  (setopt org-ql-warn-no-heading nil)
-
-  (defun my/find-org-entries-by-heading-in-directory ()
-    "Find org entries with specific heading text in all org files in a directory."
-    (interactive)
-    (let* ((directory (read-directory-name "Search org files in directory: "))
-           (heading-text (read-string "Heading contains: "))
-           (org-files (directory-files-recursively directory "\\.org$")))
-      (if org-files
-          (org-ql-find org-files
-                       :query-prefix (format "heading:\"%s\" " heading-text)
-                       :prompt (format "Entries with \"%s\" in heading: " heading-text)
-                       :widen t)
-        (message "No org files found in %s" directory)))))
+  :after (org-roam)
+  :demand t    ;; Emacs起動直後にorg-dynamic-blockから利用できるようにするため
+  :bind (:map minibuffer-mode-map
+         ;; Be able to add titles in queries while in minibuffer.
+         ;; This is similar to `org-roam-node-insert', but adds
+         ;; only title as a string.
+         ("C-c n I" . org-roam-ql-insert-node-title)))
 
 (provide 'setup-org-roam)
