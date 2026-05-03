@@ -80,6 +80,7 @@
 
 ;; load-path を追加
 (add-to-list 'load-path (expand-file-name "site-lisp" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 ;; システム判定
 (setopt my/system-linux-p (string-match-p "Linux" (shell-command-to-string "uname -o")))
@@ -583,6 +584,7 @@
 (require 'setup-gptel)
 (require 'setup-ai)
 (require 'setup-helpful)
+(require 'agent-introspect-cli)
 
 ;; setup transient menu
 (require 'setup-transient)
