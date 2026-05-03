@@ -1,30 +1,28 @@
 ;;; agent-introspect-cli.el --- Introspection API for agent CLI -*- lexical-binding: t; -*-
 
-;; このファイルは、CLI エージェントから Emacs 環境を調査するための
-;; 最小限の Introspection API を提供する。
+;; このファイルは、CLI エージェントから Emacs 環境を調査するための最小限の Introspection API を提供する。
 ;;
-;; M-: での簡単な動作確認例:
-;; (my/agent-cli-function-completions "find-file")
-;; (my/agent-cli-variable-completions "user-")
-;; (my/agent-cli-function-documentation "find-file")
-;; (my/agent-cli-variable-documentation "user-full-name")
-;; (my/agent-cli-function-source "find-file")
-;; (my/agent-cli-variable-value "user-full-name")
+;; 簡単な動作確認例:
+;; (agent-introspect-cli-function-completions "find-file")
+;; (agent-introspect-cli-variable-completions "user-")
+;; (agent-introspect-cli-function-documentation "find-file")
+;; (agent-introspect-cli-variable-documentation "user-full-name")
+;; (agent-introspect-cli-function-source "find-file")
+;; (agent-introspect-cli-variable-value "user-full-name")
 
-;; CLIからユーザーのEmacs環境のIntrospectionを行うためのAPI。
 
 ;; 関数の候補リストを得る
-(defun my/agent-cli-function-completions (prefix)
+(defun agent-introspect-cli-function-completions (prefix)
   (require 'orderless)
   (orderless-filter prefix obarray #'functionp))
 
 ;; 変数の候補リストを得る
-(defun my/agent-cli-variable-completions (prefix)
+(defun agent-introspect-cli-variable-completions (prefix)
   (require 'orderless)
   (orderless-filter prefix obarray #'boundp))
 
 ;; 関数ソースを得る
-(defun my/agent-cli--introspect-source (symbol &optional type)
+(defun agent-introspect-cli--introspect-source (symbol &optional type)
   "Return source snippet for SYMBOL (function by default, TYPE otherwise)."
   (when-let* ((sym (intern-soft symbol))
               (save-silently t)
@@ -40,19 +38,19 @@
          (t (error "Unexpected file mode: %S" major-mode)))
         (buffer-substring-no-properties beg (point))))))
 
-(defun my/agent-cli-function-source (name)
-  (or (my/agent-cli--introspect-source name)
+(defun agent-introspect-cli-function-source (name)
+  (or (agent-introspect-cli--introspect-source name)
       (error "Function not found: %s" name)))
 
 ;; 関数のドキュメントを得る
-(defun my/agent-cli-function-documentation (name)
+(defun agent-introspect-cli-function-documentation (name)
   (let ((sym (intern-soft name)))
     (unless (and sym (fboundp sym))
       (error "Function not found: %s" name))
     (documentation sym)))
 
 ;; 変数のドキュメントを得る
-(defun my/agent-cli-variable-documentation (name)
+(defun agent-introspect-cli-variable-documentation (name)
   (let ((sym (intern-soft name)))
     (unless (and sym (boundp sym))
       (error "Variable not found: %s" name))
@@ -60,7 +58,7 @@
     (custom-variable-documentation sym)))
 
 ;; 変数の値を得る
-(defun my/agent-cli-variable-value (name)
+(defun agent-introspect-cli-variable-value (name)
   (let ((sym (intern-soft name)))
     (unless (and sym (boundp sym))
       (error "Variable not found: %s" name))
