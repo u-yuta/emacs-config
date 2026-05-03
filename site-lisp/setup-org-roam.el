@@ -20,6 +20,7 @@
   :ensure t
   :init (setopt org-roam-v2-ack t)
   :after (org)
+  :demand t    ;; Emacs server起動直後にagentがorg-roam DBを利用できるようにするため
   :commands org-roam-dailies-goto-today  ;; workaround for transient error: `already defined as something else than a generic function'
   :custom
   (org-roam-directory org-directory)
