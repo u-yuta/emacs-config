@@ -33,19 +33,19 @@
 
   :init
   ;; 保存先
-  (setopt org-directory (expand-file-name "~/Documents"))
+  (setopt org-directory (expand-file-name "~/Documents/org"))
   (defun my/org-path (path)
     (file-name-concat org-directory path))
   (setopt my/journal-directory
           (seq-find #'file-directory-p
                     (mapcar #'my/org-path
-                            '("org/personal/journal" "org/work/w1-journal"))))
+                            '("personal/journal" "work/journal"))))
   (setopt org-agenda-files
           (seq-filter #'file-exists-p
                       (mapcar #'my/org-path
-                              '("org/personal/p0-agenda/agenda.org"
-                                "org/work/w0-agenda/agenda.org"
-                                "org/share/s0-agenda/shared-agenda.org"))))
+                              '("personal/p0-agenda/agenda.org"
+                                "work/w0-agenda/agenda.org"
+                                "share/s0-agenda/shared-agenda.org"))))
   (setopt my/org-agenda-file (car org-agenda-files))
   (setopt org-startup-folded 'nofold)
 

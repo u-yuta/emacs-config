@@ -35,6 +35,13 @@
          (("C-c n i" . org-roam-node-insert))
          (("C-c n I" . org-roam-insert-immediate)))
   :config
+  ;; org-roam note main
+  (setopt my/org-inbox-directory
+          (seq-find #'file-directory-p
+                    (mapcar #'my/org-path
+                            '("personal/inbox" "work/inbox"))))
+  
+  (setopt org-roam-directory-inbox (expand-file-name "personal/inbox" org-roam-directory))
   ;; Configures display formatting for Org-roam node.
   ;; https://github.com/org-roam/org-roam/wiki/User-contributed-Tricks#filtering-by-subdirectory
   (cl-defmethod org-roam-node-directories ((node org-roam-node))
@@ -68,9 +75,9 @@
 
   ;; org-roam capture template
   (setopt org-roam-capture-templates
-          '(
+          `(
             ("t" "task note" plain "%?" :target
-             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: %(my/org-roam-capture-timestamp)
 :STATUS: %^{STATUS|active|hold|done|archived}
 :END:
@@ -78,7 +85,7 @@
 #+filetags:   :task:
 ") :unnarrowed t)
             ("p" "project note" plain "%?" :target
-             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: %(my/org-roam-capture-timestamp)
 :CONTEXT_TYPE: project
 :ROAM_ALIASES: %^{ROAM_ALIASES}
@@ -87,7 +94,7 @@
 #+filetags:   :index:
 ") :unnarrowed t)
             ("a" "area note" plain "%?" :target
-             (file+head "%(format-time-string \"~/Documents/%Y/%m/\")%(my/org-roam-capture-timestamp)--${slug}.org"  ":PROPERTIES:
+             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: %(my/org-roam-capture-timestamp)
 :CONTEXT_TYPE: area
 :ROAM_ALIASES: %^{ROAM_ALIASES}
