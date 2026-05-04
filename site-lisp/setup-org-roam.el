@@ -25,10 +25,10 @@
   :custom
   (org-roam-directory org-directory)
   :bind (
-         (("C-c n f" . my/org-roam-node-find)
+         (("C-c n f" . org-roam-node-find)
           ("C-c n g" . org-roam-graph)
           ("C-c n b" . org-roam-buffer-toggle)
-          ("C-c n c" . my/org-roam-capture)
+          ("C-c n c" . org-roam-capture)
           ("C-c j" . org-roam-dailies-goto-today)
           )
          :map org-mode-map
@@ -52,41 +52,20 @@
           org-roam-node-annotation-function
           (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
 
-  ;; ノード作成時にIDのタイムスタンプとファイル名のタイムスタンプを一致させる
-  (defvar my/org-roam-capture-timestamp nil)
-
-  (defun my/org-roam-capture-timestamp ()
-    "Return one timestamp reused within the current capture."
-    (or my/org-roam-capture-timestamp
-        (setq my/org-roam-capture-timestamp
-              (format-time-string "%Y%m%dT%H%M%S"))))
-
-  (defun my/org-roam-node-find ()
-    "Run org-roam-node-find with a fresh shared timestamp."
-    (interactive)
-    (let ((my/org-roam-capture-timestamp nil))
-      (call-interactively #'org-roam-node-find)))
-
-  (defun my/org-roam-capture ()
-    "Run org-roam-node-find with a fresh shared timestamp."
-    (interactive)
-    (let ((my/org-roam-capture-timestamp nil))
-      (call-interactively #'org-roam-capture)))
-
   ;; org-roam capture template
   (setopt org-roam-capture-templates
           `(
             ("t" "task note" plain "%?" :target
-             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
-:ID: %(my/org-roam-capture-timestamp)
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+:ID: ${id}
 :STATUS: %^{STATUS|active|hold|done|archived}
 :END:
 #+title:      ${title}
 #+filetags:   :task:
 ") :unnarrowed t)
             ("p" "project note" plain "%?" :target
-             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
-:ID: %(my/org-roam-capture-timestamp)
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+:ID: ${id}
 :CONTEXT_TYPE: project
 :ROAM_ALIASES: %^{ROAM_ALIASES}
 :END:
@@ -94,8 +73,8 @@
 #+filetags:   :index:
 ") :unnarrowed t)
             ("a" "area note" plain "%?" :target
-             (file+head ,(format "%s/%%(my/org-roam-capture-timestamp)--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
-:ID: %(my/org-roam-capture-timestamp)
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+:ID: ${id}
 :CONTEXT_TYPE: area
 :ROAM_ALIASES: %^{ROAM_ALIASES}
 :END:
