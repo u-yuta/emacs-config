@@ -56,30 +56,51 @@
   (setopt org-roam-capture-templates
           `(
             ("t" "task note" plain "%?" :target
-             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+             (file+head ,(format "%s/${id}--${slug}__task.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
 :STATUS: %^{STATUS|active|hold|done|archived}
 :END:
 #+title:      ${title}
 #+filetags:   :task:
+* 目的
+* 作業内容
+* メモ・中間結果
+* 結果・知見
+* リンク
 ") :unnarrowed t)
             ("p" "project note" plain "%?" :target
-             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+             (file+head ,(format "%s/${id}--${slug}__index.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
 :CONTEXT_TYPE: project
 :ROAM_ALIASES: %^{ROAM_ALIASES}
 :END:
 #+title:      ${title}
 #+filetags:   :index:
+* 概要
+* スコープ
+* 目的・背景
+* 用語
+* リンク
+- 主要タスク: 
 ") :unnarrowed t)
             ("a" "area note" plain "%?" :target
-             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
+             (file+head ,(format "%s/${id}--${slug}__index.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
 :CONTEXT_TYPE: area
 :ROAM_ALIASES: %^{ROAM_ALIASES}
 :END:
 #+title:      ${title}
 #+filetags:   :index:
+* 概要
+* スコープ
+* 用語
+") :unnarrowed t)
+            ("w" "work note" plain "%?" :target
+             (file+head ,(format "%s/${id}--${slug}__work.org" my/org-inbox-directory)  ":PROPERTIES:
+:ID: ${id}
+:END:
+#+title:      ${title}
+#+filetags:   :work:
 ") :unnarrowed t)
             ))
 
@@ -168,56 +189,6 @@
          ;; This is similar to `org-roam-node-insert', but adds
          ;; only title as a string.
          ("C-c n I" . org-roam-ql-insert-node-title))
-  :config
-  ;; 検索クエリ
-  (setq my/org-roam-ql-query-context
-    '(or (properties "CONTEXT_TYPE" "project") (properties "CONTEXT_TYPE" "area")))
-  (setq my/org-roam-ql-query-project
-    '(or (properties "CONTEXT_TYPE" "project")))
-  (setq my/org-roam-ql-query-task
-    '(properties "tags" "task"))
-  (setq my/org-roam-ql-query-active-task
-    '(and (properties "tags" "task") (properties "STATUS" "active")))
-
-  ;; org-roamのノード検索を行い、ID、タイトルと指定したプロパティをplistあるいはJSONで返す
-  (defun my/org-roam-ql--property-name->keyword (property-name)
-    "Convert PROPERTY-NAME (string) to keyword symbol for plist keys."
-    (intern (concat ":"
-                    (downcase
-                     (replace-regexp-in-string "[^[:alnum:]]+" "-" property-name)))))
-
-  (defun my/org-roam-ql-nodes-id-title-and-properties (source-or-query properties)
-    "Return plist rows of id, title and PROPERTIES from SOURCE-OR-QUERY.
-
-SOURCE-OR-QUERY is resolved with `org-roam-ql-nodes'.
-PROPERTIES should be a list of property names (strings/symbols).
-
-Return value format:
-  ((:id ... :title ... :properties (:prop1 ... :prop2 ...)) ...)."
-    (let ((property-names (mapcar (lambda (it) (if (symbolp it) (symbol-name it) it))
-                                  properties)))
-      (mapcar
-       (lambda (node)
-         (list :id (org-roam-node-id node)
-               :title (org-roam-node-title node)
-               :properties
-               (apply #'append
-                      (mapcar (lambda (prop)
-                                (list (my/org-roam-ql--property-name->keyword prop)
-                                      (alist-get (upcase prop)
-                                                 (org-roam-node-properties node)
-                                                 nil nil #'string-equal)))
-                              property-names))))
-       (org-roam-ql-nodes source-or-query))))
-
-  (defun my/org-roam-ql-nodes-id-title-and-properties-json (source-or-query properties)
-    "Return JSON string from `my/org-roam-ql-nodes-id-title-and-properties'."
-    (require 'json)
-    ;; `json-encode' treats a top-level list as an object candidate.
-    ;; Convert to vector to force JSON array output.
-    (json-encode
-     (vconcat
-      (my/org-roam-ql-nodes-id-title-and-properties source-or-query properties))))
   )
 
 (provide 'setup-org-roam)

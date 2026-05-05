@@ -94,7 +94,7 @@ for the title component."
   ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1)
 
-  ;; orgファイルのidentifierをorg-modeのIDとしても利用可能な書式に変更する
+  ;; orgファイルのidentifierをorg-modeのIDとしても利用可能な書式にする
   (setopt denote-org-front-matter
           ":PROPERTIES:
 :ID: %4$s
