@@ -189,10 +189,11 @@ Return plist:
         (org-mode)
         (insert (format "* Note structure: %s\n\n" (note-manager--node-link node)))
         (note-manager--insert-node-list "Ancestors (recursive PARENT_ID)" ancestors)
-        (note-manager--insert-node-list "Siblings" siblings)
         (note-manager--insert-node-list "Children" children)
+        (note-manager--insert-node-list "Siblings" siblings)
         (note-manager--insert-node-list "Missions" missions)
-        (goto-char (point-min))))
+        (goto-char (point-min))
+        (read-only-mode 1)))
     (pop-to-buffer buf)))
 
 (defun note-manager-show-structure ()
@@ -343,34 +344,54 @@ Keep nearest lineage entries first. Unresolved IDs are not filtered here."
                           lineage))))
       (cl-remove-duplicates mission-ids :test #'string-equal))))
 
-(defun note-manager-consult-open-mission-from-current ()
-  "Open a mission selected via consult from current node lineage.
+(defun note-manager-consult-open-related-from-current ()
+  "Open a related node selected via consult.
 
-Lineage is current node + ancestors. Candidate label is ""TITLE [ID]"".
-Missing mission nodes are silently excluded."
+Targets include ancestors, siblings, children, and missions resolved from
+current node lineage. Each candidate is prefixed with its relation label."
   (interactive)
   (unless (require 'consult nil t)
     (user-error "consult is required"))
   (let* ((node (note-manager--current-node-or-error))
-         (mission-ids (note-manager-resolve-mission-ids-from-lineage
-                       (org-roam-node-id node)))
-         (missions (delq nil (mapcar #'org-roam-node-from-id mission-ids)))
-         (candidates (mapcar (lambda (m)
-                               (cons (format "%s [%s]"
-                                             (org-roam-node-title m)
-                                             (org-roam-node-id m))
-                                     m))
-                             missions)))
-    (unless candidates
-      (user-error "No resolvable mission found from current node lineage"))
-    (let* ((selected (consult--read (mapcar #'car candidates)
-                                    :prompt "Mission: "
+         (structure (note-manager--collect-structure node))
+         (seen (make-hash-table :test #'equal))
+         (pairs nil))
+    (dolist (entry `(("ancestor" . ,(plist-get structure :ancestors))
+                     ("child"    . ,(plist-get structure :children))
+                     ("sibling"  . ,(plist-get structure :siblings))
+                     ("mission"  . ,(plist-get structure :missions))))
+      (let ((label (car entry))
+            (nodes (cdr entry)))
+        (dolist (n nodes)
+          (let ((id (org-roam-node-id n)))
+            (unless (gethash id seen)
+              (puthash id t seen)
+              (push (cons (format "[%s] %s [%s]"
+                                  label
+                                  (org-roam-node-title n)
+                                  id)
+                          n)
+                    pairs))))))
+    (setq pairs (nreverse pairs))
+    (unless pairs
+      (user-error "No related node found from current context"))
+    (let* ((selected (consult--read (mapcar #'car pairs)
+                                    :prompt "Related: "
                                     :require-match t
                                     :sort nil))
-           (mission (cdr (assoc selected candidates))))
-      (when mission
-        (org-roam-node-visit mission)))))
+           (target (cdr (assoc selected pairs))))
+      (when target
+        (org-roam-node-visit target)))))
+
+(defalias 'note-manager-consult-open-mission-from-current
+  #'note-manager-consult-open-related-from-current)
 
 (require 'note-manager-validate)
+
+;; Keybindings
+(global-set-key (kbd "C-c N f") #'note-manager-find)
+(global-set-key (kbd "C-c N s") #'note-manager-show-structure)
+(global-set-key (kbd "C-c N m") #'note-manager-set-mission-id)
+(global-set-key (kbd "C-c N r") #'note-manager-consult-open-related-from-current)
 
 (provide 'note-manager)
