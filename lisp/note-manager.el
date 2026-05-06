@@ -1,5 +1,7 @@
 (require 'org-roam-ql)
 (require 'cl-lib)
+(require 'dash)
+(require 'hierarchy)
 
 ;; 検索クエリ
 (defconst note-manager-query-context
@@ -68,10 +70,10 @@ Return value format:
 ;; org-roam-node-display-template用
 (cl-defmethod org-roam-node-context ((node org-roam-node))
   (when-let* ((context (cdr (assoc-string "CONTEXT" (org-roam-node-properties node)))))
-     (concat "#" context)))
+    (concat "#" context)))
 (cl-defmethod org-roam-node-kind ((node org-roam-node))
   (when-let* ((kind (cdr (assoc-string "KIND" (org-roam-node-properties node)))))
-     (concat "#" kind)))
+    (concat "#" kind)))
 
 ;; nodeを開くUI
 (defun note-manager-find ()
@@ -93,26 +95,50 @@ Return value format:
   "Return nodes whose PARENT_ID equals PARENT-ID."
   (org-roam-ql-nodes `(properties "PARENT_ID" ,parent-id)))
 
-(defun note-manager--ancestor-nodes (node)
+(defun note-manager--assert-no-parent-cycle (nodes)
+  "Raise `user-error' if NODES contain a PARENT_ID cycle."
+  (let* ((id->node (-group-by #'org-roam-node-id nodes))
+         (parent-of (lambda (id)
+                      (when-let* ((node (car (alist-get id id->node nil nil #'string-equal)))
+                                  (pid (note-manager--node-parent-id node))
+                                  (present (alist-get pid id->node nil nil #'string-equal)))
+                        (declare (ignore present))
+                        pid))))
+    (dolist (node nodes)
+      (let ((start (org-roam-node-id node))
+            (seen (make-hash-table :test #'equal))
+            (cur (org-roam-node-id node)))
+        (while cur
+          (setq cur (funcall parent-of cur))
+          (when cur
+            (when (or (gethash cur seen) (string= cur start))
+              (user-error "parent-cycle-detected: %s" cur))
+            (puthash cur t seen)))))))
+
+(defun note-manager--build-hierarchy (nodes)
+  "Build and return hierarchy object from NODES using PARENT_ID."
+  (note-manager--assert-no-parent-cycle nodes)
+  (let ((h (hierarchy-new))
+        (id-set (-map #'org-roam-node-id nodes)))
+    (hierarchy-add-trees
+     h nodes
+     (lambda (n)
+       (let ((pid (note-manager--node-parent-id n)))
+         (when (member pid id-set)
+           (org-roam-node-from-id pid))))
+     nil)
+    h))
+
+(defun note-manager--ancestor-nodes (node &optional hierarchy)
   "Return ancestor nodes of NODE by recursively following PARENT_ID.
-Nearest parent comes first. Raise user error when parent cycle is detected."
-  (let* ((start-id (org-roam-node-id node))
-         (current node)
-         (seen (make-hash-table :test #'equal))
-         ancestors)
-    (while current
-      (let* ((parent-id (note-manager--node-parent-id current))
-             (parent (and parent-id (org-roam-node-from-id parent-id))))
-        (cond
-         ((null parent)
-          (setq current nil))
-         ((or (gethash (org-roam-node-id parent) seen)
-              (string= (org-roam-node-id parent) start-id))
-          (user-error "parent-cycle-detected: %s" (org-roam-node-id parent)))
-         (t
-          (puthash (org-roam-node-id parent) t seen)
-          (push parent ancestors)
-          (setq current parent)))))
+Nearest parent comes first. Raise user error when parent cycle is detected.
+When HIERARCHY is non-nil, use it instead of rebuilding one."
+  (let* ((ancestors nil)
+         (h (or hierarchy
+                (note-manager--build-hierarchy (org-roam-node-list))))
+         (cur node))
+    (while (setq cur (hierarchy-parent h cur))
+      (push cur ancestors))
     (nreverse ancestors)))
 
 (defun note-manager--insert-node-list (title nodes)
@@ -124,24 +150,24 @@ Nearest parent comes first. Raise user error when parent cycle is detected."
     (insert "- (none)\n"))
   (insert "\n"))
 
+
 (defun note-manager--collect-structure (node)
   "Collect minimal structure data around NODE.
 
 Return plist:
-  (:node NODE :ancestors ... :parent ... :siblings ... :children ...)."
+  (:node NODE :ancestors ... :siblings ... :children ...)."
   (let* ((node-id (org-roam-node-id node))
-         (parent-id (note-manager--node-parent-id node))
-         (parent (and parent-id (org-roam-node-from-id parent-id)))
-         (children (note-manager--nodes-by-parent-id node-id))
-         (siblings (if parent-id
-                       (seq-filter
-                        (lambda (n) (not (string= (org-roam-node-id n) node-id)))
-                        (note-manager--nodes-by-parent-id parent-id))
+         (all (org-roam-node-list))
+         (h (note-manager--build-hierarchy all))
+         (parent (hierarchy-parent h node))
+         (children (hierarchy-children h node))
+         (siblings (if parent
+                       (--remove (string= (org-roam-node-id it) node-id)
+                                 (hierarchy-children h parent))
                      nil))
-         (ancestors (note-manager--ancestor-nodes node)))
+         (ancestors (note-manager--ancestor-nodes node h)))
     (list :node node
           :ancestors ancestors
-          :parent parent
           :siblings siblings
           :children children)))
 
@@ -149,7 +175,6 @@ Return plist:
   "Render STRUCTURE (from `note-manager--collect-structure') to temp buffer."
   (let* ((node (plist-get structure :node))
          (ancestors (plist-get structure :ancestors))
-         (parent (plist-get structure :parent))
          (siblings (plist-get structure :siblings))
          (children (plist-get structure :children))
          (buf (get-buffer-create "*note-manager-structure*")))
@@ -159,7 +184,6 @@ Return plist:
         (org-mode)
         (insert (format "* Note structure: %s\n\n" (note-manager--node-link node)))
         (note-manager--insert-node-list "Ancestors (recursive PARENT_ID)" ancestors)
-        (note-manager--insert-node-list "Parent" (and parent (list parent)))
         (note-manager--insert-node-list "Siblings" siblings)
         (note-manager--insert-node-list "Children" children)
         (goto-char (point-min))))
@@ -168,7 +192,7 @@ Return plist:
 (defun note-manager-show-structure ()
   "Show minimal note structure around current org-roam node.
 
-Display parent, children, siblings, and all ancestors in a temporary org buffer."
+Display children, siblings, and all ancestors in a temporary org buffer."
   (interactive)
   (let* ((node (org-roam-node-at-point))
          (node-id (and node (org-roam-node-id node))))
@@ -277,24 +301,8 @@ Raise error when parent cycle is detected."
   (let ((node (org-roam-node-from-id id)))
     (unless node
       (user-error "Node not found for ID: %s" id))
-    (let ((current node)
-          (seen (make-hash-table :test #'equal))
-          ancestors)
-      (while current
-        (let* ((parent-id (note-manager--node-parent-id current))
-               (parent (and parent-id (org-roam-node-from-id parent-id))))
-          (cond
-           ((null parent)
-            (setq current nil))
-           ((or (gethash (org-roam-node-id parent) seen)
-                (string= (org-roam-node-id parent) id))
-            (user-error "parent-cycle-detected: %s" (org-roam-node-id parent)))
-           (t
-            (puthash (org-roam-node-id parent) t seen)
-            (push (org-roam-node-id parent) ancestors)
-            (setq current parent)))))
-      (nreverse ancestors))))
-
+    (-map #'org-roam-node-id
+          (note-manager--ancestor-nodes node))))
 (defun note-manager-resolve-mission (id)
   "Resolve mission note from task ID via MISSION_ID."
   (let* ((node (org-roam-node-from-id id))
