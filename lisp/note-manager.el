@@ -198,24 +198,6 @@ Display parent, children, siblings, and all ancestors in a temporary org buffer.
       (goto-char (point-min))
       (org-entry-put (point) "MISSION_ID" mission-id))))
 
-(defconst note-manager-valid-kinds '("task" "mission" "area")
-  "Allowed KIND values for rev4 notes.")
-(defconst note-manager-valid-filetags '("work" "note" "index" "ref" "journal" "data")
-  "Allowed filetags for rev4 minimal validation.")
-(defconst note-manager-valid-task-status '("inbox" "active" "hold" "done" "archived")
-  "Allowed STATUS values for task notes.")
-(defconst note-manager-valid-mission-status '("active" "hold" "done" "archived")
-  "Allowed STATUS values for mission notes.")
-(defconst note-manager-task-required-headings
-  '("目的" "完了条件" "作業内容" "次のアクション" "メモ・中間結果" "結果・知見" "リンク")
-  "Required level-1 headings for task notes.")
-(defconst note-manager-mission-required-headings
-  '("目的" "背景" "スコープ" "成功条件" "制約" "用語")
-  "Required level-1 headings for mission notes.")
-(defconst note-manager-area-required-headings
-  '("概要" "スコープ" "用語")
-  "Required level-1 headings for area notes.")
-
 (defun note-manager--normalize-symbol-or-string (value)
   "Return downcased string for VALUE (symbol/string), else nil.
 Treat nil as nil (not as symbol "nil")."
@@ -330,97 +312,6 @@ Raise error when parent cycle is detected."
           :title (org-roam-node-title mission)
           :path (org-roam-node-file mission))))
 
-(defun note-manager--task-heading-titles ()
-  "Return level-1 heading titles in current org buffer."
-  (org-element-map (org-element-parse-buffer) 'headline
-    (lambda (h)
-      (when (= (org-element-property :level h) 1)
-        (org-element-property :raw-value h)))))
-
-(defun note-manager-validate-current-note ()
-  "Validate current note against rev4 minimal constraints.
-Return diagnostics list: (:code <symbol> :level <symbol> :message <string>)."
-  (interactive)
-  (let* ((meta (note-manager-current-note-metadata))
-         (id (plist-get meta :id))
-         (kind (plist-get meta :kind))
-         (status (plist-get meta :status))
-         (parent-id (plist-get meta :parent-id))
-         (mission-id (plist-get meta :mission-id))
-         (filetags (plist-get meta :filetags))
-         diags)
-    (unless id
-      (push '(:code missing-id :level error :message "ID is missing") diags))
-    (unless filetags
-      (push '(:code missing-filetags :level error :message "filetags is missing") diags))
-    (when (and kind (not (member kind note-manager-valid-kinds)))
-      (push `(:code invalid-kind :level error :message ,(format "Invalid KIND: %s" kind)) diags))
-    (dolist (tag filetags)
-      (unless (member tag note-manager-valid-filetags)
-        (push `(:code invalid-filetag :level error :message ,(format "Invalid filetag: %s" tag)) diags)))
-    (when (and (equal kind "task") (not status))
-      (push '(:code missing-task-status :level error :message "STATUS is missing for task") diags))
-    (when status
-      (let ((ok (cond
-                 ((equal kind "task") (member status note-manager-valid-task-status))
-                 ((equal kind "mission") (member status note-manager-valid-mission-status))
-                 (t t))))
-        (unless ok
-          (push `(:code invalid-status :level error :message ,(format "Invalid STATUS: %s" status)) diags))))
-    (when parent-id
-      (unless (org-roam-node-from-id parent-id)
-        (push `(:code unresolved-parent :level error :message ,(format "PARENT_ID not found: %s" parent-id)) diags)))
-    (when mission-id
-      (unless (org-roam-node-from-id mission-id)
-        (push `(:code unresolved-mission :level error :message ,(format "MISSION_ID not found: %s" mission-id)) diags)))
-    (let* ((present (delq nil (note-manager--task-heading-titles)))
-           (required (cond
-                      ((equal kind "task") note-manager-task-required-headings)
-                      ((equal kind "mission") note-manager-mission-required-headings)
-                      ((equal kind "area") note-manager-area-required-headings)
-                      (t nil)))
-           (missing (and required
-                         (seq-remove (lambda (h) (member h present)) required))))
-      (when missing
-        (push `(:code missing-required-headings :level warn
-                      :message ,(format "Missing required headings(%s): %s"
-                                        kind
-                                        (string-join missing ", ")))
-              diags)))
-    (when (member kind note-manager-valid-kinds)
-      (condition-case err
-          (note-manager-get-ancestors id)
-        (error
-         (when (string-match-p "parent-cycle-detected" (error-message-string err))
-           (push `(:code parent-cycle-detected :level error :message ,(error-message-string err)) diags)))))
-    (setq diags (nreverse diags))
-    (when (called-interactively-p 'interactive)
-      (if diags
-          (message "%S" diags)
-        (message "Validation OK")))
-    diags))
-
-(defun note-manager-set-status (status)
-  "Set file-level STATUS property.
-STATUS accepts symbol/string and is validated by KIND."
-  (interactive
-   (let* ((meta (note-manager-current-note-metadata))
-          (kind (plist-get meta :kind))
-          (choices (if (equal kind "mission")
-                       note-manager-valid-mission-status
-                     note-manager-valid-task-status)))
-     (list (completing-read "STATUS: " choices nil t))))
-  (let* ((meta (note-manager-current-note-metadata))
-         (kind (plist-get meta :kind))
-         (status-str (note-manager--normalize-symbol-or-string status))
-         (valid (if (equal kind "mission")
-                    note-manager-valid-mission-status
-                  note-manager-valid-task-status)))
-    (unless (member status-str valid)
-      (user-error "Invalid STATUS for kind=%s: %s" kind status-str))
-    (save-excursion
-      (goto-char (point-min))
-      (org-entry-put (point) "STATUS" status-str))
-    status-str))
+(require 'note-manager-validate)
 
 (provide 'note-manager)
