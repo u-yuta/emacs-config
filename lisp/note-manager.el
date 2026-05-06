@@ -407,3 +407,4 @@ STATUS accepts symbol/string and is validated by KIND."
       (org-entry-put (point) "STATUS" status-str))
     status-str))
 
+(provide 'note-manager)

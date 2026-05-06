@@ -589,7 +589,9 @@
 ;; setup transient menu
 (require 'setup-transient)
 (require 'pandoc-menu)
+
 (require 'docdb)
+(require 'note-manager)
 
 
 ;; Load host-specific configuration
