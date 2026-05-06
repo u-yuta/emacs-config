@@ -239,21 +239,20 @@ Treat nil as nil (not as symbol "nil")."
 (defun note-manager--current-node-or-error ()
   "Return current org-roam node or raise user error."
   (or (org-roam-node-at-point)
-      (let* ((id (org-entry-get (point-min) "ID"))
-             (node (and id (org-roam-node-from-id id))))
-        (or node
-            (user-error "Current buffer is not an org-roam note with ID")))))
+      (if-let* ((id (org-entry-get (point-min) "ID"))
+                (node (org-roam-node-from-id id)))
+          node
+        (user-error "Current buffer is not an org-roam note with ID"))))
 
 (defun note-manager--current-filetags ()
   "Return current buffer filetags as lowercase string list."
-  (let* ((entry (assoc "FILETAGS" (org-collect-keywords '("FILETAGS"))))
-         (val (cadr entry))
-         (raw (cond ((stringp val) val)
-                    ((and (listp val) (stringp (car val))) (car val))
-                    (t nil))))
-    (if raw
-        (mapcar #'downcase (split-string raw ":" t))
-      nil)))
+  (if-let* ((entry (assoc "FILETAGS" (org-collect-keywords '("FILETAGS"))))
+            (val (cadr entry))
+            (raw (cond ((stringp val) val)
+                       ((and (listp val) (stringp (car val))) (car val))
+                       (t nil))))
+      (mapcar #'downcase (split-string raw ":" t))
+    nil))
 
 (defun note-manager-current-note-metadata ()
   "Return current note metadata plist for rev4 minimal API."

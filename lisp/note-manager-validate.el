@@ -36,12 +36,12 @@ Return diagnostics list: (:code <symbol> :level <symbol> :message <string>)."
                  (t t))))
         (unless ok
           (push `(:code invalid-status :level error :message ,(format "Invalid STATUS: %s" status)) diags))))
-    (when parent-id
-      (unless (org-roam-node-from-id parent-id)
-        (push `(:code unresolved-parent :level error :message ,(format "PARENT_ID not found: %s" parent-id)) diags)))
-    (when mission-id
-      (unless (org-roam-node-from-id mission-id)
-        (push `(:code unresolved-mission :level error :message ,(format "MISSION_ID not found: %s" mission-id)) diags)))
+    (when-let* ((pid parent-id)
+                ((not (org-roam-node-from-id pid))))
+      (push `(:code unresolved-parent :level error :message ,(format "PARENT_ID not found: %s" pid)) diags))
+    (when-let* ((mid mission-id)
+                ((not (org-roam-node-from-id mid))))
+      (push `(:code unresolved-mission :level error :message ,(format "MISSION_ID not found: %s" mid)) diags))
     (when (member kind note-manager-valid-kinds)
       (condition-case err
           (note-manager-get-ancestors id)
