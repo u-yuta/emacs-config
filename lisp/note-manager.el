@@ -40,22 +40,21 @@ PROPERTIES should be a list of property names (strings/symbols).
 
 Return value format:
   ((:id ... :title ... :properties (:prop1 ... :prop2 ...)) ...)."
-  (let ((property-names (mapcar (lambda (it) (if (symbolp it) (symbol-name it) it))
-                                properties)))
-    (mapcar
-     (lambda (node)
-       (let ((node-properties (org-roam-node-properties node))
-             (properties-plist nil))
-         (dolist (prop property-names)
-           (setq properties-plist
-                 (plist-put properties-plist
-                            (note-manager--property-name->keyword prop)
-                            (alist-get (upcase prop)
-                                       node-properties
-                                       nil nil #'string-equal))))
-         (list :id (org-roam-node-id node)
-               :title (org-roam-node-title node)
-               :properties properties-plist)))
+  (let ((property-names (--map (if (symbolp it) (symbol-name it) it)
+                               properties)))
+    (--map
+     (let ((node-properties (org-roam-node-properties it))
+           (properties-plist nil))
+       (dolist (prop property-names)
+         (setq properties-plist
+               (plist-put properties-plist
+                          (note-manager--property-name->keyword prop)
+                          (alist-get (upcase prop)
+                                     node-properties
+                                     nil nil #'string-equal))))
+       (list :id (org-roam-node-id it)
+             :title (org-roam-node-title it)
+             :properties properties-plist))
      (org-roam-ql-nodes source-or-query))))
 
 (defun note-manager-nodes-id-title-and-properties-json (source-or-query properties)
@@ -206,15 +205,14 @@ Display children, siblings, and all ancestors in a temporary org buffer."
   (interactive)
   (let* ((nodes (org-roam-ql-nodes note-manager-query-mission))
          (candidates
-          (mapcar (lambda (node)
-                    (cons (format "%s [%s]"
-                                  (org-roam-node-title node)
-                                  (org-roam-node-id node))
-                          node))
-                  nodes))
+          (--map (cons (format "%s [%s]"
+                               (org-roam-node-title it)
+                               (org-roam-node-id it))
+                       it)
+                 nodes))
          (selected
           (completing-read "Mission: "
-                           (mapcar #'car candidates)
+                           (-map #'car candidates)
                            nil t))
          (selected-node (cdr (assoc selected candidates)))
          (mission-id (org-roam-node-id selected-node)))
@@ -280,19 +278,18 @@ KIND/STATUS accept symbol or string."
                  (kind-str `(properties "KIND" ,kind-str))
                  (status-str `(properties "STATUS" ,status-str))
                  (t t))))
-    (mapcar
-     (lambda (node)
-       (with-current-buffer (find-file-noselect (org-roam-node-file node))
-         (save-excursion
-           (goto-char (point-min))
-           (list :id (org-roam-node-id node)
-                 :kind (note-manager--normalize-symbol-or-string
-                        (alist-get "KIND" (org-roam-node-properties node) nil nil #'string-equal))
-                 :status (note-manager--normalize-symbol-or-string
-                          (alist-get "STATUS" (org-roam-node-properties node) nil nil #'string-equal))
-                 :filetags (note-manager--current-filetags)
-                 :title (org-roam-node-title node)
-                 :path (org-roam-node-file node)))))
+    (--map
+     (with-current-buffer (find-file-noselect (org-roam-node-file it))
+       (save-excursion
+         (goto-char (point-min))
+         (list :id (org-roam-node-id it)
+               :kind (note-manager--normalize-symbol-or-string
+                      (alist-get "KIND" (org-roam-node-properties it) nil nil #'string-equal))
+               :status (note-manager--normalize-symbol-or-string
+                        (alist-get "STATUS" (org-roam-node-properties it) nil nil #'string-equal))
+               :filetags (note-manager--current-filetags)
+               :title (org-roam-node-title it)
+               :path (org-roam-node-file it))))
      (org-roam-ql-nodes query))))
 
 (defun note-manager-get-ancestors (id)
