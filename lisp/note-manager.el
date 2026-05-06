@@ -65,6 +65,22 @@ Return value format:
    (vconcat
     (note-manager-nodes-id-title-and-properties source-or-query properties))))
 
+;; org-roam-node-display-template用
+(cl-defmethod org-roam-node-context ((node org-roam-node))
+  (when-let* ((context (cdr (assoc-string "CONTEXT" (org-roam-node-properties node)))))
+     (concat "#" context)))
+(cl-defmethod org-roam-node-kind ((node org-roam-node))
+  (when-let* ((kind (cdr (assoc-string "KIND" (org-roam-node-properties node)))))
+     (concat "#" kind)))
+
+;; nodeを開くUI
+(defun note-manager-find ()
+  "Find and visit an existing Org-roam node (no capture)."
+  (interactive)
+  (when-let* ((org-roam-node-display-template "${context:20} ${title:80} ${tags:10} ${kind:10}")
+              (node (org-roam-node-read nil nil nil t "Node: ")))
+    (org-roam-node-visit node)))
+
 (defun note-manager--node-link (node)
   "Return org id link string for NODE."
   (format "[[id:%s][%s]]" (org-roam-node-id node) (org-roam-node-title node)))
