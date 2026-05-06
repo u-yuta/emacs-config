@@ -70,6 +70,8 @@
 
 (global-set-key (kbd "M-h") 'backward-kill-word)
 (global-set-key (kbd "C-c h") 'help-command)
+(global-set-key (kbd "C-c w p") 'my/copy-buffer-file-path)
+(global-set-key (kbd "C-c w P") 'my/copy-project-relative-file-path)
 (global-unset-key (kbd "C-x C-z"))  ;; disable suspend-frame
 
 ;; モードごとの設定より優先して設定
@@ -168,6 +170,29 @@
   "Insert timestamp"
   (interactive)
   (insert (format-time-string "%Y%m%dT%H%M%S")))
+
+;; ファイルパスをコピーする
+(defun my/copy-buffer-file-path ()
+  "Copy the current buffer file path to the clipboard."
+  (interactive)
+  (if-let* ((path buffer-file-name)
+            (display-path (abbreviate-file-name path)))
+      (progn
+        (kill-new display-path)
+        (message (concat "Copied: " display-path)))
+    (user-error "Current buffer is not visiting a file")))
+
+(defun my/copy-project-relative-file-path ()
+  "Copy current buffer file path relative to project root."
+  (interactive)
+  (if-let* ((path buffer-file-name)
+            (project (project-current nil (file-name-directory path)))
+            (root (project-root project))
+            (relative-path (file-relative-name path root)))
+      (progn
+        (kill-new relative-path)
+        (message (concat "Copied: " relative-path)))
+    (user-error "Current buffer is not a file in a project")))
 
 
 ;; ============================================
