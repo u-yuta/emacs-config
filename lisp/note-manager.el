@@ -77,7 +77,7 @@ Return value format:
 (defun note-manager-find ()
   "Find and visit an existing Org-roam node (no capture)."
   (interactive)
-  (when-let* ((org-roam-node-display-template "${context:20} ${title:80} ${tags:10} ${kind:10}")
+  (when-let* ((org-roam-node-display-template "${title:80} ${context:30} ${tags:10} ${kind:10}")
               (node (org-roam-node-read nil nil nil t "Node: ")))
     (org-roam-node-visit node)))
 
