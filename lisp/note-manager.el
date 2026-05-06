@@ -154,7 +154,7 @@ When HIERARCHY is non-nil, use it instead of rebuilding one."
   "Collect minimal structure data around NODE.
 
 Return plist:
-  (:node NODE :ancestors ... :siblings ... :children ...)."
+  (:node NODE :ancestors ... :siblings ... :children ... :missions ...)."
   (let* ((node-id (org-roam-node-id node))
          (all (org-roam-node-list))
          (h (note-manager--build-hierarchy all))
@@ -164,11 +164,16 @@ Return plist:
                        (--remove (string= (org-roam-node-id it) node-id)
                                  (hierarchy-children h parent))
                      nil))
-         (ancestors (note-manager--ancestor-nodes node h)))
+         (ancestors (note-manager--ancestor-nodes node h))
+         (missions (delq nil
+                         (mapcar #'org-roam-node-from-id
+                                 (note-manager-resolve-mission-ids-from-lineage
+                                  node-id)))))
     (list :node node
           :ancestors ancestors
           :siblings siblings
-          :children children)))
+          :children children
+          :missions missions)))
 
 (defun note-manager--render-structure (structure)
   "Render STRUCTURE (from `note-manager--collect-structure') to temp buffer."
@@ -176,6 +181,7 @@ Return plist:
          (ancestors (plist-get structure :ancestors))
          (siblings (plist-get structure :siblings))
          (children (plist-get structure :children))
+         (missions (plist-get structure :missions))
          (buf (get-buffer-create "*note-manager-structure*")))
     (with-current-buffer buf
       (let ((inhibit-read-only t))
@@ -185,13 +191,14 @@ Return plist:
         (note-manager--insert-node-list "Ancestors (recursive PARENT_ID)" ancestors)
         (note-manager--insert-node-list "Siblings" siblings)
         (note-manager--insert-node-list "Children" children)
+        (note-manager--insert-node-list "Missions" missions)
         (goto-char (point-min))))
     (pop-to-buffer buf)))
 
 (defun note-manager-show-structure ()
   "Show minimal note structure around current org-roam node.
 
-Display children, siblings, and all ancestors in a temporary org buffer."
+Display children, siblings, ancestors, and missions in a temporary org buffer."
   (interactive)
   (let* ((node (org-roam-node-at-point))
          (node-id (and node (org-roam-node-id node))))
@@ -316,6 +323,53 @@ Raise error when parent cycle is detected."
           :kind "mission"
           :title (org-roam-node-title mission)
           :path (org-roam-node-file mission))))
+
+(defun note-manager-resolve-mission-ids-from-lineage (id)
+  "Return deduplicated MISSION_ID list from current node + ancestors for ID.
+
+Keep nearest lineage entries first. Unresolved IDs are not filtered here."
+  (let ((node (org-roam-node-from-id id)))
+    (unless node
+      (user-error "Node not found for ID: %s" id))
+    (let* ((lineage (cons node (note-manager--ancestor-nodes node)))
+           (mission-ids
+            (delq nil
+                  (mapcar (lambda (n)
+                            (let ((mid (alist-get "MISSION_ID"
+                                                  (org-roam-node-properties n)
+                                                  nil nil #'string-equal)))
+                              (unless (or (null mid) (string= mid ""))
+                                mid)))
+                          lineage))))
+      (cl-remove-duplicates mission-ids :test #'string-equal))))
+
+(defun note-manager-consult-open-mission-from-current ()
+  "Open a mission selected via consult from current node lineage.
+
+Lineage is current node + ancestors. Candidate label is ""TITLE [ID]"".
+Missing mission nodes are silently excluded."
+  (interactive)
+  (unless (require 'consult nil t)
+    (user-error "consult is required"))
+  (let* ((node (note-manager--current-node-or-error))
+         (mission-ids (note-manager-resolve-mission-ids-from-lineage
+                       (org-roam-node-id node)))
+         (missions (delq nil (mapcar #'org-roam-node-from-id mission-ids)))
+         (candidates (mapcar (lambda (m)
+                               (cons (format "%s [%s]"
+                                             (org-roam-node-title m)
+                                             (org-roam-node-id m))
+                                     m))
+                             missions)))
+    (unless candidates
+      (user-error "No resolvable mission found from current node lineage"))
+    (let* ((selected (consult--read (mapcar #'car candidates)
+                                    :prompt "Mission: "
+                                    :require-match t
+                                    :sort nil))
+           (mission (cdr (assoc selected candidates))))
+      (when mission
+        (org-roam-node-visit mission)))))
 
 (require 'note-manager-validate)
 
