@@ -24,6 +24,23 @@
   '(and (properties "KIND" "task") (properties "STATUS" "active"))
   "Query for active task nodes.")
 
+(defun note-manager--format-node-display (node)
+  "Format NODE like `${title:80} ${context:30} ${tags:10} ${kind:10}`."
+  (let* ((title (or (org-roam-node-title node) ""))
+         (context (or (org-roam-node-context node) ""))
+         (tags (mapconcat #'identity (org-roam-node-tags node) ","))
+         (kind (or (org-roam-node-kind node) "")))
+    (format "%-80s %-30s %-10s %-10s"
+            (truncate-string-to-width title 80 nil nil t)
+            (truncate-string-to-width context 30 nil nil t)
+            (truncate-string-to-width tags 10 nil nil t)
+            (truncate-string-to-width kind 10 nil nil t))))
+
+(defun note-manager--format-node-display-with-id (node)
+  "Format NODE display with ID suffix."
+  (format "%s [%s]"
+          (note-manager--format-node-display node)
+          (org-roam-node-id node)))
 
 ;; org-roamのノード検索を行い、ID、タイトルと指定したプロパティをplistあるいはJSONで返す
 (defun note-manager--property-name->keyword (property-name)
@@ -32,10 +49,29 @@
                   (downcase
                    (replace-regexp-in-string "[^[:alnum:]]+" "-" property-name)))))
 
+(defun note-manager--node-p (obj)
+  "Return non-nil when OBJ is an org-roam node object."
+  (eq (type-of obj) 'org-roam-node))
+
+(defun note-manager--resolve-nodes (source-or-query)
+  "Resolve SOURCE-OR-QUERY to a node list.
+
+- nil: all nodes
+- node list: returned as is
+- otherwise: resolved with `org-roam-ql-nodes'"
+  (cond
+   ((null source-or-query) (org-roam-node-list))
+   ((and (listp source-or-query)
+         (or (null source-or-query)
+             (note-manager--node-p (car source-or-query))))
+    source-or-query)
+   (t
+    (org-roam-ql-nodes source-or-query))))
+
 (defun note-manager-nodes-id-title-and-properties (source-or-query properties)
   "Return plist rows of id, title and PROPERTIES from SOURCE-OR-QUERY.
 
-SOURCE-OR-QUERY is resolved with `org-roam-ql-nodes'.
+SOURCE-OR-QUERY accepts nil, a node list, or an org-roam-ql query.
 PROPERTIES should be a list of property names (strings/symbols).
 
 Return value format:
@@ -55,7 +91,7 @@ Return value format:
        (list :id (org-roam-node-id it)
              :title (org-roam-node-title it)
              :properties properties-plist))
-     (org-roam-ql-nodes source-or-query))))
+     (note-manager--resolve-nodes source-or-query))))
 
 (defun note-manager-nodes-id-title-and-properties-json (source-or-query properties)
   "Return JSON string from `note-manager-nodes-id-title-and-properties'."
@@ -81,6 +117,22 @@ Return value format:
   (when-let* ((org-roam-node-display-template "${title:80} ${context:30} ${tags:10} ${kind:10}")
               (node (org-roam-node-read nil nil nil t "Node: ")))
     (org-roam-node-visit node)))
+
+(defun note-manager-find-active-task ()
+  "Find and visit an active task node (no capture)."
+  (interactive)
+  (let* ((nodes (org-roam-ql-nodes note-manager-query-active-task))
+         (candidates
+          (--map (cons (note-manager--format-node-display it)
+                       it)
+                 nodes))
+         (selected
+          (completing-read "Active task: "
+                           (-map #'car candidates)
+                           nil t))
+         (selected-node (cdr (assoc selected candidates))))
+    (when selected-node
+      (org-roam-node-visit selected-node))))
 
 (defun note-manager--node-link (node)
   "Return org id link string for NODE."
@@ -213,9 +265,7 @@ Display children, siblings, ancestors, and missions in a temporary org buffer."
   (interactive)
   (let* ((nodes (org-roam-ql-nodes note-manager-query-mission))
          (candidates
-          (--map (cons (format "%s [%s]"
-                               (org-roam-node-title it)
-                               (org-roam-node-id it))
+          (--map (cons (note-manager--format-node-display-with-id it)
                        it)
                  nodes))
          (selected
@@ -227,7 +277,6 @@ Display children, siblings, ancestors, and missions in a temporary org buffer."
     (save-excursion
       (goto-char (point-min))
       (org-entry-put (point) "MISSION_ID" mission-id))))
-
 (defun note-manager--normalize-symbol-or-string (value)
   "Return downcased string for VALUE (symbol/string), else nil.
 Treat nil as nil (not as symbol "nil")."
@@ -307,6 +356,7 @@ Raise error when parent cycle is detected."
       (user-error "Node not found for ID: %s" id))
     (-map #'org-roam-node-id
           (note-manager--ancestor-nodes node))))
+
 (defun note-manager-resolve-mission (id)
   "Resolve mission note from task ID via MISSION_ID."
   (let* ((node (org-roam-node-from-id id))
@@ -365,10 +415,9 @@ current node lineage. Each candidate is prefixed with its relation label."
           (let ((id (org-roam-node-id n)))
             (unless (gethash id seen)
               (puthash id t seen)
-              (push (cons (format "[%s] %s [%s]"
+              (push (cons (format "[%s] %s"
                                   label
-                                  (org-roam-node-title n)
-                                  id)
+                                  (note-manager--format-node-display n))
                           n)
                     pairs))))))
     (setq pairs (nreverse pairs))
@@ -388,9 +437,10 @@ current node lineage. Each candidate is prefixed with its relation label."
 (require 'note-manager-validate)
 
 ;; Keybindings
-(global-set-key (kbd "C-c N f") #'note-manager-find)
-(global-set-key (kbd "C-c N s") #'note-manager-show-structure)
-(global-set-key (kbd "C-c N m") #'note-manager-set-mission-id)
-(global-set-key (kbd "C-c N r") #'note-manager-consult-open-related-from-current)
+(global-set-key (kbd "C-c m f") #'note-manager-find)
+(global-set-key (kbd "C-c m s") #'note-manager-show-structure)
+(global-set-key (kbd "C-c m t") #'note-manager-find-active-task)
+(global-set-key (kbd "C-c m m") #'note-manager-set-mission-id)
+(global-set-key (kbd "C-c m r") #'note-manager-consult-open-related-from-current)
 
 (provide 'note-manager)
