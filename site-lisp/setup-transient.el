@@ -88,24 +88,6 @@
   (require 'casual-calc) ; optional if using autoloaded menu
   )
 
-;; Leader key menu -----------------------
-(global-set-key (kbd "C-c m") 'my/transient-leader-menu)
-
-(transient-define-prefix my/transient-leader-menu ()
-  ["Leader key menu"
-   ("a" "App" my/transient-app-map)
-   ("b" "Buffers" consult-buffer)
-   ("c" "Capture" my/transient-capture-map)
-   ;; ("d" "Dired" (lambda () (interactive) (dired default-directory)))  ;; open current dir
-   ("d" "Dired" dired-at-point)  ;; open current dir
-   ("h" "Help" my/transient-help-map)  ;; defined in Helpful configuration
-   ("i" "Insert" my/transient-insert-map)
-   ("f" "File" my/transient-open-file-menu)
-   ("g" "Goto" my/transient-goto-map)
-   ("s" "Search" my/transient-search-map)
-   ("w" "Window" my/transient-window-map)]
-  )
-
 ;; Help
 (transient-define-prefix my/transient-help-map ()
    ["Help"
