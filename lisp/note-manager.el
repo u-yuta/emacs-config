@@ -434,6 +434,86 @@ current node lineage. Each candidate is prefixed with its relation label."
 (defalias 'note-manager-consult-open-mission-from-current
   #'note-manager-consult-open-related-from-current)
 
+(defun note-manager--task-active-p (node)
+  "Return non-nil when NODE is an active task."
+  (string-equal
+   (downcase (or (alist-get "STATUS" (org-roam-node-properties node) nil nil #'string-equal)
+                 ""))
+   "active"))
+
+(defun note-manager--build-task-forest-data ()
+  "Build intermediate forest data from KIND=task nodes.
+
+Return plist:
+  :nodes            list of task org-roam nodes
+  :node-by-id       hash table (id -> node)
+  :children-by-id   hash table (parent-id -> child-id list)
+  :root-ids         list of root node ids"
+  (let* ((nodes (org-roam-ql-nodes note-manager-query-task))
+         (node-by-id (make-hash-table :test #'equal))
+         (children-by-id (make-hash-table :test #'equal))
+         (root-ids nil))
+    (dolist (node nodes)
+      (puthash (org-roam-node-id node) node node-by-id))
+    (dolist (node nodes)
+      (let* ((id (org-roam-node-id node))
+             (pid (note-manager--node-parent-id node))
+             (parent-in-task-set (and pid (gethash pid node-by-id))))
+        (if parent-in-task-set
+            (puthash pid
+                     (append (gethash pid children-by-id) (list id))
+                     children-by-id)
+          (push id root-ids))))
+    (list :nodes nodes
+          :node-by-id node-by-id
+          :children-by-id children-by-id
+          :root-ids (nreverse root-ids))))
+
+(defun note-manager--tree-has-active-task-p (root-id forest-data)
+  "Return non-nil when subtree ROOT-ID in FOREST-DATA has any active task."
+  (let* ((node-by-id (plist-get forest-data :node-by-id))
+         (children-by-id (plist-get forest-data :children-by-id))
+         (stack (list root-id))
+         (found nil))
+    (while (and stack (not found))
+      (let* ((id (pop stack))
+             (node (gethash id node-by-id)))
+        (when (and node (note-manager--task-active-p node))
+          (setq found t))
+        (setq stack (append (gethash id children-by-id) stack))))
+    found))
+
+(defun note-manager--render-task-forest-outline (forest-data)
+  "Render FOREST-DATA as text outline.
+
+Only trees that contain at least one active task are rendered."
+  (let* ((node-by-id (plist-get forest-data :node-by-id))
+         (children-by-id (plist-get forest-data :children-by-id))
+         (root-ids (plist-get forest-data :root-ids))
+         (lines nil))
+    (cl-labels
+        ((render-subtree (id depth)
+           (when-let* ((node (gethash id node-by-id)))
+             (push (format "%s- %s"
+                           (make-string (* 2 depth) ? )
+                           (org-roam-node-title node))
+                   lines)
+             (dolist (child-id (gethash id children-by-id))
+               (render-subtree child-id (1+ depth))))))
+      (dolist (root-id root-ids)
+        (when (note-manager--tree-has-active-task-p root-id forest-data)
+          (render-subtree root-id 0))))
+    (if lines
+        (mapconcat #'identity (nreverse lines) "\n")
+      "")))
+
+(defun note-manager-task-outline ()
+  "Return task forest outline text for KIND=task nodes.
+
+Trees where all nodes are non-active tasks are excluded."
+  (note-manager--render-task-forest-outline
+   (note-manager--build-task-forest-data)))
+
 (require 'note-manager-validate)
 
 ;; Keybindings
