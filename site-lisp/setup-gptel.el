@@ -86,12 +86,27 @@
     :endpoint "/api/v1/chat/completions"
     :stream t
     :key #'(lambda () (my/get-auth-secret "openrouter.ai"))
-    :models '(google/gemini-2.5-pro
-              google/gemini-2.5-flash
+    :models '(google/gemini-3-flash-preview google/gemini-3.1-flash-lite-preview
+              google/gemini-3.1-pro-preview
               openai/gpt-5.2 openai/gpt-5.3-codex
-              qwen/qwen3-coder  ;; Qwen3-Coder-480B-A35B-Instruct
-              z-ai/glm-4.5-air:free
+              openai/gpt-5.4-mini openai/gpt-5.4-mini openai/gpt-oss-120b
+              qwen/qwen3-coder
+              qwen/qwen3.6-35b-a3b qwen/qwen3.6-flash
               ))
+  ;; OpenRouter no thinking
+  (gptel-make-openai "OpenRouter(NoThink)"  ;; Any name you want
+    :host "openrouter.ai"
+    :endpoint "/api/v1/chat/completions"
+    :stream t
+    :key #'(lambda () (my/get-auth-secret "openrouter.ai"))
+    :models '(google/gemini-3-flash-preview google/gemini-3.1-flash-lite-preview
+              google/gemini-3.1-pro-preview
+              openai/gpt-5.2 openai/gpt-5.3-codex
+              openai/gpt-5.4-mini openai/gpt-5.4-mini openai/gpt-oss-120b
+              qwen/qwen3-coder
+              qwen/qwen3.6-35b-a3b qwen/qwen3.6-flash
+              )
+    :request-params '(:reasoning (:enabled :json-false)))
 
   ;; Novita AI
   (gptel-make-openai "Novita"     ;Any name you want
@@ -115,9 +130,9 @@
               openai/gpt-oss-20b
               zai-org/glm-5.1
               ))
-  ;; Novita AI (Qwen 3.5 non-thinking mode)
+  ;; Novita AI (non-thinking mode)
   ;; https://huggingface.co/Qwen/Qwen3.5-397B-A17B#instruct-or-non-thinking-mode
-  (gptel-make-openai "Novita(nothink)"
+  (gptel-make-openai "Novita(NoThink)"
     :host "api.novita.ai"
     :endpoint "/v3/openai/chat/completions"
     :stream t
