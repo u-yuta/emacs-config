@@ -469,6 +469,22 @@ current node lineage. Each candidate is prefixed with its relation label."
 (defalias 'note-manager-consult-open-mission-from-current
   #'note-manager-consult-open-related-from-current)
 
+(defconst note-manager-task-status-display-map
+  '(("inbox" . "inbox")
+    ("active" . "active")
+    ("hold" . "hold")
+    ("done" . "done")
+    ("archived" . "archived"))
+  "Mapping from task STATUS value to outline display label.")
+
+(defun note-manager--task-status-prefix (node)
+  "Return fixed-width STATUS prefix string for NODE like "[active  ]"."
+  (let* ((raw-status (downcase (or (alist-get "STATUS" (org-roam-node-properties node) nil nil #'string-equal)
+                                   "")))
+         (display-status (or (alist-get raw-status note-manager-task-status-display-map nil nil #'string-equal)
+                             raw-status)))
+    (format "[%-6.6s]" display-status)))
+
 (defun note-manager--task-active-p (node)
   "Return non-nil when NODE is an active task."
   (string-equal
@@ -525,17 +541,28 @@ Only trees that contain at least one active task are rendered."
   (let* ((node-by-id (plist-get forest-data :node-by-id))
          (children-by-id (plist-get forest-data :children-by-id))
          (root-ids (plist-get forest-data :root-ids))
+         (status-order '("done" "active" "hold" "inbox" "archived"))
          (lines nil))
     (cl-labels
-        ((render-subtree (id depth)
+        ((status-rank (id)
+           (let* ((node (gethash id node-by-id))
+                  (status (downcase (or (and node
+                                             (alist-get "STATUS" (org-roam-node-properties node) nil nil #'string-equal))
+                                        ""))))
+             (or (cl-position status status-order :test #'string-equal)
+                 (length status-order))))
+         (sorted-ids (ids)
+           (cl-stable-sort (copy-sequence ids) #'< :key #'status-rank))
+         (render-subtree (id depth)
            (when-let* ((node (gethash id node-by-id)))
-             (push (format "%s- %s"
+             (push (format "%s- %s %s"
                            (make-string (* 2 depth) ? )
+                           (note-manager--task-status-prefix node)
                            (note-manager--node-link node))
                    lines)
-             (dolist (child-id (gethash id children-by-id))
+             (dolist (child-id (sorted-ids (gethash id children-by-id)))
                (render-subtree child-id (1+ depth))))))
-      (dolist (root-id root-ids)
+      (dolist (root-id (sorted-ids root-ids))
         (when (note-manager--tree-has-active-task-p root-id forest-data)
           (render-subtree root-id 0))))
     (if lines
