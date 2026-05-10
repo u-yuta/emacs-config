@@ -29,7 +29,10 @@
           ("C-c n g" . org-roam-graph)
           ("C-c n b" . org-roam-buffer-toggle)
           ("C-c n c" . org-roam-capture)
-          ("C-c j" . org-roam-dailies-goto-today)
+          ("C-c j j" . org-roam-dailies-goto-today)
+          ("C-c j y" . org-roam-dailies-goto-yesterday)
+          ("C-c j p" . org-roam-dailies-goto-previous-note)
+          ("C-c j n" . org-roam-dailies-goto-next-note)
           )
          :map org-mode-map
          (("C-c n i" . org-roam-node-insert))
