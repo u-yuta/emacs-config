@@ -496,7 +496,7 @@ Only trees that contain at least one active task are rendered."
            (when-let* ((node (gethash id node-by-id)))
              (push (format "%s- %s"
                            (make-string (* 2 depth) ? )
-                           (org-roam-node-title node))
+                           (note-manager--node-link node))
                    lines)
              (dolist (child-id (gethash id children-by-id))
                (render-subtree child-id (1+ depth))))))
