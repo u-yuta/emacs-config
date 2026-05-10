@@ -88,8 +88,8 @@
     :key #'(lambda () (my/get-auth-secret "openrouter.ai"))
     :models '(google/gemini-3-flash-preview google/gemini-3.1-flash-lite-preview
               google/gemini-3.1-pro-preview
-              openai/gpt-5.2 openai/gpt-5.3-codex
-              openai/gpt-5.4-mini openai/gpt-5.4-mini openai/gpt-oss-120b
+              openai/gpt-5.4 openai/gpt-5.4-mini openai/gpt-5.3-codex
+              openai/gpt-oss-120b
               qwen/qwen3-coder
               qwen/qwen3.6-35b-a3b qwen/qwen3.6-flash
               ))
