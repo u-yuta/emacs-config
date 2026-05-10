@@ -277,6 +277,41 @@ Display children, siblings, ancestors, and missions in a temporary org buffer."
     (save-excursion
       (goto-char (point-min))
       (org-entry-put (point) "MISSION_ID" mission-id))))
+
+(defun note-manager--descendant-ids (node hierarchy)
+  "Return all descendant IDs of NODE in HIERARCHY."
+  (let ((stack (hierarchy-children hierarchy node))
+        (ids nil))
+    (while stack
+      (let ((cur (pop stack)))
+        (push (org-roam-node-id cur) ids)
+        (setq stack (append (hierarchy-children hierarchy cur) stack))))
+    ids))
+
+(defun note-manager-set-parent-id ()
+  "Select a parent node and set file-level PARENT_ID property.
+
+Exclude current node and all its descendants from candidates."
+  (interactive)
+  (let* ((current (note-manager--current-node-or-error))
+         (tasks (org-roam-ql-nodes note-manager-query-task))
+         (h (note-manager--build-hierarchy tasks))
+         (exclude-ids (cons (org-roam-node-id current)
+                            (note-manager--descendant-ids current h)))
+         (nodes (--remove (member (org-roam-node-id it) exclude-ids) tasks))
+         (candidates (--map (cons (note-manager--format-node-display-with-id it) it)
+                            nodes)))
+    (unless candidates
+      (user-error "No valid parent candidates"))
+    (let* ((selected (completing-read "Parent: "
+                                      (-map #'car candidates)
+                                      nil t))
+           (selected-node (cdr (assoc selected candidates)))
+           (parent-id (org-roam-node-id selected-node)))
+      (save-excursion
+        (goto-char (point-min))
+        (org-set-property "PARENT_ID" parent-id)))))
+
 (defun note-manager--normalize-symbol-or-string (value)
   "Return downcased string for VALUE (symbol/string), else nil.
 Treat nil as nil (not as symbol "nil")."
