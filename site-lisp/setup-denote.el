@@ -92,7 +92,7 @@ for the title component."
   ;; instead of their long file name they have, for example, a literal
   ;; "[D]" followed by the file's title.  Read the doc string of
   ;; `denote-rename-buffer-format' for how to modify this.
-  (denote-rename-buffer-mode 1)
+  (denote-rename-buffer-mode 0)
 
   ;; orgファイルのidentifierをorg-modeのIDとしても利用可能な書式にする
   (setopt denote-org-front-matter
