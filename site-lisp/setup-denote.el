@@ -27,8 +27,9 @@
    ("C-c n r" . denote-rename-file))
   :config
   (setopt denote-directory "~/Documents")
-  ;; ノート作成時にサブディレクトリとタイトルを指定する
-  (setopt denote-prompts '(subdirectory title))
+  (setopt denote-prompts '(subdirectory title))  ;; ノート作成時にサブディレクトリとタイトルを指定する
+  ;; org-store-link の保存候補に denote-link-ol-store が出ないようにする  
+  (org-link-set-parameters "denote" :store nil)
   
   (setopt denote-known-keywords
           ;; 役割で分ける
@@ -144,7 +145,7 @@ for the title component."
               #'my-denote-always-rename-on-save-based-on-front-matter
               nil t))
   (add-hook 'denote-rename-buffer-mode-hook #'my/enable-denote-rename-on-save)
-    )
+  )
 
 (use-package denote-sequence
   :ensure t
