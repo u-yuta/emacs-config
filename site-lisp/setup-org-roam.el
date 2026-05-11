@@ -142,29 +142,17 @@
   (defun my/org-store-file-id-link ()
     "現在位置によらずファイルレベル ID リンクを Org の保存済みリンクに登録する。"
     (interactive)
-    (require 'org-id)
-    (require 'ol)
+    (save-excursion
+      (goto-char (point-min))
 
-    (unless (derived-mode-p 'org-mode)
-      (user-error "Not in org-mode"))
-    (unless buffer-file-name
-      (user-error "This buffer is not visiting a file"))
+      ;; 先頭が見出しなら、見出しの前にファイルレベル property drawer を作る
+      (when (eq (car-safe (org-element-at-point)) 'headline)
+        (insert ":PROPERTIES:\n:END:\n")
+        (goto-char (point-min)))
 
-    (org-with-wide-buffer
-     (save-excursion
-       (goto-char (point-min))
-
-       ;; 先頭が見出しなら、見出しの前にファイルレベル property drawer を作る
-       (when (eq (car-safe (org-element-at-point)) 'headline)
-         (insert ":PROPERTIES:\n:END:\n")
-         (goto-char (point-min)))
-
-       ;; point-min がファイルレベル領域になっている前提で ID を作る
-       (let* ((id (org-id-get-create))
-              (link (format "id:%s" id))
-              (desc nil))
-         (org-link--add-to-stored-links link desc)
-         (message "Stored: [[%s]]" link)))))
+      ;; point-min がファイルレベル領域になっている前提で ID を作る
+      (let* ((id (org-id-get-create)))
+        (call-interactively 'org-store-link))))
 
   (add-hook 'find-file-hook #'my/rename-buffer)
 
