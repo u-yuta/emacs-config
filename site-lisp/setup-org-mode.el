@@ -108,7 +108,7 @@
   
   (setopt org-todo-keywords
           '((sequence "TODO(t)" "ONGO(o)" "NEXT(n)" "|" "DONE(d)")
-            (sequence "WAITING(w!)" "HOLD(h!)" "|" "SOMEDAY(s!)" "CANCELLED(c!)")))
+            (sequence "WAITING(w)" "HOLD(h)" "|" "SOMEDAY(s)" "CANCELLED(c!)")))
 
   (setopt org-tag-persistent-alist
         '((:startgroup . nil)
