@@ -155,9 +155,9 @@
     "Rename buffer to title when file is in Org-roam."
     (when (org-roam-file-p)
       (when-let* ((node (org-roam-node-at-point))
-             (title (org-roam-node-title node))
-             (id (org-roam-node-id node)))
-        (rename-buffer (concat (org-roam-node-title (org-roam-node-at-point)) " [" id "]")))))
+                  (title (org-roam-node-title node))
+                  (id (org-roam-node-id node)))
+        (rename-buffer (concat title " [" id "]")))))
   
   (org-roam-db-autosync-mode 1)
   )
