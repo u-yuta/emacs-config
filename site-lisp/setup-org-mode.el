@@ -25,6 +25,7 @@
          ("C-c l" . org-store-link)
          ("C-c a" . org-agenda)
          ("C-c C-x C-j" . org-clock-goto)
+         ("C-c j f" . my/journal-find-from-today-back-month)
          :map org-mode-map
          ("C-c ." . org-time-stamp-inactive)
          ("C-c !" . org-time-stamp)
@@ -167,17 +168,23 @@
   
   (defun my/journal-select-from-today-back (n)
     "直近N日前までの既存journalファイルをミニバッファで選択して返す。"
-    (let* ((cands (my/journal-files-from-today-back n)))
+    ;; ファイル内容プレビュー付き選択のため、`completing-read' ではなく
+    ;; `consult--read' + `consult--file-preview' を使う。
+    (require 'consult)
+    (let ((cands (my/journal-files-from-today-back n)))
       (when cands
         (condition-case nil
-            (if (boundp 'vertico-sort-function)
-                (let ((vertico-sort-function nil))
-                  (completing-read "Journal: " cands nil t))
-              (completing-read "Journal: " cands nil t))
+            (consult--read
+             cands
+             :prompt "Journal: "
+             :require-match t
+             :sort nil
+             :category 'file
+             :state (consult--file-preview))
           (quit nil)))))
 
   (defun my/journal-find-from-today-back-week ()
-    "直近30日前までの既存journalファイルから選択し、開く。
+    "直近7日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
     (interactive)
     (let ((file (my/journal-select-from-today-back 7)))
