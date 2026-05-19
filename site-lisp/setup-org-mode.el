@@ -171,33 +171,34 @@
     ;; ファイル内容プレビュー付き選択のため、`completing-read' ではなく
     ;; `consult--read' + `consult--file-preview' を使う。
     (require 'consult)
-    (let ((cands (my/journal-files-from-today-back n)))
-      (when cands
-        (condition-case nil
-            (consult--read
-             cands
-             :prompt "Journal: "
-             :require-match t
-             :sort nil
-             :category 'file
-             :state (consult--file-preview))
-          (quit nil)))))
+    (when-let* ((cands (mapcar (lambda (file)
+                                 (propertize (file-name-nondirectory file)
+                                             'consult--candidate file))
+                               (my/journal-files-from-today-back n))))
+      (condition-case nil
+          (consult--read
+           cands
+           :prompt "Journal: "
+           :require-match t
+           :sort nil
+           :category 'file
+           :lookup #'consult--lookup-candidate
+           :state (consult--file-preview))
+        (quit nil))))
 
   (defun my/journal-find-from-today-back-week ()
     "直近7日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
     (interactive)
-    (let ((file (my/journal-select-from-today-back 7)))
-      (when file
-        (find-file file))))
+    (when-let* ((file (my/journal-select-from-today-back 7)))
+      (find-file file)))
 
   (defun my/journal-find-from-today-back-month ()
     "直近30日前までの既存journalファイルから選択し、開く。
   キャンセル時は何もしない。"
     (interactive)
-    (let ((file (my/journal-select-from-today-back 30)))
-      (when file
-        (find-file file))))
+    (when-let* ((file (my/journal-select-from-today-back 30)))
+      (find-file file)))
 
   ;; Capture template
   (defun my/journal-entry-template ()
