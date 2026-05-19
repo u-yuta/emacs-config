@@ -154,10 +154,10 @@
   (defun my/rename-buffer ()
     "Rename buffer to title when file is in Org-roam."
     (when (org-roam-file-p)
-      (let* ((node (org-roam-node-at-point))
+      (when-let* ((node (org-roam-node-at-point))
              (title (org-roam-node-title node))
              (id (org-roam-node-id node)))
-        (when title (rename-buffer (concat (org-roam-node-title (org-roam-node-at-point)) " [" id "]"))))))
+        (rename-buffer (concat (org-roam-node-title (org-roam-node-at-point)) " [" id "]")))))
   
   (org-roam-db-autosync-mode 1)
   )
