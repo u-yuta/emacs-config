@@ -166,15 +166,43 @@
                  (format-time-string "journal-%Y%m%d.org" time))
                 res)))))
   
+  (defun my/journal-file-name-date-and-weekday (name)
+    "NAME から `YYYY-MM-DD' 形式の日付文字列と曜日文字列の cons を返す。
+NAME が journal ファイル名形式でない場合は nil を返す。"
+    (when (string-match "\\`journal-\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)\\.org\\'" name)
+      (let* ((year (match-string 1 name))
+             (month (match-string 2 name))
+             (day (match-string 3 name))
+             (date-str (format "%s-%s-%s" year month day))
+             (time (encode-time 0 0 0
+                                (string-to-number day)
+                                (string-to-number month)
+                                (string-to-number year)))
+             (weekday (format-time-string "%a" time)))
+        (cons date-str weekday))))
+
+  (defun my/journal-candidate-display (file name-width)
+    "FILE の journal 候補表示文字列を返す。NAME-WIDTH は名前列の幅。"
+    (let* ((name (file-name-nondirectory file))
+           (date-and-weekday (my/journal-file-name-date-and-weekday name)))
+      (if date-and-weekday
+          (format (format "%%-%ds  %%s  %%s" name-width)
+                  name (car date-and-weekday) (cdr date-and-weekday))
+        name)))
+
   (defun my/journal-select-from-today-back (n)
     "直近N日前までの既存journalファイルをミニバッファで選択して返す。"
     ;; ファイル内容プレビュー付き選択のため、`completing-read' ではなく
     ;; `consult--read' + `consult--file-preview' を使う。
     (require 'consult)
-    (when-let* ((cands (mapcar (lambda (file)
-                                 (propertize (file-name-nondirectory file)
+    (when-let* ((files (my/journal-files-from-today-back n))
+                (name-width (apply #'max 0 (mapcar (lambda (file)
+                                                     (string-width (file-name-nondirectory file)))
+                                                   files)))
+                (cands (mapcar (lambda (file)
+                                 (propertize (my/journal-candidate-display file name-width)
                                              'consult--candidate file))
-                               (my/journal-files-from-today-back n))))
+                               files)))
       (condition-case nil
           (consult--read
            cands
