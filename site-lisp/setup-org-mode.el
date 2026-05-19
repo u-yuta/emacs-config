@@ -500,6 +500,14 @@
 (use-package d2-mode
   :ensure t)
 
+;; orgit: Link to Magit buffers from Org documents
+;;
+;; `orgit:/path/to/repo/'            links to a `magit-status' buffer
+;; `orgit-rev:/path/to/repo/::REV'   links to a `magit-revision' buffer
+;; `orgit-log:/path/to/repo/::ARGS'  links to a `magit-log' buffer
+(use-package orgit
+  :ensure t)
+
 ;; Tableの形式をその場で変換する関数。
 (defun org-table-transform-in-place ()
   "Just like `ORG-TABLE-EXPORT', but instead of exporting to a
