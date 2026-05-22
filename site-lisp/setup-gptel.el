@@ -173,6 +173,16 @@
   ;; Setup gptel tools
   (my/gptel-setup-journaling-tools))
 
+;; ob-gptel: An Org Babel backend for gptel.
+(use-package ob-gptel
+  :vc (:url "https://github.com/jwiegley/ob-gptel")
+  :config
+  (add-to-list 'org-babel-load-languages '(gptel . t))
+  (defun ob-gptel-setup-completions ()
+    (add-hook 'completion-at-point-functions
+              'ob-gptel-capf nil t))
+  :hook (org-mode . ob-gptel-setup-completions))
+
 ;; gptel-agent
 (use-package gptel-agent
   :vc (:url "https://github.com/karthink/gptel-agent" :rev "2e6ba04")  ;; 2026-02-12 latest
