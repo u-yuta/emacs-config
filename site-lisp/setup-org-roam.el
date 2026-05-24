@@ -104,10 +104,17 @@
 
   ;; org-roam dailies template
   (setopt org-roam-dailies-directory my/journal-directory)
+  (setopt my/org-roam-dailies-capture-template-head
+          "#+title: %<%Y-%m-%d %A>\n#+filetags: :journal:\n\n* 予定\n\n* やること\n\n* メモ\n\n* 発生したタスク\n\n* サマリー\n\n")
   (setopt org-roam-dailies-capture-templates
-          '(("j" "journal" entry ""
+          `(("j" "journal" entry "* %?"
              :target (file+head "%<%Y/journal-%Y%m%d>.org"
-                                "#+title: %<%Y-%m-%d %A>\n#+filetags: :journal:\n\n* 予定\n\n* やること\n\n* タスクキュー\n\n* メモ\n\n* 日報\n\n")
+                                ,my/org-roam-dailies-capture-template-head)
+             :unnarrowed t)
+            ("m" "journal memo" entry "** %?"
+             :target (file+head+olp "%<%Y/journal-%Y%m%d>.org"
+                                    ,my/org-roam-dailies-capture-template-head
+                                    ("メモ"))
              :unnarrowed t)))
   
   ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"

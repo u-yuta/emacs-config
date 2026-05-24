@@ -228,25 +228,6 @@ NAME が journal ファイル名形式でない場合は nil を返す。"
     (when-let* ((file (my/journal-select-from-today-back 30)))
       (find-file file)))
 
-  ;; Capture template
-  (defun my/journal-entry-template ()
-    "Return a capture template string"
-    (concat
-     "* " (format-time-string "%F %A") "\n"
-     "** 予定\n\n** やること\n\n** タスクキュー\n\n** メモ\n\n** 日報\n\n"
-     ))
- 
-  (setopt org-capture-templates
-          '(
-            ("j" "Journal memo" entry
-             (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "メモ")
-             "** %U %?\n%a")
-            ("t" "Journal add task" entry
-             (file+headline (lambda () (my/journal-file-today-create-if-not-exist)) "タスクキュー")
-             "** %?\n")
-            )
-          )
-
   (defun my/org-files-list-except-journal ()
     "Return a list of all org files except those starting with 'journal'."
     (let ((org-files (org-files-list)))
