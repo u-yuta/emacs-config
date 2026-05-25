@@ -15,14 +15,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; gptel tool setup functions
-(defun my/gptel-setup-journaling-tools ()
-  (gptel-make-tool
-   :name "get_current_datetime"
-   :function (lambda () (current-time-string))
-   :description "Get the current local time."
-   :category "journal"))
-
 ;; Macher: A project-aware LLM editing toolset for Emacs, built on gptel.
 (use-package macher
   :ensure t
@@ -168,10 +160,7 @@
           
           ;; 日本語応答用ディレクティブ
           (default-ja  . "あなたはEmacsに組み込まれた大規模言語モデルであり、役立つアシスタントです。常に日本語で簡潔に応答してください。")
-          ))
-
-  ;; Setup gptel tools
-  (my/gptel-setup-journaling-tools))
+          )))
 
 ;; ob-gptel: An Org Babel backend for gptel.
 (use-package ob-gptel
