@@ -175,7 +175,8 @@
 
 ;; ob-gptel: An Org Babel backend for gptel.
 (use-package ob-gptel
-  :vc (:url "https://github.com/jwiegley/ob-gptel")
+  :ensure t
+  :vc (:url "https://github.com/jwiegley/ob-gptel" :rev :newest)
   :config
   (add-to-list 'org-babel-load-languages '(gptel . t))
   (defun ob-gptel-setup-completions ()
