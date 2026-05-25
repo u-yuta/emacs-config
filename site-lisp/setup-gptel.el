@@ -54,7 +54,7 @@
 ;; gptel: Interact with LLMs
 (use-package gptel
   :ensure t
-  :vc (:url "https://github.com/karthink/gptel" :rev "b34a135") ;; 2026-02-12 latest
+  :vc (:url "https://github.com/karthink/gptel" :rev "f5ad4eb") ;; v0.9.9.5
   :bind ("C-c <return>" . gptel-menu)  ;; 確認のためgptel-sendではなくgptel-menuを割当
   :config
   (require 'macher nil t)
