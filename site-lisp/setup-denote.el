@@ -40,18 +40,20 @@
             "index" ;; 構造・接続
             ))
 
-  ;; title の slug 規則は Denote 標準をほぼ踏襲し、差分は 2 点のみ:
+  ;; title の slug 規則は Denote 標準をほぼ踏襲。差分は以下:
   ;; 1) downcase しない（大文字小文字を保持）
   ;; 2) . は保持する（後段の共通処理で消さない）
+  ;; 3) | ; : / は削除せず - に置き換える
   (defun my/denote-sluggify-title (str)
     "Make STR an appropriate slug for title.
 Compared to Denote defaults, this keeps letter case (no downcase)
-and is paired with custom post-processing that preserves dots."
+and is paired with custom post-processing that preserves dots.
+Also replace `|', `;', `:', and `/' with hyphens instead of removing them."
     (denote-slug-hyphenate
      (replace-regexp-in-string
-      "[][{}!@#$%^&*()+'\"?,\|;:~`‘’“”/=]*"
+      "[][{}!@#$%^&*()+'\"?,=~`‘’“”]*"
       ""
-      str)))
+      (replace-regexp-in-string "[|;:/]+" "-" str))))
 
   (defun my/denote-sluggify-and-apply-rules (component str)
     "Make STR an appropriate slug for file name COMPONENT.
