@@ -63,17 +63,6 @@
 (unless (server-running-p)
   (server-start))
 
-;; グローバルなキーバインドの設定
-(global-set-key (kbd "<home>") 'beginning-of-buffer)
-(global-set-key (kbd "<end>") 'end-of-buffer)
-(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
-
-(global-set-key (kbd "M-h") 'backward-kill-word)
-(global-set-key (kbd "C-c h") 'help-command)
-(global-set-key (kbd "C-c w p") 'my/copy-buffer-file-path)
-(global-set-key (kbd "C-c w P") 'my/copy-project-relative-file-path)
-(global-unset-key (kbd "C-x C-z"))  ;; disable suspend-frame
-
 ;; モードごとの設定より優先して設定
 (bind-key* "C-h" 'backward-delete-char-untabify)
 
@@ -193,6 +182,25 @@
         (kill-new relative-path)
         (message (concat "Copied: " relative-path)))
     (user-error "Current buffer is not a file in a project")))
+
+;; Back to indentation, or beginning of line.
+(defun back-to-indentation-or-beginning ()
+   (interactive)
+   (if (bolp) (back-to-indentation) (beginning-of-line)))
+
+;; ============================================
+;; グローバルなキーバインドの設定
+;; ============================================
+
+(global-set-key (kbd "<home>") 'beginning-of-buffer)
+(global-set-key (kbd "<end>") 'end-of-buffer)
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+
+(global-set-key (kbd "M-h") 'backward-kill-word)
+(global-set-key (kbd "C-c h") 'help-command)
+(global-set-key (kbd "C-c w p") 'my/copy-buffer-file-path)
+(global-set-key (kbd "C-c w P") 'my/copy-project-relative-file-path)
+(global-unset-key (kbd "C-x C-z"))  ;; disable suspend-frame
 
 
 ;; ============================================
@@ -451,11 +459,6 @@
 
 ;; FFAP設定
 (ffap-bindings)
-
-;; Back to indentation, or beginning of line.
-(defun back-to-indentation-or-beginning ()
-   (interactive) 
-   (if (bolp) (back-to-indentation) (beginning-of-line)))
 
 ;; avy
 ;; 参考：文字入力後、ターゲット選択前に `?' を入力する、選択可能なAction(kill, copy, zapなど)が表示される
