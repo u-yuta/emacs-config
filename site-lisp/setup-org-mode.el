@@ -473,33 +473,42 @@ NAME が journal ファイル名形式でない場合は nil を返す。"
 ;; Use the standard Emacs bookmark commands, C-x r m
 (use-package org-bookmark-heading :ensure t)
 
-(use-package org-download
-  :ensure t
-  :after org
-  :init
-  (setopt org-download-screenshot-basename "__screenshot.png")
-  :config
-  ;; org-modeのattachment機能を使わず、カレントディレクトリにファイル保存する
-  (setopt org-download-method 'directory)  
-  (setopt org-download-image-dir nil)  ;; current directory
-  (setopt org-download-heading-lvl nil)  ;; no subdirectories
-  (setopt org-download-timestamp "")
+;; Save Windows clipboard image
+(defun my/save-windows-clipboard-image ()
+  "Save Windows clipboard image to ~/Documents/YYYY/MM/."
+  (interactive)
+  (let* ((ts (format-time-string "%Y%m%dT%H%M%S"))
+         (year (format-time-string "%Y"))
+         (month (format-time-string "%m"))
+         (dir (expand-file-name
+               (format "~/Documents/%s/%s/" year month)))
+         (path (expand-file-name
+                (format "%s__screenshot.png" ts)
+                dir))
+         (win-path
+          (with-temp-buffer
+            (call-process "wslpath" nil t nil "-w" path)
+            (string-trim (buffer-string)))
+          ))
 
-  ;; org-download-screenshot でクリップボードの画像を保存する
-  (setq org-download-screenshot-method
-        "powershell.exe -Command \"(Get-Clipboard -Format image).Save('$(wslpath -w %s)')\"")
+    (make-directory dir t)
 
-  ;; Prompt file name
-  (setopt org-download-file-format-function 'my/org-download-file-format)
-  (defun my/org-download-file-format (filename)
-    (read-file-name
-     "File name: "
-     nil nil nil
-     (concat
-      (format-time-string "%Y%m%dT%H%M%S--")
-      filename
-      )))
-  )
+    (let ((exit-code
+           (call-process
+            "powershell.exe"
+            nil nil nil
+            "-NoProfile"
+            "-Command"
+            (format
+             "$img = Get-Clipboard -Format Image; if ($img) { $img.Save('%s') } else { exit 1 }"
+             win-path))))
+
+      (if (zerop exit-code)
+          (progn
+            (message "Saved clipboard image: %s" path)
+            (kill-new (abbreviate-file-name path))
+            path)
+        (error "Failed to save clipboard image")))))
 
 ;; ob-mermaid
 (use-package ob-mermaid
