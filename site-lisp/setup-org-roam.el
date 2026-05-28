@@ -165,7 +165,8 @@
                   (title (org-roam-node-title node))
                   (id (org-roam-node-id node)))
         (rename-buffer (concat title " [" id "]")))))
-  
+
+  (require 'org-link-proj)
   (org-roam-db-autosync-mode 1)
   )
 
