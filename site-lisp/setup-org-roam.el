@@ -60,9 +60,8 @@
   (setopt org-roam-capture-templates
           `(
             ("t" "task" plain "%?" :target
-             (file+head ,(format "%s/${id}.org" my/org-inbox-directory)  ":PROPERTIES:
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
-:KIND: task
 :END:
 #+title:      ${title}
 #+filetags:   :work:
@@ -72,32 +71,33 @@
 * 結果・知見
 * リンク
 ") :unnarrowed t)
-            ("m" "mission" plain "%?" :target
-             (file+head ,(format "%s/${id}.org" my/org-inbox-directory)  ":PROPERTIES:
+            ("p" "project" plain "%?" :target
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
-:KIND: area
 :END:
 #+title:      ${title}
 #+filetags:   :index:
-* 概要
+* 目的
+* 背景
 * スコープ
-* 目的・背景
-* 用語
+* 現在状況
+* 今の主要タスク
+* waiting
+* リスク / 論点
+* 関連sources
 ") :unnarrowed t)
             ("a" "area" plain "%?" :target
-             (file+head ,(format "%s/${id}.org" my/org-inbox-directory)  ":PROPERTIES:
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  ":PROPERTIES:
 :ID: ${id}
-:KIND: area
-:ROAM_ALIASES: %^{ROAM_ALIASES}
 :END:
 #+title:      ${title}
 #+filetags:   :index:
 * 概要
 * スコープ
-* 用語
+* 関連sources
 ") :unnarrowed t)
             ("w" "work note" plain "%?" :target
-             (file+head ,(format "%s/${id}.org" my/org-inbox-directory)  "#+title:      ${title}
+             (file+head ,(format "%s/${id}--${slug}.org" my/org-inbox-directory)  "#+title:      ${title}
 #+filetags:   :work:
 ") :unnarrowed t)
             ))
