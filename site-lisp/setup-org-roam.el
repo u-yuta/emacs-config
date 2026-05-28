@@ -110,11 +110,6 @@
           `(("j" "journal" entry "* %?"
              :target (file+head "%<%Y/journal-%Y%m%d>.org"
                                 ,my/org-roam-dailies-capture-template-head)
-             :unnarrowed t)
-            ("m" "journal memo" entry "** %?"
-             :target (file+head+olp "%<%Y/journal-%Y%m%d>.org"
-                                    ,my/org-roam-dailies-capture-template-head
-                                    ("メモ"))
              :unnarrowed t)))
   
   ;; Customize slug generation: spaces and non-alphanumeric chars become "-" instead of "_"
