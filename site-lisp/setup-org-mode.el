@@ -190,6 +190,17 @@ NAME が journal ファイル名形式でない場合は nil を返す。"
                   name (car date-and-weekday) (cdr date-and-weekday))
         name)))
 
+  (defun my/journal-preview-state ()
+    "Journal preview 用の consult state を返す。"
+    (let ((base-state (consult--file-preview)))
+      (lambda (action cand)
+        (funcall base-state action cand)
+        (when (and (eq action 'preview) cand)
+          (when-let ((buf (get-file-buffer cand)))
+            (with-current-buffer buf
+              (org-content 2) ; レベル2までの見出しだけ表示する
+              ))))))
+
   (defun my/journal-select-from-today-back (n)
     "直近N日前までの既存journalファイルをミニバッファで選択して返す。"
     ;; ファイル内容プレビュー付き選択のため、`completing-read' ではなく
@@ -211,7 +222,7 @@ NAME が journal ファイル名形式でない場合は nil を返す。"
            :sort nil
            :category 'file
            :lookup #'consult--lookup-candidate
-           :state (consult--file-preview))
+           :state (my/journal-preview-state))
         (quit nil))))
 
   (defun my/journal-find-from-today-back-week ()
