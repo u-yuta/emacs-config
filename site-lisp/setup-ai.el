@@ -1,4 +1,4 @@
-;;; setup-ai.el --- AI tools and utilities configurations -*- lexical-binding: t -*
+;;; setup-ai.el --- AI tools and utilities configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

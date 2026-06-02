@@ -1,4 +1,4 @@
-;;; setup-auth-source.el --- Authentication and secret management configurations -*- lexical-binding: t -*
+;;; setup-auth-source.el --- Authentication and secret management configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

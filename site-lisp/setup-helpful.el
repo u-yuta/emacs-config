@@ -1,4 +1,4 @@
-;;; setup-helpful.el --- Enhance Help buffers using Helpful -*- lexical-binding: t -*
+;;; setup-helpful.el --- Enhance Help buffers using Helpful -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

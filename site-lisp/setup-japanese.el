@@ -1,4 +1,4 @@
-;;; setup-japanese.el --- Japanese language environment configuration -*- lexical-binding: t -*-
+;;; setup-japanese.el --- Japanese language environment configuration -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

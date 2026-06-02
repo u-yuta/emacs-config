@@ -1,4 +1,4 @@
-;;; setup-transient.el --- Transient menu UI configurations -*- lexical-binding: t -*
+;;; setup-transient.el --- Transient menu UI configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

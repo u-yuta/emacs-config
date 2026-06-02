@@ -1,4 +1,4 @@
-;;; setup-python.el --- Python configurations -*- lexical-binding: t -*-
+;;; setup-python.el --- Python configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

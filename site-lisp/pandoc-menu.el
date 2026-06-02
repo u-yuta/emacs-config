@@ -1,4 +1,4 @@
-;;; pandoc-transient.el -*- lexical-binding: t -*
+;;; pandoc-transient.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

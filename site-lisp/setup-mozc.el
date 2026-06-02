@@ -1,4 +1,4 @@
-;;; setup-mozc.el --- Japanese input configuration with Mozc -*- lexical-binding: t -*-
+;;; setup-mozc.el --- Japanese input configuration with Mozc -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

@@ -1,4 +1,4 @@
-;;; windows-path-on-wsl.el --- Windows path operations -*- lexical-binding: t -*-
+;;; windows-path-on-wsl.el --- Windows path operations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

@@ -1,4 +1,4 @@
-;;; setup-note-search.el --- note search configurations -*- lexical-binding: t -*
+;;; setup-note-search.el --- note search configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

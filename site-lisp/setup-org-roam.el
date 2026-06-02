@@ -1,4 +1,4 @@
-;;; setup-org-roam.el --- Org-roam configurations -*- lexical-binding: t -*
+;;; setup-org-roam.el --- Org-roam configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

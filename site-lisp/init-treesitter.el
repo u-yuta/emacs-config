@@ -1,4 +1,4 @@
-;;; init-treesitter.el --- Tree-sitter configurations -*- lexical-binding: t -*-
+;;; init-treesitter.el --- Tree-sitter configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

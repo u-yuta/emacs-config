@@ -1,4 +1,4 @@
-;;; docdb.el --- make filelists for docdb -*- lexical-binding: t -*
+;;; docdb.el --- make filelists for docdb -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

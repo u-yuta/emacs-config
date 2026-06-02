@@ -1,4 +1,4 @@
-;;; setup-org-mode.el --- Org-mode configurations -*- lexical-binding: t -*
+;;; setup-org-mode.el --- Org-mode configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

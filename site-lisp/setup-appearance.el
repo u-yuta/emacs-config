@@ -1,4 +1,4 @@
-;;; setut-appearance.el --- GUI appearance configurations -*- lexical-binding: t -*-
+;;; setut-appearance.el --- GUI appearance configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

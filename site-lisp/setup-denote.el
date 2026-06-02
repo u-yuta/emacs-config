@@ -1,4 +1,4 @@
-;;; setup-denote.el --- Denote configurations -*- lexical-binding: t -*
+;;; setup-denote.el --- Denote configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

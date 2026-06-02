@@ -1,4 +1,4 @@
-;;; setup-citation.el --- Citation configurations -*- lexical-binding: t -*
+;;; setup-citation.el --- Citation configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

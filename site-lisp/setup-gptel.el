@@ -1,4 +1,4 @@
-;;; setup-gptel.el --- gptel.el configurations -*- lexical-binding: t -*
+;;; setup-gptel.el --- gptel.el configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

@@ -1,4 +1,4 @@
-;;; setup-completion.el --- In-buffer completion configurations -*- lexical-binding: t -*
+;;; setup-completion.el --- In-buffer completion configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

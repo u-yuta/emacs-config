@@ -1,4 +1,4 @@
-;;; setup-vertico-consult.el --- Vertico, Consult and related packages configurations -*- lexical-binding: t -*-
+;;; setup-vertico-consult.el --- Vertico, Consult and related packages configurations -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;

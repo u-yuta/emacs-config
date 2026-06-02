@@ -1,4 +1,4 @@
-;;; setup-dape.el --- Dape: Debug Adapter Protocol for Emacs  -*- lexical-binding: t -*
+;;; setup-dape.el --- Dape: Debug Adapter Protocol for Emacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2025 u-yuta
 ;;
