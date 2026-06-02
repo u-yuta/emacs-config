@@ -175,14 +175,14 @@
 
 ;; gptel-agent
 (use-package gptel-agent
-  :vc (:url "https://github.com/karthink/gptel-agent" :rev "2e6ba04")  ;; 2026-02-12 latest
+  :vc (:url "https://github.com/karthink/gptel-agent" :rev "f8cab036")  ;; 2026-05-23
   :ensure t
   :config
   (let ((agents-dir (expand-file-name "agents" user-emacs-directory)))
     (add-to-list 'gptel-agent-dirs agents-dir)
     (when (file-directory-p agents-dir)
       (gptel-agent-update)))  ;; Read files from agents directories
-  )         
+  )
 
 ;; gptel-magit
 (use-package gptel-magit
