@@ -619,7 +619,6 @@
 (require 'pandoc-menu)
 
 (require 'docdb)
-(require 'note-manager)
 
 
 ;; Load host-specific configuration
