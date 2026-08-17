@@ -49,7 +49,7 @@
   ;; Configures display formatting for Org-roam node.
   ;; https://github.com/org-roam/org-roam/wiki/User-contributed-Tricks#filtering-by-subdirectory
   (cl-defmethod org-roam-node-directories ((node org-roam-node))
-    (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
+    (if-let* ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
         (format "%s/" (car (split-string dirs "/")))
       ""))
   (setopt org-roam-node-display-template "${directories:12} ${title:80} ${tags:10}"

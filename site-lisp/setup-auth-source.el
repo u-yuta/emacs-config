@@ -30,8 +30,8 @@
 ;; password store のデータの更新が反映されない場合は auth-source-forget-all-cached を実行する
 (defun my/get-auth-secret (host)
   "Get secret from auth-source for the specified HOST."
-  (if-let ((auth-info (car (auth-source-search :host host))))
-      (if-let ((secret-fn (plist-get auth-info :secret)))
+  (if-let* ((auth-info (car (auth-source-search :host host))))
+      (if-let* ((secret-fn (plist-get auth-info :secret)))
           (funcall secret-fn)
         (error "No secret found for host: %s" host))
     (error "No auth-source entry found for host: %s" host)))
