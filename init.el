@@ -287,7 +287,7 @@
   (setopt recentf-max-saved-items 1000)
   (setopt recentf-max-menu-items 500)
   (recentf-mode 1)
-  (run-at-time nil (* 5 60) 'recentf-save-list)
+  (setopt recentf-autosave-interval 300)
   )
 
 ;; dired
@@ -386,6 +386,11 @@
 ;; ============================================
 
 (require 'setup-python)
+
+(use-package markdown-ts-mode
+  :ensure nil
+  :mode ("\\.md\\'" . markdown-ts-mode)
+  :defer t)
 
 ;; markdown-mode
 (use-package markdown-mode
