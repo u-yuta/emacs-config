@@ -1,4 +1,4 @@
-;;; org-link-proj.el - Support for links to project pages in Org mode
+;;; org-link-proj.el - Support for links to project pages in Org mode -*- lexical-binding: t; -*-
 (require 'ol)
 (require 'cl-lib)
 (require 'org-roam)
