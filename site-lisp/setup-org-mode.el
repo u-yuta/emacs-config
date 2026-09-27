@@ -58,6 +58,8 @@
   (setopt org-return-follows-link t)
   ;; Todo 完了日時を記録
   (setopt org-log-done 'time)
+  ;; 完了見出しの本文は通常表示のままにし、DONE keywordだけで状態を示す
+  (setopt org-fontify-done-headline nil)
   ;; 見出し直後のみインデント調整をする
   (setopt org-adapt-indentation nil)
   ;; ordered サブタスクの先頭のみを表示する
@@ -472,6 +474,14 @@ NAME が journal ファイル名形式でない場合は nil を返す。"
   (setopt org-plantuml-exec-mode 'plantuml)
   (setopt org-plantuml-jar-path "~/.local/bin/plantuml.jar")
   )
+
+(use-package org-day-plan
+  :ensure nil
+  :after org
+  :bind (("C-c j e" . org-day-plan-show-finish-time))
+  :custom
+  (org-day-plan-file-function #'my/journal-file-today)
+  (org-day-plan-heading "メモ"))
 
 (use-package org-bullets
   :ensure t
